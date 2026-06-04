@@ -1,0 +1,733 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Crédito Privado PRO: A Masterclass Completa</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<style>
+  :root {
+    --bg: #F8FAFC; --surface: #FFFFFF; --surface-alt: #F1F5F9;
+    --ink: #0F172A; --ink-light: #475569; --ink-lighter: #94A3B8;
+    --border: #E2E8F0; --border-dark: #CBD5E1;
+    
+    /* Paleta Funcional e Premium */
+    --primary: #2563EB; --primary-bg: #DBEAFE;
+    --teal: #0D9488; --teal-bg: #CCFBF1;
+    --amber: #D97706; --amber-bg: #FEF3C7;
+    --rose: #E11D48; --rose-bg: #FFE4E6;
+    
+    --serif: "Fraunces", Georgia, serif; 
+    --sans: "IBM Plex Sans", system-ui, sans-serif; 
+    --mono: "IBM Plex Mono", monospace;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body { background: var(--bg); color: var(--ink); font-family: var(--sans); line-height: 1.6; font-size: 16px; -webkit-font-smoothing: antialiased; }
+  .num { font-family: var(--mono); font-variant-numeric: tabular-nums; }
+
+  /* Navegação */
+  nav { position: sticky; top: 0; z-index: 50; background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); border-bottom: 1px solid var(--border); box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+  .nav-container { max-width: 1200px; margin: 0 auto; padding: 0.8rem 1.5rem; display: flex; align-items: center; gap: 2rem; overflow-x: auto; scrollbar-width: none; }
+  .nav-container::-webkit-scrollbar { display: none; }
+  .brand { font-family: var(--serif); font-weight: 600; font-size: 1.2rem; color: var(--ink); white-space: nowrap; }
+  .brand span { color: var(--primary); }
+  
+  .tabs { display: flex; gap: 0.5rem; }
+  .tab-btn { background: transparent; border: 1px solid transparent; color: var(--ink-light); padding: 0.5rem 1rem; border-radius: 99px; font-family: var(--sans); font-weight: 500; font-size: 0.9rem; cursor: pointer; transition: all 0.2s; white-space: nowrap; }
+  .tab-btn:hover { background: var(--surface-alt); color: var(--primary); }
+  .tab-btn.active { background: var(--primary); color: #fff; box-shadow: 0 2px 4px rgba(37, 99, 235, 0.2); }
+
+  /* Progresso */
+  #progress { position: fixed; top: 0; left: 0; height: 3px; background: var(--teal); width: 0; z-index: 60; transition: width 0.1s; }
+
+  /* Layout */
+  .container { max-width: 1200px; margin: 0 auto; padding: 0 1.5rem; }
+  .header-section { padding: 4rem 0 3rem; }
+  .eyebrow { font-family: var(--mono); font-size: 0.8rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--primary); margin-bottom: 1rem; display: block;}
+  h1 { font-family: var(--serif); font-size: clamp(2.2rem, 4.5vw, 3.2rem); line-height: 1.1; letter-spacing: -0.02em; margin-bottom: 1.5rem; }
+  .lead { font-size: 1.15rem; color: var(--ink-light); max-width: 75ch; }
+  
+  .panel { display: none; padding: 3rem 0 5rem; border-top: 1px solid var(--border); animation: fadeIn 0.4s ease; }
+  .panel.active { display: block; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+  
+  h2 { font-family: var(--serif); font-size: 2rem; margin-bottom: 1.5rem; color: var(--ink); }
+  h3 { font-size: 1.2rem; margin: 2rem 0 1rem; color: var(--ink); }
+  
+  .grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 2rem; }
+  .grid-split { display: grid; grid-template-columns: 1fr; gap: 3rem; }
+  @media(min-width: 992px) { .grid-split { grid-template-columns: 1.2fr 1fr; align-items: start; } }
+  @media(min-width: 992px) { .grid-split-rev { grid-template-columns: 1fr 1.2fr; align-items: start; } }
+  
+  /* UI Elements */
+  .prose p { margin-bottom: 1.2rem; color: var(--ink-light); }
+  .prose strong { color: var(--ink); }
+  
+  .card { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 1.5rem; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); }
+  .card-alt { background: var(--surface-alt); border: 1px solid var(--border); border-radius: 16px; padding: 1.5rem; }
+  
+  .metric-box { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 1.2rem; display: flex; flex-direction: column; justify-content: center; }
+  .metric-box .label { font-size: 0.85rem; color: var(--ink-light); margin-bottom: 0.4rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; }
+  .metric-box .value { font-family: var(--mono); font-size: 1.8rem; font-weight: 600; color: var(--ink); }
+  .metric-box .sub { font-size: 0.85rem; color: var(--ink-lighter); margin-top: 0.4rem; line-height: 1.3; }
+
+  .analogy { border-left: 4px solid var(--primary); background: var(--primary-bg); padding: 1.2rem 1.5rem; border-radius: 0 12px 12px 0; margin: 1.5rem 0; }
+  .analogy-title { font-family: var(--mono); font-size: 0.75rem; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase; color: var(--primary); margin-bottom: 0.5rem; display: block; }
+  .analogy p { margin: 0; color: var(--ink); font-size: 0.95rem; }
+
+  /* Controls */
+  .control-group { margin-bottom: 1.5rem; background: var(--surface); padding: 1rem; border-radius: 12px; border: 1px solid var(--border); }
+  .control-group label { display: flex; justify-content: space-between; font-size: 0.9rem; color: var(--ink-light); margin-bottom: 0.8rem; font-weight: 500; }
+  .control-group label b { font-family: var(--mono); color: var(--primary); font-size: 1rem; }
+  input[type=range] { width: 100%; accent-color: var(--primary); height: 6px; border-radius: 3px; cursor: pointer; }
+  
+  .btn-group { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 1rem; }
+  .btn-group button { background: var(--surface); border: 1px solid var(--border-dark); color: var(--ink-light); padding: 0.6rem 1.2rem; border-radius: 8px; font-family: var(--sans); font-size: 0.9rem; font-weight: 600; cursor: pointer; transition: 0.2s; }
+  .btn-group button.active { background: var(--primary); color: white; border-color: var(--primary); box-shadow: 0 4px 6px rgba(37, 99, 235, 0.2); }
+
+  /* Gráficos */
+  .chart-container { position: relative; height: 350px; width: 100%; margin-top: 1.5rem; }
+  .chart-container.small { height: 260px; }
+
+  /* Tabelas */
+  .table-wrapper { overflow-x: auto; margin: 1.5rem 0; border: 1px solid var(--border); border-radius: 12px; background: var(--surface); box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); }
+  table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
+  th, td { padding: 0.8rem 1rem; text-align: left; border-bottom: 1px solid var(--border); }
+  th { background: var(--surface-alt); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--ink-light); font-weight: 600; }
+  td.num, th.num { text-align: right; font-family: var(--mono); }
+  tr:last-child td { border-bottom: none; }
+  tr.highlight { background: var(--teal-bg); }
+  tr.total td { font-weight: 600; background: var(--surface-alt); border-top: 2px solid var(--border-dark); color: var(--ink); }
+
+  /* Matriz de Decisão */
+  .matrix-grid { display: grid; grid-template-columns: 100px 1fr 1fr; gap: 1rem; margin-top: 1.5rem; }
+  @media(max-width: 768px) { .matrix-grid { grid-template-columns: 1fr; } .matrix-hdr-side { display: none; } }
+  .matrix-cell { background: var(--surface); border: 1px solid var(--border); padding: 1.5rem; border-radius: 12px; transition: all 0.3s ease; }
+  .matrix-cell.header { background: var(--surface-alt); font-weight: 600; display: flex; align-items: center; justify-content: center; text-align: center; color: var(--ink-light); border: none; }
+  .matrix-cell.win { border: 2px solid var(--teal); background: var(--teal-bg); box-shadow: 0 4px 12px rgba(13, 148, 136, 0.15); transform: translateY(-2px); }
+  .matrix-cell.lose { border: 2px solid var(--rose); background: var(--rose-bg); box-shadow: 0 4px 12px rgba(225, 29, 72, 0.15); }
+  .matrix-cell.neutral { border: 2px solid var(--amber); background: var(--amber-bg); }
+  .matrix-cell h4 { font-size: 1.1rem; margin-bottom: 0.5rem; color: var(--ink); display: flex; align-items: center; gap: 0.5rem; }
+  .matrix-cell p { font-size: 0.9rem; color: var(--ink-light); margin: 0; line-height: 1.5; }
+
+  .text-teal { color: var(--teal); } .text-amber { color: var(--amber); } .text-rose { color: var(--rose); } .text-primary { color: var(--primary); }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-container">
+    <div class="brand">Crédito Privado <span>PRO</span></div>
+    <div class="tabs">
+      <button class="tab-btn active" onclick="switchTab('mod1', this)">1. Anatomia do Preço</button>
+      <button class="tab-btn" onclick="switchTab('mod2', this)">2. Tabela de Cálculos</button>
+      <button class="tab-btn" onclick="switchTab('mod3', this)">3. Choque de Juros (Marcação)</button>
+      <button class="tab-btn" onclick="switchTab('mod4', this)">4. Tempo e Pull-to-Par</button>
+      <button class="tab-btn" onclick="switchTab('mod5', this)">5. Matriz Estratégica</button>
+    </div>
+  </div>
+  <div id="progress"></div>
+</nav>
+
+<header class="header-section container">
+  <span class="eyebrow">A Matemática por trás do Dinheiro</span>
+  <h1>Do Cálculo do Preço Unitário<br>à Matriz de Decisão Tática.</h1>
+  <p class="lead">Entenda exaustivamente como o mercado precifica obrigações e debêntures. Calcule o ágio e o deságio ao cêntimo, visualize o impacto das variações de juros no ecrã e domine a matriz de decisão para otimizar os seus investimentos.</p>
+</header>
+
+<main class="container">
+
+<!-- =========================================================
+     MÓDULO 1: ANATOMIA DO PU E PREÇO SUJO VS LIMPO
+========================================================== -->
+<section id="mod1" class="panel active">
+  <h2>1. A Anatomia do PU (Preço Unitário)</h2>
+  
+  <div class="grid-split">
+    <div>
+      <div class="prose">
+        <p>Ao abrir a sua corretora, depara-se com uma debênture a custar <strong>1.586,95 €</strong> (ou R$). O instinto natural é achar "caro", já que o papel nasceu a valer 1.000,00. No entanto, o PU não mede se o ativo está caro ou barato; ele é apenas o reflexo do valor acumulado no tempo.</p>
+        
+        <div class="analogy">
+          <span class="analogy-title">O Efeito do Juro Corrido (Acruado)</span>
+          <p>Imagine que o título paga um cupão anual. Entre o dia 1 e o dia 364, o título vai acumulando valor diariamente (o Juro Corrido). Se vender no meio do caminho, o comprador tem de lhe pagar esse juro acumulado, pois ele irá receber o cupão por inteiro no final do período.</p>
+        </div>
+
+        <p>O gráfico ao lado ilustra perfeitamente este mecanismo. A linha vermelha (<strong>Preço Sujo</strong>) é o que efetivamente sai da sua conta. Tem um formato de serrote porque os juros acumulam e, no dia do pagamento, o "balão" esvazia para a sua conta. A linha tracejada (<strong>Preço Limpo</strong>) remove este efeito, sendo a verdadeira métrica para saber se o ativo valorizou.</p>
+      </div>
+    </div>
+    
+    <div class="card-alt">
+      <h3>Simulador de Preço Sujo vs Limpo</h3>
+      <div class="control-group">
+        <label>Cupão Prometido no Período <b id="lbl1_cupom">4,00</b></label>
+        <input type="range" id="inp1_cupom" min="1" max="10" step="0.5" value="4" oninput="updateMod1()">
+      </div>
+      <div class="control-group">
+        <label>Dias decorridos desde o último cupão <b id="lbl1_dias">90 dias</b></label>
+        <input type="range" id="inp1_dias" min="0" max="252" step="1" value="90" oninput="updateMod1()">
+      </div>
+      
+      <div class="grid-2" style="gap: 1rem;">
+        <div class="metric-box">
+          <div class="label">Preço Limpo (Base 100)</div>
+          <div class="value num text-primary">100,00</div>
+          <div class="sub">Valor base, sem distorção.</div>
+        </div>
+        <div class="metric-box" style="border-color: var(--rose);">
+          <div class="label">Preço Sujo (O PU Pago)</div>
+          <div class="value num text-rose" id="out1_sujo">101,43</div>
+          <div class="sub">Valor Base + Juro Acumulado.</div>
+        </div>
+      </div>
+
+      <div class="chart-container small"><canvas id="chartMod1"></canvas></div>
+    </div>
+  </div>
+</section>
+
+<!-- =========================================================
+     MÓDULO 2: TABELA DE CÁLCULOS E A FÓRMULA DO VP
+========================================================== -->
+<section id="mod2" class="panel">
+  <h2>2. Desconstruindo o Preço: A Tabela de Valor Presente</h2>
+  
+  <div class="prose" style="max-width: 100%;">
+    <p>A regra de ouro da matemática financeira é que <strong>dinheiro no futuro vale menos do que dinheiro hoje</strong>. O mercado determina o preço justo de um título calculando o Valor Presente (VP) de cada cupão futuro, descontado à taxa de mercado atual (YTM - Yield to Maturity).</p>
+    <p>Utilize os controlos abaixo para criar o seu próprio título. Veja como o Valor Presente de cada ano é calculado. A soma exata da última coluna é o preço que pagará hoje.</p>
+  </div>
+  
+  <div class="card" style="margin-top: 2rem;">
+    <div class="grid-2">
+      <div>
+        <div class="control-group">
+          <label>Taxa de Emissão (O Cupão que o Título Paga): <b id="lbl2_cupom" class="text-ink">6,00%</b></label>
+          <input type="range" id="inp2_cupom" min="1" max="15" step="0.5" value="6" oninput="updateMod2()">
+        </div>
+        <div class="control-group" style="background: var(--teal-bg); border-color: var(--teal);">
+          <label>Taxa Exigida Hoje pelo Mercado (YTM): <b id="lbl2_ytm" class="text-teal">8,00%</b></label>
+          <input type="range" id="inp2_ytm" min="1" max="15" step="0.5" value="8" oninput="updateMod2()">
+        </div>
+        <div class="control-group">
+          <label>Prazo de Vencimento (Anos): <b id="lbl2_prazo" class="text-primary">5 Anos</b></label>
+          <input type="range" id="inp2_prazo" min="1" max="10" step="1" value="5" oninput="updateMod2()">
+        </div>
+      </div>
+      
+      <div style="display:flex; flex-direction: column; justify-content: center;">
+        <div class="metric-box" style="background: var(--surface-alt);">
+          <div class="label">Preço Justo Hoje (PU Base 100)</div>
+          <div class="value num" id="out2_pu" style="font-size: 2.5rem; color: var(--primary);">92,01</div>
+          <div class="sub" id="out2_desc" style="font-size: 1rem; margin-top: 0.5rem;">Como a taxa de mercado (8%) é superior ao cupão (6%), o título sofre um <strong>Deságio (Desconto)</strong> para compensar o comprador.</div>
+        </div>
+      </div>
+    </div>
+
+    <h3 style="margin-top: 2rem; border-bottom: 2px solid var(--border); padding-bottom: 0.5rem;">Memória de Cálculo (O Segredo do Ecrã)</h3>
+    <div class="table-wrapper">
+      <table id="table2">
+        <thead>
+          <tr>
+            <th>Ano</th>
+            <th>Fluxo Futuro Prometido<br><span style="font-size: 0.75rem; text-transform:none; font-weight:normal;">(Cupão e/ou Devolução do Principal)</span></th>
+            <th>Fator de Desconto<br><span style="font-size: 0.75rem; text-transform:none; font-weight:normal; font-family:var(--mono);">1 / (1 + YTM)^t</span></th>
+            <th class="num">Valor Presente<br><span style="font-size: 0.75rem; text-transform:none; font-weight:normal;">(O que vale hoje)</span></th>
+          </tr>
+        </thead>
+        <tbody id="tbody2">
+          <!-- Gerado via JS -->
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- =========================================================
+     MÓDULO 3: MARCAÇÃO A MERCADO E O CHOQUE DE JUROS
+========================================================== -->
+<section id="mod3" class="panel">
+  <h2>3. Marcação a Mercado: Subida e Descida de Juros</h2>
+  
+  <div class="prose" style="max-width: 100%;">
+    <p>O que acontece se a economia der uma volta repentina amanhã? Se o Banco Central subir ou descer as taxas de juro, o impacto não é igual para todos os títulos.</p>
+    <p>Títulos que pagam cupons baixos (Deságio) têm o seu dinheiro "preso" até muito mais tarde no tempo. Eles possuem uma <strong>Duration Alta</strong>. Como resultado, são muito mais violentos e voláteis na Marcação a Mercado. Títulos de cupão elevado (Ágio) devolvem dinheiro mais rápido e, por isso, são mais defensivos (Duration Baixa).</p>
+  </div>
+
+  <div class="card-alt" style="margin-top: 2rem;">
+    <div class="grid-split">
+      <div>
+        <h3 style="margin-top: 0;">Laboratório de Choque</h3>
+        <p style="font-size: 0.9rem; color: var(--ink-light);">Simule um cenário onde todos os títulos têm o mesmo YTM inicial (6,00%) e o mesmo prazo (5 anos), diferindo apenas no cupão que prometeram pagar.</p>
+        
+        <div class="control-group" style="margin-top: 1.5rem; background: var(--surface); border: 2px solid var(--border-dark);">
+          <label>Aplicar Choque na Taxa de Juro: <b id="lbl3_choque" class="text-ink">0,00%</b></label>
+          <input type="range" id="inp3_choque" min="-4" max="4" step="0.5" value="0" oninput="updateMod3()">
+          <div style="display:flex; justify-content: space-between; font-size: 0.75rem; color: var(--ink-light); margin-top: 0.5rem;">
+            <span>Descida (Ganha Valor)</span>
+            <span>Subida (Perde Valor)</span>
+          </div>
+        </div>
+
+        <div class="analogy" id="box3_insight" style="margin: 2rem 0 0 0; background: var(--surface);">
+          <span class="analogy-title" style="color: var(--ink);">Análise do Efeito</span>
+          <p id="txt3_insight" style="color: var(--ink-light);">Mova o cursor de choque para ver quem ganha ou perde mais com a alteração das taxas de juro.</p>
+        </div>
+      </div>
+
+      <div>
+        <h3 style="margin-top:0; text-align: center; font-size: 1.1rem;">Impacto Real no Valor do Título (%)</h3>
+        <div class="chart-container small"><canvas id="chartMod3"></canvas></div>
+        
+        <div class="table-wrapper" style="margin-top: 1rem;">
+          <table>
+            <thead>
+              <tr>
+                <th>Perfil do Título</th>
+                <th class="num">PU Inicial<br><span style="font-size:0.7rem;font-weight:normal">(YTM 6%)</span></th>
+                <th class="num">Novo PU<br><span style="font-size:0.7rem;font-weight:normal" id="tbl3_ytm_novo">(YTM 6%)</span></th>
+                <th class="num">Variação</th>
+              </tr>
+            </thead>
+            <tbody id="tbody3">
+              <!-- Gerado via JS -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- =========================================================
+     MÓDULO 4: TEMPO E PULL-TO-PAR
+========================================================== -->
+<section id="mod4" class="panel">
+  <h2>4. O Efeito do Tempo: "Pull-to-Par"</h2>
+  
+  <div class="grid-split">
+    <div>
+      <div class="prose">
+        <p>Se as taxas de juro não sofrerem alterações, será que os preços dos títulos ficam parados? A resposta é não. Eles obedecem à força gravitacional do vencimento.</p>
+        <p>No dia do vencimento (Ano 0), todos os títulos pagam exatamente o seu valor nominal (Face = 100). Portanto:</p>
+        <ul>
+          <li style="margin-bottom: 0.5rem;"><strong>Títulos com Ágio (PU > 100):</strong> Vão perdendo valor ano após ano. O prêmio que pagou inicialmente vai sendo amortizado. Não se assuste se o ecrã mostrar desvalorização — o lucro está a cair na sua conta através dos cupons elevados.</li>
+          <li><strong>Títulos com Deságio (PU < 100):</strong> Vão ganhando valor constantemente. O ganho de capital converge para 100 à medida que o prazo acaba.</li>
+        </ul>
+      </div>
+    </div>
+    
+    <div class="card">
+      <h3 style="margin-top:0; font-size: 1.1rem; text-align: center;">Convergência dos Preços para a Face (100)</h3>
+      <p style="text-align: center; font-size: 0.85rem; color: var(--ink-light);">Eixo X: Anos em falta para o vencimento (Lê-se da esquerda para a direita)</p>
+      <div class="chart-container"><canvas id="chartMod4"></canvas></div>
+    </div>
+  </div>
+</section>
+
+<!-- =========================================================
+     MÓDULO 5: MATRIZ DE DECISÃO (O GUIA DE BOLSO)
+========================================================== -->
+<section id="mod5" class="panel">
+  <h2>5. Matriz de Decisão Tática e Estratégica</h2>
+  
+  <div class="prose" style="max-width: 100%;">
+    <p>O mercado de obrigações e crédito privado não é um jogo de sorte. É o casamento perfeito entre a sua <strong>visão macroeconómica</strong> e as <strong>características do instrumento</strong>.</p>
+    <p>Utilize esta matriz de conceitos ("Cheat Sheet") para tomar decisões rápidas. Selecione a sua perspetiva para o rumo das taxas de juro nos próximos anos e a matriz revelar-lhe-á a estratégia exata.</p>
+  </div>
+
+  <div class="card-alt" style="margin-top: 2rem;">
+    <div style="text-align: center; margin-bottom: 2rem;">
+      <label style="font-weight: 600; font-size: 1.2rem; color: var(--ink); display:block; margin-bottom:1rem;">Qual é a sua perspetiva para as Taxas de Juro?</label>
+      <div class="btn-group" style="justify-content: center;">
+        <button id="btn5_cai" onclick="updateMod5('cai')">Juros Vão DESCER Forte</button>
+        <button id="btn5_man" class="active" onclick="updateMod5('man')">Juros ESTÁVEIS / Inalterados</button>
+        <button id="btn5_sub" onclick="updateMod5('sub')">Juros Vão SUBIR Forte</button>
+      </div>
+    </div>
+
+    <div class="matrix-grid">
+      <!-- Cabeçalhos das Colunas -->
+      <div class="matrix-hdr-side"></div>
+      <div class="matrix-cell header" style="flex-direction: column;">
+        <span style="color: var(--primary); font-size: 1.1rem; margin-bottom: 0.5rem;">Títulos com ÁGIO</span>
+        <span style="font-weight:normal; font-size:0.8rem;">(Cupão Alto, Duration Curta,<br>Preço Atual Elevado)</span>
+      </div>
+      <div class="matrix-cell header" style="flex-direction: column;">
+        <span style="color: var(--amber); font-size: 1.1rem; margin-bottom: 0.5rem;">Títulos com DESÁGIO</span>
+        <span style="font-weight:normal; font-size:0.8rem;">(Cupão Baixo, Duration Longa,<br>Preço Atual com Desconto)</span>
+      </div>
+      
+      <!-- Linha 1: Decisão de Compra -->
+      <div class="matrix-cell header matrix-hdr-side" style="background:transparent; justify-content:flex-end;">
+        <div style="text-align:right;">Estratégia de<br><strong style="color:var(--teal); font-size:1.4rem;">COMPRA</strong></div>
+      </div>
+      <div class="matrix-cell" id="mx_compra_agio">
+        <!-- JS Inject -->
+      </div>
+      <div class="matrix-cell" id="mx_compra_des">
+        <!-- JS Inject -->
+      </div>
+
+      <!-- Linha 2: Gestão de Carteira -->
+      <div class="matrix-cell header matrix-hdr-side" style="background:transparent; justify-content:flex-end;">
+        <div style="text-align:right;">Gestão da<br><strong style="color:var(--ink); font-size:1.4rem;">CARTEIRA</strong></div>
+      </div>
+      <div class="matrix-cell" id="mx_tenho_agio">
+        <!-- JS Inject -->
+      </div>
+      <div class="matrix-cell" id="mx_tenho_des">
+        <!-- JS Inject -->
+      </div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <div class="container">
+    <p>Masterclass Interativa de Crédito Privado. Elaborada com base na matemática financeira universal (Cálculo de Valor Presente, Marcação a Mercado, Duration). As métricas apresentadas pressupõem capitalização anual composta para fins de clareza didática. Não constitui aconselhamento financeiro nem recomendação de investimento.</p>
+  </div>
+</footer>
+
+<script>
+  // --- Utilitários ---
+  const $ = id => document.getElementById(id);
+  const v = id => parseFloat($(id).value);
+  const fmt = (n, d=2) => n.toFixed(d).replace('.', ',');
+  const pct = (n, d=2) => fmt(n, d) + '%';
+  
+  // Cores Consistentes
+  const C_PRI = '#2563EB', C_TEA = '#0D9488', C_AMB = '#D97706', C_ROS = '#E11D48', C_INK = '#0F172A', C_LGT = '#94A3B8';
+  Chart.defaults.font.family = "'IBM Plex Sans', system-ui, sans-serif";
+  Chart.defaults.color = '#475569';
+  const gridOptions = { color: '#E2E8F0' };
+
+  const CH = {}; // Instâncias dos gráficos
+  
+  // Fórmula Universal do Valor Presente
+  function calcVP(cupom, ytm_pct, anos) {
+    let vp = 0;
+    const y = ytm_pct / 100;
+    for(let t=1; t<=anos; t++) { vp += cupom / Math.pow(1+y, t); }
+    vp += 100 / Math.pow(1+y, anos);
+    return vp;
+  }
+
+  // --- Gestão de Tabs ---
+  function switchTab(modId, btnElement) {
+    document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    $(modId).classList.add('active');
+    btnElement.classList.add('active');
+
+    if(modId === 'mod1' && !CH.c1) initMod1();
+    if(modId === 'mod2') updateMod2(); // Não tem chart inicial
+    if(modId === 'mod3' && !CH.c3) initMod3();
+    if(modId === 'mod4' && !CH.c4) initMod4();
+    if(modId === 'mod5') updateMod5('man'); 
+  }
+
+  // Progresso do Scroll
+  window.addEventListener('scroll', () => {
+    const h = document.documentElement;
+    $('progress').style.width = (h.scrollTop / (h.scrollHeight - h.clientHeight) * 100) + '%';
+  });
+
+  // ==========================================
+  // MÓDULO 1: Anatomia do PU (Limpo vs Sujo)
+  // ==========================================
+  function initMod1() {
+    CH.c1 = new Chart($('chartMod1'), {
+      type: 'line',
+      data: { labels: [], datasets: [
+        { label: 'Preço Limpo', data: [], borderColor: C_PRI, borderDash: [5,5], borderWidth: 2, pointRadius: 0 },
+        { label: 'Preço Sujo (PU Pago)', data: [], borderColor: C_ROS, borderWidth: 2, pointRadius: 0 }
+      ]},
+      options: { 
+        maintainAspectRatio: false, 
+        plugins: { legend: { position: 'bottom' } }, 
+        scales: { x: { title:{display:true, text:'Decurso do Tempo (Dias Úteis)'}, grid: {display:false} }, y: { grid: gridOptions } } 
+      }
+    });
+    updateMod1();
+  }
+
+  function updateMod1() {
+    if(!CH.c1) return;
+    const cupom = v('inp1_cupom'), dias = v('inp1_dias');
+    $('lbl1_cupom').innerText = fmt(cupom);
+    $('lbl1_dias').innerText = dias + ' dias';
+    
+    const acruado = cupom * (dias / 252);
+    $('out1_sujo').innerText = fmt(100 + acruado);
+
+    const labels = [], limpo = [], sujo = [];
+    // Simular 2 anos inteiros (252*2) para mostrar os "dentes" de serrote
+    for(let t=0; t<=504; t+=21) { // saltos de 1 mês aprox
+      const tModulo = t % 252;
+      labels.push(t);
+      limpo.push(100);
+      
+      // O ralo esvazia exatamente no dia 252 e 504
+      if (tModulo === 0 && t > 0) {
+        sujo.push(100); 
+      } else {
+        sujo.push(100 + cupom * (tModulo/252));
+      }
+    }
+    CH.c1.data.labels = labels;
+    CH.c1.data.datasets[0].data = limpo;
+    CH.c1.data.datasets[1].data = sujo;
+    CH.c1.update();
+  }
+
+  // ==========================================
+  // MÓDULO 2: Tabela de Cálculos e VP
+  // ==========================================
+  function updateMod2() {
+    const cupom = v('inp2_cupom');
+    const ytm = v('inp2_ytm');
+    const prazo = parseInt(v('inp2_prazo'));
+    
+    $('lbl2_cupom').innerText = fmt(cupom) + '%';
+    $('lbl2_ytm').innerText = fmt(ytm) + '%';
+    $('lbl2_prazo').innerText = prazo + (prazo===1 ? ' Ano' : ' Anos');
+    
+    const pu = calcVP(cupom, ytm, prazo);
+    $('out2_pu').innerText = fmt(pu);
+    
+    const box = $('out2_pu').parentElement;
+    const desc = $('out2_desc');
+    
+    if (Math.abs(ytm - cupom) < 0.05) {
+      box.style.borderColor = C_INK;
+      desc.innerHTML = `Como a taxa de mercado (${fmt(ytm)}%) é igual ao cupão, o título está <strong>No Par</strong>. O seu preço é a soma exata dos capitais base.`;
+    } else if (ytm < cupom) {
+      box.style.borderColor = C_TEA;
+      desc.innerHTML = `Como a taxa de mercado (${fmt(ytm)}%) é inferior ao cupão (${fmt(cupom)}%), o título possui um <strong>Ágio (Prémio)</strong>. Está a pagar mais caro pelos juros altos.`;
+    } else {
+      box.style.borderColor = C_AMB;
+      desc.innerHTML = `Como a taxa de mercado (${fmt(ytm)}%) é superior ao cupão (${fmt(cupom)}%), o título sofre um <strong>Deságio (Desconto)</strong> para compensar o investidor pela fraca taxa fixa.`;
+    }
+
+    const tbody = $('tbody2');
+    tbody.innerHTML = '';
+    let soma = 0;
+    
+    for(let i=1; i<=prazo; i++) {
+      let principal = (i === prazo) ? 100 : 0;
+      let fluxo = cupom + principal;
+      let fator = 1 / Math.pow(1 + ytm/100, i);
+      let vp = fluxo * fator;
+      soma += vp;
+      
+      tbody.innerHTML += `
+        <tr>
+          <td>Ano ${i}</td>
+          <td>${fmt(cupom)} ${principal ? ' + 100,00 (Principal)' : ''} = <strong>${fmt(fluxo)}</strong></td>
+          <td style="font-family: var(--mono);">${fator.toFixed(5)}</td>
+          <td class="num ${i===prazo ? 'text-primary' : ''}">${fmt(vp)}</td>
+        </tr>
+      `;
+    }
+    
+    tbody.innerHTML += `
+      <tr class="total">
+        <td colspan="3" style="text-align:right;">Preço Justo (Valor Presente Total) =</td>
+        <td class="num" style="font-size:1.2rem; color:var(--primary);">${fmt(soma)}</td>
+      </tr>
+    `;
+  }
+
+  // ==========================================
+  // MÓDULO 3: Choque de Juros (Marcação)
+  // ==========================================
+  function initMod3() {
+    CH.c3 = new Chart($('chartMod3'), {
+      type: 'bar',
+      data: { labels: ['Tít. Ágio (C: 9%)', 'Tít. Par (C: 6%)', 'Tít. Deságio (C: 2%)'], datasets: [
+        { label: 'Variação no Ecrã (%)', data: [0,0,0], backgroundColor: C_PRI, borderRadius: 6 }
+      ]},
+      options: { 
+        maintainAspectRatio: false, 
+        plugins: { legend: { display: false } }, 
+        scales: { y: { grid: gridOptions, ticks: {callback: v => v+'%'} } } 
+      }
+    });
+    updateMod3();
+  }
+
+  function updateMod3() {
+    if(!CH.c3) return;
+    const chq = v('inp3_choque');
+    
+    const lbl = $('lbl3_choque');
+    if (chq === 0) { lbl.innerText = "Sem Alteração (0,00%)"; lbl.style.color = C_INK; }
+    else if (chq > 0) { lbl.innerText = "SUBIDA de " + fmt(chq) + "%"; lbl.style.color = C_ROS; }
+    else { lbl.innerText = "DESCIDA de " + Math.abs(chq).toFixed(2).replace('.',',') + "%"; lbl.style.color = C_TEA; }
+
+    const ytmInicial = 6.0;
+    const ytmFinal = ytmInicial + chq;
+    const anos = 5;
+
+    $('tbl3_ytm_novo').innerText = `(Novo YTM: ${fmt(ytmFinal)}%)`;
+
+    const tits = [
+      { nome: "Ágio (Cupão 9%)", c: 9 },
+      { nome: "Par (Cupão 6%)", c: 6 },
+      { nome: "Deságio (Cupão 2%)", c: 2 }
+    ];
+
+    const tbody = $('tbody3');
+    tbody.innerHTML = '';
+    const chartData = [];
+    const bgColors = [];
+
+    tits.forEach(t => {
+      const puOri = calcVP(t.c, ytmInicial, anos);
+      const puFim = calcVP(t.c, ytmFinal, anos);
+      const varPct = (puFim / puOri - 1) * 100;
+      
+      chartData.push(varPct);
+      // Verde se subiu o preco (choque negativo), vermelho se desceu
+      bgColors.push(varPct > 0 ? C_TEA : (varPct < 0 ? C_ROS : C_LGT));
+
+      const colorClass = varPct > 0 ? "text-teal" : (varPct < 0 ? "text-rose" : "");
+      const sinal = varPct > 0 ? "+" : "";
+
+      tbody.innerHTML += `
+        <tr>
+          <td><strong>${t.nome}</strong></td>
+          <td class="num">${fmt(puOri)}</td>
+          <td class="num">${fmt(puFim)}</td>
+          <td class="num ${colorClass}"><strong>${sinal}${fmt(varPct)}%</strong></td>
+        </tr>
+      `;
+    });
+
+    CH.c3.data.datasets[0].data = chartData;
+    CH.c3.data.datasets[0].backgroundColor = bgColors;
+    CH.c3.update();
+
+    const box = $('box3_insight');
+    const txt = $('txt3_insight');
+    box.style.borderLeftColor = chq > 0 ? C_ROS : (chq < 0 ? C_TEA : C_PRI);
+    box.style.backgroundColor = chq > 0 ? 'var(--rose-bg)' : (chq < 0 ? 'var(--teal-bg)' : 'var(--surface)');
+    
+    if (chq > 0) {
+      txt.innerHTML = "<strong>Cuidado: Juros a Subir!</strong> A gangorra afundou os preços. Note que o título de <strong>Deságio</strong> é o que sofre a maior queda percentual (mais volatilidade/duration). O Ágio protege melhor a carteira.";
+    } else if (chq < 0) {
+      txt.innerHTML = "<strong>Oportunidade: Juros a Descer!</strong> A gangorra fez os preços disparar. O <strong>Deságio</strong> é a estrela aqui, com valorizações expressivas. É a tática perfeita para ganhar capital rapidamente.";
+    } else {
+      txt.innerHTML = "Sem choque de juros, não há distorções na marcação a mercado. Mova o cursor para simular decisões de política monetária (cortes ou subidas de taxas).";
+    }
+  }
+
+  // ==========================================
+  // MÓDULO 4: Tempo e Pull-to-Par
+  // ==========================================
+  function initMod4() {
+    const lbls = [], dAgio = [], dPar = [], dDes = [];
+    // Simulação do Ano 20 até ao Ano 0 (Vencimento)
+    for(let t=20; t>=0; t--) {
+      lbls.push(t);
+      dAgio.push(t===0 ? 100 : calcVP(10, 6, t));
+      dPar.push(t===0 ? 100 : calcVP(6, 6, t));
+      dDes.push(t===0 ? 100 : calcVP(2, 6, t));
+    }
+
+    CH.c4 = new Chart($('chartMod4'), {
+      type: 'line',
+      data: { labels: lbls, datasets: [
+        { label: 'Tít. Ágio (C: 10%) - Desce p/ Face', data: dAgio, borderColor: C_PRI, tension: 0.2, pointRadius:0, borderWidth:3 },
+        { label: 'Tít. Deságio (C: 2%) - Sobe p/ Face', data: dDes, borderColor: C_AMB, tension: 0.2, pointRadius:0, borderWidth:3 },
+        { label: 'Linha do Par (Valor 100)', data: dPar, borderColor: C_INK, borderDash:[5,5], tension: 0, pointRadius:0, borderWidth:1 }
+      ]},
+      options: { 
+        maintainAspectRatio: false, 
+        plugins: { legend: {position: 'bottom'} },
+        scales: { 
+          x: { reverse: true, title: {display:true, text:'Anos para o Vencimento'} }, 
+          y: { grid: gridOptions, title: {display:true, text:'Preço (PU)'} } 
+        } 
+      }
+    });
+  }
+
+  // ==========================================
+  // MÓDULO 5: Matriz de Decisão
+  // ==========================================
+  function updateMod5(cenario) {
+    // Reset Btns
+    $('btn5_cai').classList.remove('active');
+    $('btn5_man').classList.remove('active');
+    $('btn5_sub').classList.remove('active');
+    $('btn5_'+cenario).classList.add('active');
+
+    const mCA = $('mx_compra_agio'), mCD = $('mx_compra_des');
+    const mTA = $('mx_tenho_agio'), mTD = $('mx_tenho_des');
+
+    // Remove cores anteriores
+    [mCA, mCD, mTA, mTD].forEach(e => { e.classList.remove('win', 'lose', 'neutral'); });
+
+    // Ícones
+    const iconWin = `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--teal)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>`;
+    const iconLose = `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--rose)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>`;
+    const iconNeu = `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--amber)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line></svg>`;
+
+    if (cenario === 'cai') { // Juros a descer
+      mCA.classList.add('neutral');
+      mCA.innerHTML = `<h4>${iconNeu} Aceitável</h4><p>Garante um bom cupão fixo. Contudo, não beneficia totalmente do grande ganho de capital que a descida de juros proporciona (Duration Curta).</p>`;
+      
+      mCD.classList.add('win');
+      mCD.innerHTML = `<h4>${iconWin} TÁTICA DE OURO</h4><p>Compre sem hesitar. Títulos de Deságio (longos) funcionam como alavancagem. O preço no ecrã vai disparar com a queda das taxas.</p>`;
+      
+      mTA.classList.add('neutral');
+      mTA.innerHTML = `<h4>${iconNeu} Manter p/ Renda</h4><p>O ativo está seguro. O único problema será reinvestir os cupons avultados num cenário onde as novas taxas de mercado estão baixas.</p>`;
+      
+      mTD.classList.add('win');
+      mTD.innerHTML = `<h4>${iconWin} VENDER COM LUCRO</h4><p>O seu papel acabou de valorizar anos num só momento. Venda no mercado secundário e realize o extraordinário ganho de capital.</p>`;
+    } 
+    else if (cenario === 'sub') { // Juros a subir
+      mCA.classList.add('win');
+      mCA.innerHTML = `<h4>${iconWin} EXCELENTE</h4><p>Proteção máxima. O preço sofre pouco e, melhor ainda, vai receber muito fluxo de caixa para reinvestir às novas taxas mais atrativas.</p>`;
+      
+      mCD.classList.add('lose');
+      mCD.innerHTML = `<h4>${iconLose} FUJA</h4><p>Armadilha. Vai comprar um título cujo preço vai derreter rapidamente no ecrã. A rentabilidade fica presa durante anos numa taxa má.</p>`;
+      
+      mTA.classList.add('neutral');
+      mTA.innerHTML = `<h4>${iconNeu} Manter e Reinvestir</h4><p>Pode haver uma ligeira queda de preço momentânea, mas o seu foco é agarrar os cupons gordos que recebe e comprar novos títulos baratos.</p>`;
+      
+      mTD.classList.add('lose');
+      mTD.innerHTML = `<h4>${iconLose} NÃO VENDA AGORA</h4><p>A marcação a mercado penalizou brutalmente a sua posição. Se vender, realiza um grande prejuízo. Segure e espere o efeito "Pull-to-Par" atuar com o tempo.</p>`;
+    }
+    else { // Juros laterais/manter
+      mCA.classList.add('neutral');
+      mCA.innerHTML = `<h4>${iconNeu} Adequado</h4><p>Perfeito para investidores que procuram geração de rendimento (cash flow) imediato e constante, sem surpresas no percurso.</p>`;
+      
+      mCD.classList.add('neutral');
+      mCD.innerHTML = `<h4>${iconNeu} Adequado</h4><p>Ideal para objetivos a longo prazo. O retorno é garantido e construído silenciosamente no preço ao longo dos anos, sem muito capital devolvido antecipadamente.</p>`;
+      
+      mTA.classList.add('neutral');
+      mTA.innerHTML = `<h4>${iconNeu} "Buy and Hold"</h4><p>Não faça nada. O título está a comportar-se exatamente como matematicamente projetado. Limite-se a reinvestir os cupões assim que caírem.</p>`;
+      
+      mTD.classList.add('neutral');
+      mTD.innerHTML = `<h4>${iconNeu} Aguardar Vencimento</h4><p>Deixe o relógio trabalhar. Observe a valorização passiva e constante (o PU subir em direção a 100) sem volatilidade induzida pelos juros.</p>`;
+    }
+  }
+
+  // Início
+  window.onload = () => {
+    initMod1();
+    updateMod2(); // Forçar preenchimento da tabela
+  };
+
+</script>
+</body>
+</html>
