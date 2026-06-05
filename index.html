@@ -174,6 +174,9 @@
   <button class="tabbtn" onclick="show('pV',this)"><span class="pip" style="background:var(--lilac)"></span>Convexidade</button>
   <button class="tabbtn" onclick="show('pM',this)"><span class="pip" style="background:var(--teal)"></span>Política monetária</button>
   <button class="tabbtn" onclick="show('pU',this)"><span class="pip" style="background:var(--coral)"></span>Universo da RF</button>
+  <button class="tabbtn" onclick="show('pP',this)"><span class="pip" style="background:var(--teal)"></span>Cálculo dos públicos</button>
+  <button class="tabbtn" onclick="show('pY',this)"><span class="pip" style="background:var(--sky)"></span>Achar a taxa (TIR)</button>
+  <button class="tabbtn" onclick="show('pH',this)"><span class="pip" style="background:var(--lilac)"></span>DV01 & hedge</button>
 </div></div>
 
 <main class="wrap">
@@ -815,6 +818,96 @@
     <p>A régua para comparar tudo isso é o <strong>spread</strong> (módulo de crédito): quanto maior o risco do emissor e menor a garantia, maior o prêmio que o ativo precisa pagar sobre o Tesouro. E, para comparar isento com tributado, traga ambos para a mesma base (líquida de IR).</p>
   </div>
   <div class="note"><span class="t">Fechando o mapa</span><p>Do Tesouro Selic (mais seguro) ao FIDC (mais arriscado), é tudo a mesma engenharia: fluxo de caixa, valor presente, indexador e um spread que paga pelo risco. Os módulos do curso se aplicam a cada um deles.</p></div>
+</section>
+
+<!-- P CALCULO DOS PUBLICOS -->
+<section id="pP" class="panel t-teal">
+  <div class="ptag">Técnico · precificação oficial</div>
+  <h2>Calculando cada título público "na mão"</h2>
+  <div class="prose">
+    <p>Aqui está o coração técnico: como sai o PU de cada título do Tesouro, usando a base de <strong>252 dias úteis</strong> e juros compostos. São quatro fórmulas — uma por família.</p>
+    <p><strong>LTN (prefixado, sem cupom).</strong> Só o desconto da face:</p>
+    <div class="formula">PU = 1.000 ÷ (1 + i)^(du/252)</div>
+    <div class="ex"><span class="t">Exemplo</span>i = 12% a.a., 504 du (≈ 2 anos): PU = 1.000 ÷ (1,12)² = <strong>R$ 797,19</strong>.</div>
+    <p><strong>NTN-F (prefixado com cupom).</strong> Cupom semestral de 10% a.a. = 1.000 × [(1,10)^½ − 1] = <strong>R$ 48,81</strong>. O PU soma o valor presente de cada cupom mais o principal:</p>
+    <div class="formula">PU = Σ 48,81 ÷ (1+i)^(du_k/252) + 1.000 ÷ (1+i)^(du_n/252)</div>
+    <p><strong>LFT (Selic).</strong> Negocia como uma <strong>cotação</strong> sobre o VNA (principal corrigido pela Selic). Um pequeno ágio/deságio (a "taxa over") faz o preço fugir levemente do VNA:</p>
+    <div class="formula">PU = VNA × cotação,  cotação = 1 ÷ (1 + ágio)^(du/252)</div>
+    <p><strong>NTN-B (IPCA+).</strong> O VNA é os R$ 1.000 corrigidos pelo IPCA (base 15/07/2000). O cupom semestral de 6% a.a. = VNA × [(1,06)^½ − 1] = VNA × <strong>2,9563%</strong>. A cotação (base 100) desconta cupons e principal pela taxa <em>real</em>; o PU é a cotação aplicada ao VNA:</p>
+    <div class="formula">cotação = Σ 2,9563 ÷ (1+i)^(du_k/252) + 100 ÷ (1+i)^(du_n/252)   ·   PU = VNA × cotação ÷ 100</div>
+  </div>
+
+  <div class="subsec">
+    <h3>Calculadora de PU</h3>
+    <div class="prose"><p>Escolha o título e veja o PU sair com a fórmula preenchida. (Prazo em anos; internamente equivale a du/252.)</p></div>
+    <div class="lab">
+      <div class="pad">
+        <div class="seg" id="titSeg"><span class="sl">Título:</span>
+          <button class="active" onclick="setTit('LTN',this)">LTN</button>
+          <button onclick="setTit('NTNF',this)">NTN-F</button>
+          <button onclick="setTit('LFT',this)">LFT</button>
+          <button onclick="setTit('NTNB',this)">NTN-B</button>
+        </div>
+        <div class="ctrl" id="rowTax"><label>Taxa (% a.a.) <b id="l1tax">12,00%</b></label><input type="range" id="i1tax" min="1" max="20" step="0.1" value="12" oninput="renderP()"></div>
+        <div class="ctrl"><label>Prazo (anos) <b id="l1ano">2 anos</b></label><input type="range" id="i1ano" min="1" max="10" step="1" value="2" oninput="renderP()"></div>
+        <div class="ctrl" id="rowVNA" style="display:none"><label>VNA <b id="l1vna">R$ 4.200,00</b></label><input type="range" id="i1vna" min="1000" max="6000" step="50" value="4200" oninput="renderP()"></div>
+        <div class="ctrl" id="rowSpr" style="display:none"><label>Ágio / deságio (% a.a.) <b id="l1spr">0,10%</b></label><input type="range" id="i1spr" min="-1" max="1" step="0.01" value="0.1" oninput="renderP()"></div>
+        <div class="stat"><span>Preço unitário (PU)</span><b class="big" id="o1pu">—</b></div>
+        <div class="stat"><span id="o1extra"></span></div>
+      </div>
+      <div class="pad"><h3 style="font-size:1rem;margin-bottom:.6rem">Fórmula preenchida</h3><p id="o1desc" style="font-family:var(--mono);font-size:.86rem;color:var(--ink);margin:0"></p></div>
+    </div>
+  </div>
+  <div class="note"><span class="t">Detalhe importante</span><p>No mundo real, os <em>du_k</em> são contados em dias úteis até cada data de pagamento (calendário da B3), e o VNA da NTN-B usa a projeção de IPCA da ANBIMA entre as divulgações do IBGE. A lógica do cálculo é exatamente esta.</p></div>
+</section>
+
+<!-- Y ACHAR A TAXA -->
+<section id="pY" class="panel t-sky">
+  <div class="ptag">Técnico · TIR / yield</div>
+  <h2>Como achar a taxa a partir do preço</h2>
+  <div class="prose">
+    <p>Calcular o preço dado o YTM é direto. O caminho inverso — <strong>achar o YTM a partir do preço</strong> — não tem fórmula fechada para títulos com cupom: é preciso resolver de forma <strong>iterativa</strong>. O YTM é a taxa que faz a soma dos valores presentes igualar o preço de mercado (a TIR do fluxo).</p>
+    <div class="formula">Ache y tal que:  Preço = Σ Cupom ÷ (1+y)^t + Face ÷ (1+y)^N</div>
+    <p>O método mais simples é a <strong>bisseção</strong>: como o preço cai monotonicamente quando o YTM sobe, testa-se uma taxa no meio do intervalo, vê-se se o preço calculado ficou acima ou abaixo do alvo e estreita-se o intervalo, repetindo até convergir. Mova o preço e veja a taxa que o explica — e a verificação de que, naquele YTM, o VP volta a bater no preço.</p>
+  </div>
+  <div class="lab">
+    <div class="pad">
+      <div class="ctrl"><label>Preço de mercado (por 100) <b id="lYp">90,00</b></label><input type="range" id="iYp" min="60" max="140" step="0.5" value="90" oninput="rY()"></div>
+      <div class="ctrl"><label>Cupom (% a.a.) <b id="lYc">8,0%</b></label><input type="range" id="iYc" min="0" max="15" step="0.5" value="8" oninput="rY()"></div>
+      <div class="ctrl"><label>Prazo (anos) <b id="lYn">3</b></label><input type="range" id="iYn" min="1" max="20" step="1" value="3" oninput="rY()"></div>
+      <div class="stat"><span>YTM (resolvido)</span><b class="big" id="oYy">—</b></div>
+      <div class="stat"><span>Verificação: VP nesse YTM</span><b id="oYchk">—</b></div>
+    </div>
+    <div class="chart-box"><canvas id="cTIR"></canvas></div>
+  </div>
+  <div class="note"><span class="t">Mexa e observe</span><p>Abaixe o preço: a taxa (YTM) sobe — preço e juro andam ao contrário. A "Verificação" sempre volta ao preço de entrada, confirmando que aquele YTM zera a conta. É a mesma TIR de uma calculadora financeira.</p></div>
+</section>
+
+<!-- H DV01 E HEDGE -->
+<section id="pH" class="panel t-lilac">
+  <div class="ptag">Técnico · risco e hedge</div>
+  <h2>DV01, imunização e hedge com DI futuro</h2>
+  <div class="prose">
+    <p>A duration diz a sensibilidade em %; o <strong>DV01</strong> (também PV01) diz em <strong>reais</strong>: quanto a posição perde ou ganha se a taxa mexer <strong>1 ponto-base</strong> (0,01%).</p>
+    <div class="formula">DV01 = PU × ModD × 0,0001</div>
+    <div class="ex"><span class="t">Exemplo</span>Posição de R$ 1.000.000 com duration modificada 7: DV01 = 1.000.000 × 7 × 0,0001 = <strong>R$ 700</strong> por ponto-base.</div>
+    <p><strong>Imunização.</strong> Se você casa a <strong>duration</strong> da carteira com o horizonte do seu objetivo, o risco de preço (juro sobe → preço cai) e o de reinvestimento (juro sobe → reaplica melhor) se compensam naquele prazo — você "trava" o retorno mesmo que a taxa oscile.</p>
+    <p><strong>Hedge com DI futuro.</strong> O contrato de DI da B3 vale R$ 100.000 no vencimento; seu PU é 100.000 ÷ (1+i)^(du/252). Para neutralizar o risco de juros de uma posição, casa-se o DV01:</p>
+    <div class="formula">nº de contratos = DV01 da posição ÷ DV01 do contrato de DI</div>
+  </div>
+  <div class="lab">
+    <div class="pad">
+      <div class="ctrl"><label>Valor da posição <b id="lHpu">R$ 1.000.000</b></label><input type="range" id="iHpu" min="100000" max="5000000" step="50000" value="1000000" oninput="renderH()"></div>
+      <div class="ctrl"><label>Duration modificada (anos) <b id="lHmod">7,00 anos</b></label><input type="range" id="iHmod" min="0.5" max="12" step="0.1" value="7" oninput="renderH()"></div>
+      <div class="ctrl"><label>Taxa do DI futuro (% a.a.) <b id="lHdi">11,00%</b></label><input type="range" id="iHdi" min="5" max="16" step="0.1" value="11" oninput="renderH()"></div>
+      <div class="ctrl"><label>Prazo do DI futuro <b id="lHdu">504 du</b></label><input type="range" id="iHdu" min="63" max="1260" step="21" value="504" oninput="renderH()"></div>
+      <div class="stat"><span>DV01 da posição</span><b class="big" id="oHdv">—</b></div>
+      <div class="stat"><span>DV01 de 1 contrato de DI</span><b id="oHdvDI">—</b></div>
+      <div class="stat"><span>Contratos para o hedge</span><b id="oHn">—</b></div>
+    </div>
+    <div class="pad"><h3 style="font-size:1rem;margin-bottom:.6rem">Como ler</h3><p style="font-size:.9rem;color:var(--ink2);margin:0">O DV01 da posição é o prejuízo (ou ganho) em reais para cada ponto-base de alta (ou queda) na taxa. Vendendo a quantidade de contratos de DI que iguala esse DV01, um movimento de juros que machuca a carteira é compensado pelo resultado no DI — o risco de juros fica neutralizado.</p></div>
+  </div>
+  <div class="note"><span class="t">Fechando o técnico</span><p>Com isto você tem o ciclo completo: precificar (PU), achar a taxa (TIR), medir o risco (duration, DV01, convexidade) e protegê-lo (imunização, hedge com DI). É o ferramental que um gestor usa todo dia.</p></div>
 </section>
 
 </main>
