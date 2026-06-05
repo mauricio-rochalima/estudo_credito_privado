@@ -1,692 +1,740 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-PT">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Renda Fixa — curso interativo de apreçamento</title>
+<title>Crédito Privado PRO: A Masterclass Completa</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 <style>
-  :root{
-    --bg:#FFFFFF;--soft:#F7F8FB;--card:#FFFFFF;
-    --ink:#23232B;--ink2:#56565F;--ink3:#94939F;
-    --line:#ECECF2;--line2:#DEDEE6;
-    --sky:#4F95D6;--sky-bg:#EAF2FB;
-    --mint:#2FA98C;--mint-bg:#E4F6F0;
-    --lilac:#8B79C4;--lilac-bg:#EFEAF8;
-    --coral:#E07C5E;--coral-bg:#FBEBE4;
-    --amber:#CE9322;--amber-bg:#FBF2DB;
-    --rose:#D26D8C;--rose-bg:#FAE8EF;
-    --teal:#2E9AA4;--teal-bg:#E4F4F5;
-    --green:#6AA04B;--green-bg:#EEF5E6;
-    --plum:#A66BA6;--plum-bg:#F5EAF5;
-    --sand:#A87C56;--sand-bg:#F3ECE3;--ind:#5C6BC0;--ind-bg:#ECEEFA;
-    --serif:"Fraunces",Georgia,serif;--sans:"IBM Plex Sans",sans-serif;--mono:"IBM Plex Mono",monospace;
-    --acc:var(--sky);--acc-bg:var(--sky-bg);
+  :root {
+    --bg: #F8FAFC; --surface: #FFFFFF; --surface-alt: #F1F5F9;
+    --ink: #0F172A; --ink-light: #475569; --ink-lighter: #94A3B8;
+    --border: #E2E8F0; --border-dark: #CBD5E1;
+    
+    /* Paleta Funcional e Premium */
+    --primary: #2563EB; --primary-bg: #DBEAFE;
+    --teal: #0D9488; --teal-bg: #CCFBF1;
+    --amber: #D97706; --amber-bg: #FEF3C7;
+    --rose: #E11D48; --rose-bg: #FFE4E6;
+    
+    --serif: "Fraunces", Georgia, serif; 
+    --sans: "IBM Plex Sans", system-ui, sans-serif; 
+    --mono: "IBM Plex Mono", monospace;
   }
-  *{box-sizing:border-box;margin:0;padding:0}
-  body{background:var(--bg);color:var(--ink);font-family:var(--sans);line-height:1.68;font-size:16px;-webkit-font-smoothing:antialiased}
-  .num{font-family:var(--mono);font-feature-settings:"tnum"}
-  .wrap{max-width:1080px;margin:0 auto;padding:0 1.8rem}
-  @media(max-width:600px){.wrap{padding:0 1.2rem}}
 
-  header.hero{padding:3.6rem 0 1.8rem}
-  .eyebrow{font-family:var(--mono);font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;color:var(--sky);margin-bottom:1rem}
-  h1{font-family:var(--serif);font-weight:600;font-size:clamp(2rem,5.5vw,3.2rem);line-height:1.06;letter-spacing:-.02em;margin-bottom:1rem}
-  .sub{font-size:1.12rem;color:var(--ink2);max-width:66ch}
-  .hi-sky{color:var(--sky);font-weight:600}.hi-mint{color:var(--mint);font-weight:600}.hi-lilac{color:var(--lilac);font-weight:600}
-  .hi-coral{color:var(--coral);font-weight:600}.hi-amber{color:var(--amber);font-weight:600}.hi-rose{color:var(--rose);font-weight:600}
-  .hi-teal{color:var(--teal);font-weight:600}.hi-green{color:var(--green);font-weight:600}.hi-plum{color:var(--plum);font-weight:600}
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body { background: var(--bg); color: var(--ink); font-family: var(--sans); line-height: 1.6; font-size: 16px; -webkit-font-smoothing: antialiased; }
+  .num { font-family: var(--mono); font-variant-numeric: tabular-nums; }
 
-  .tabbar{position:sticky;top:0;z-index:30;background:rgba(255,255,255,.93);backdrop-filter:blur(8px);border-bottom:1px solid var(--line);margin-top:1.4rem}
-  .tabs{max-width:1080px;margin:0 auto;padding:.7rem 1.8rem;display:flex;gap:.45rem;overflow-x:auto;scrollbar-width:thin}
-  @media(max-width:600px){.tabs{padding:.7rem 1.2rem}}
-  .tabbtn{flex:0 0 auto;font-family:var(--sans);font-size:.82rem;font-weight:500;border:1px solid var(--line2);background:#fff;color:var(--ink2);padding:.5rem .85rem;border-radius:999px;cursor:pointer;white-space:nowrap;transition:.18s;display:flex;align-items:center;gap:.45rem}
-  .tabbtn:hover{border-color:var(--ink3)}
-  .tabbtn.active{background:var(--ink);color:#fff;border-color:var(--ink)}
-  .tabbtn .pip{width:9px;height:9px;border-radius:50%}
+  /* Navegação */
+  nav { position: sticky; top: 0; z-index: 50; background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); border-bottom: 1px solid var(--border); box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+  .nav-container { max-width: 1200px; margin: 0 auto; padding: 0.8rem 1.5rem; display: flex; align-items: center; gap: 2rem; overflow-x: auto; scrollbar-width: none; }
+  .nav-container::-webkit-scrollbar { display: none; }
+  .brand { font-family: var(--serif); font-weight: 600; font-size: 1.2rem; color: var(--ink); white-space: nowrap; }
+  .brand span { color: var(--primary); }
+  
+  .tabs { display: flex; gap: 0.5rem; }
+  .tab-btn { background: transparent; border: 1px solid transparent; color: var(--ink-light); padding: 0.5rem 1rem; border-radius: 99px; font-family: var(--sans); font-weight: 500; font-size: 0.9rem; cursor: pointer; transition: all 0.2s; white-space: nowrap; }
+  .tab-btn:hover { background: var(--surface-alt); color: var(--primary); }
+  .tab-btn.active { background: var(--primary); color: #fff; box-shadow: 0 2px 4px rgba(37, 99, 235, 0.2); }
 
-  .panel{display:none;padding:3.2rem 0 4rem;animation:fade .4s ease}
-  .panel.active{display:block}
-  @keyframes fade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
-  .ptag{font-family:var(--mono);font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;color:var(--acc);margin-bottom:.6rem}
-  h2{font-family:var(--serif);font-weight:600;font-size:clamp(1.55rem,4vw,2.2rem);letter-spacing:-.015em;margin-bottom:1.1rem;line-height:1.12}
-  h3{font-family:var(--serif);font-weight:600;font-size:1.3rem;letter-spacing:-.01em;margin-bottom:.6rem}
-  .em{color:var(--acc);font-weight:600}
+  /* Progresso */
+  #progress { position: fixed; top: 0; left: 0; height: 3px; background: var(--teal); width: 0; z-index: 60; transition: width 0.1s; }
 
-  .prose{max-width:72ch}
-  .prose p{margin-bottom:1.15rem;color:var(--ink2)}
-  .prose p strong{color:var(--ink);font-weight:600}
-  .formula{font-family:var(--mono);font-size:.92rem;background:var(--soft);border:1px solid var(--line);border-radius:10px;padding:.7rem 1rem;margin:.2rem 0 1.3rem;color:var(--ink);overflow-x:auto}
-  .ex{background:var(--acc-bg);border-radius:12px;padding:1rem 1.2rem;margin:0 0 1.3rem;font-size:.95rem;color:var(--ink)}
-  .ex .t{font-family:var(--mono);font-size:.72rem;letter-spacing:.07em;text-transform:uppercase;color:var(--acc);display:block;margin-bottom:.35rem}
+  /* Layout */
+  .container { max-width: 1200px; margin: 0 auto; padding: 0 1.5rem; }
+  .header-section { padding: 4rem 0 3rem; }
+  .eyebrow { font-family: var(--mono); font-size: 0.8rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--primary); margin-bottom: 1rem; display: block;}
+  h1 { font-family: var(--serif); font-size: clamp(2.2rem, 4.5vw, 3.2rem); line-height: 1.1; letter-spacing: -0.02em; margin-bottom: 1.5rem; }
+  .lead { font-size: 1.15rem; color: var(--ink-light); max-width: 75ch; }
+  
+  .panel { display: none; padding: 3rem 0 5rem; border-top: 1px solid var(--border); animation: fadeIn 0.4s ease; }
+  .panel.active { display: block; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+  
+  h2 { font-family: var(--serif); font-size: 2rem; margin-bottom: 1.5rem; color: var(--ink); }
+  h3 { font-size: 1.2rem; margin: 2rem 0 1rem; color: var(--ink); }
+  
+  .grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 2rem; }
+  .grid-split { display: grid; grid-template-columns: 1fr; gap: 3rem; }
+  @media(min-width: 992px) { .grid-split { grid-template-columns: 1.2fr 1fr; align-items: start; } }
+  @media(min-width: 992px) { .grid-split-rev { grid-template-columns: 1fr 1.2fr; align-items: start; } }
+  
+  /* UI Elements */
+  .prose p { margin-bottom: 1.2rem; color: var(--ink-light); }
+  .prose strong { color: var(--ink); }
+  
+  .card { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 1.5rem; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); }
+  .card-alt { background: var(--surface-alt); border: 1px solid var(--border); border-radius: 16px; padding: 1.5rem; }
+  
+  .metric-box { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 1.2rem; display: flex; flex-direction: column; justify-content: center; }
+  .metric-box .label { font-size: 0.85rem; color: var(--ink-light); margin-bottom: 0.4rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; }
+  .metric-box .value { font-family: var(--mono); font-size: 1.8rem; font-weight: 600; color: var(--ink); }
+  .metric-box .sub { font-size: 0.85rem; color: var(--ink-lighter); margin-top: 0.4rem; line-height: 1.3; }
 
-  .lab{display:grid;grid-template-columns:340px 1fr;gap:2rem;align-items:start;margin:2.2rem 0 0}
-  @media(max-width:860px){.lab{grid-template-columns:1fr;gap:1.4rem}}
-  .pad{background:var(--soft);border:1px solid var(--line);border-radius:18px;padding:1.6rem}
-  .chart-box{background:#fff;border:1px solid var(--line);border-radius:18px;padding:1.2rem;position:relative;height:380px}
+  .analogy { border-left: 4px solid var(--primary); background: var(--primary-bg); padding: 1.2rem 1.5rem; border-radius: 0 12px 12px 0; margin: 1.5rem 0; }
+  .analogy-title { font-family: var(--mono); font-size: 0.75rem; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase; color: var(--primary); margin-bottom: 0.5rem; display: block; }
+  .analogy p { margin: 0; color: var(--ink); font-size: 0.95rem; }
 
-  .ctrl{margin-bottom:1.25rem}
-  .ctrl label{display:flex;justify-content:space-between;font-size:.86rem;color:var(--ink2);margin-bottom:.4rem}
-  .ctrl label b{font-family:var(--mono);color:var(--acc)}
-  input[type=range]{width:100%;accent-color:var(--acc);height:4px}
-  input[type=number]{width:100%;font-family:var(--mono);font-size:.95rem;padding:.5rem .65rem;border:1px solid var(--line2);border-radius:9px;background:#fff;color:var(--ink)}
-  .seg{display:flex;gap:.45rem;flex-wrap:wrap;margin-bottom:1.25rem}
-  .seg .sl{font-size:.82rem;color:var(--ink3);align-self:center;margin-right:.2rem}
-  .seg button{font-family:var(--sans);font-size:.82rem;font-weight:500;border:1px solid var(--line2);background:#fff;color:var(--ink2);padding:.45rem .75rem;border-radius:9px;cursor:pointer;transition:.16s}
-  .seg button.active{background:var(--acc);color:#fff;border-color:var(--acc)}
-  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:.7rem}
+  /* Controls */
+  .control-group { margin-bottom: 1.5rem; background: var(--surface); padding: 1rem; border-radius: 12px; border: 1px solid var(--border); }
+  .control-group label { display: flex; justify-content: space-between; font-size: 0.9rem; color: var(--ink-light); margin-bottom: 0.8rem; font-weight: 500; }
+  .control-group label b { font-family: var(--mono); color: var(--primary); font-size: 1rem; }
+  input[type=range] { width: 100%; accent-color: var(--primary); height: 6px; border-radius: 3px; cursor: pointer; }
+  
+  .btn-group { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 1rem; }
+  .btn-group button { background: var(--surface); border: 1px solid var(--border-dark); color: var(--ink-light); padding: 0.6rem 1.2rem; border-radius: 8px; font-family: var(--sans); font-size: 0.9rem; font-weight: 600; cursor: pointer; transition: 0.2s; }
+  .btn-group button.active { background: var(--primary); color: white; border-color: var(--primary); box-shadow: 0 4px 6px rgba(37, 99, 235, 0.2); }
 
-  .stat{display:flex;justify-content:space-between;align-items:baseline;padding:.6rem 0;border-bottom:1px solid var(--line)}
-  .stat:last-child{border-bottom:none}
-  .stat span{font-size:.84rem;color:var(--ink2)}
-  .stat b{font-family:var(--mono);font-size:1.05rem;color:var(--ink)}
-  .stat b.big{font-size:1.4rem;color:var(--acc)}
-  .badge{display:inline-block;font-family:var(--mono);font-size:.72rem;padding:.15rem .55rem;border-radius:999px;background:var(--acc-bg);color:var(--acc)}
+  /* Gráficos */
+  .chart-container { position: relative; height: 350px; width: 100%; margin-top: 1.5rem; }
+  .chart-container.small { height: 260px; }
 
-  .note{margin-top:2rem;background:var(--acc-bg);border-left:3px solid var(--acc);border-radius:0 14px 14px 0;padding:1.1rem 1.3rem;max-width:78ch}
-  .note .t{font-family:var(--mono);font-size:.72rem;letter-spacing:.08em;text-transform:uppercase;color:var(--acc);display:block;margin-bottom:.35rem}
-  .note p{margin:0;color:var(--ink);font-size:.95rem}
+  /* Tabelas */
+  .table-wrapper { overflow-x: auto; margin: 1.5rem 0; border: 1px solid var(--border); border-radius: 12px; background: var(--surface); box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); }
+  table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
+  th, td { padding: 0.8rem 1rem; text-align: left; border-bottom: 1px solid var(--border); }
+  th { background: var(--surface-alt); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--ink-light); font-weight: 600; }
+  td.num, th.num { text-align: right; font-family: var(--mono); }
+  tr:last-child td { border-bottom: none; }
+  tr.highlight { background: var(--teal-bg); }
+  tr.total td { font-weight: 600; background: var(--surface-alt); border-top: 2px solid var(--border-dark); color: var(--ink); }
 
-  .subsec{margin-top:3rem;padding-top:2.4rem;border-top:1px solid var(--line)}
-  table{width:100%;border-collapse:collapse;font-size:.88rem;margin:.6rem 0 1rem}
-  th,td{text-align:left;padding:.55rem .6rem;border-bottom:1px solid var(--line)}
-  th{font-size:.7rem;text-transform:uppercase;letter-spacing:.04em;color:var(--ink3)}
-  td.num,th.num{text-align:right;font-family:var(--mono)}
-  tr.tot td{border-top:2px solid var(--line2);font-weight:600}
-  .pos{color:var(--mint)}.neg{color:#C2553A}
-  tr.hl td{background:var(--acc-bg)}
-  tr.dim{opacity:.34}
-  tbody tr{transition:opacity .25s,background .25s}
-  .step{display:flex;gap:1rem;margin-bottom:1.5rem;align-items:flex-start}
-  .step .sn{flex:0 0 auto;width:34px;height:34px;border-radius:50%;background:var(--acc-bg);color:var(--acc);font-family:var(--mono);font-weight:500;display:flex;align-items:center;justify-content:center;font-size:.95rem;margin-top:.15rem}
-  .step h4{font-family:var(--serif);font-size:1.18rem;margin-bottom:.35rem}
-  .step p{margin:0 0 .6rem;color:var(--ink2);max-width:70ch}
-  .step .formula{margin:.4rem 0 .7rem;max-width:60ch}
+  /* Matriz de Decisão */
+  .matrix-grid { display: grid; grid-template-columns: 100px 1fr 1fr; gap: 1rem; margin-top: 1.5rem; }
+  @media(max-width: 768px) { .matrix-grid { grid-template-columns: 1fr; } .matrix-hdr-side { display: none; } }
+  .matrix-cell { background: var(--surface); border: 1px solid var(--border); padding: 1.5rem; border-radius: 12px; transition: all 0.3s ease; }
+  .matrix-cell.header { background: var(--surface-alt); font-weight: 600; display: flex; align-items: center; justify-content: center; text-align: center; color: var(--ink-light); border: none; }
+  .matrix-cell.win { border: 2px solid var(--teal); background: var(--teal-bg); box-shadow: 0 4px 12px rgba(13, 148, 136, 0.15); transform: translateY(-2px); }
+  .matrix-cell.lose { border: 2px solid var(--rose); background: var(--rose-bg); box-shadow: 0 4px 12px rgba(225, 29, 72, 0.15); }
+  .matrix-cell.neutral { border: 2px solid var(--amber); background: var(--amber-bg); }
+  .matrix-cell h4 { font-size: 1.1rem; margin-bottom: 0.5rem; color: var(--ink); display: flex; align-items: center; gap: 0.5rem; }
+  .matrix-cell p { font-size: 0.9rem; color: var(--ink-light); margin: 0; line-height: 1.5; }
 
-  .cards3{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin:1.4rem 0}
-  @media(max-width:760px){.cards3{grid-template-columns:1fr}}
-  .vcard{border-radius:16px;padding:1.3rem 1.4rem;border:1px solid var(--line)}
-  .vcard h4{font-family:var(--serif);font-size:1.1rem;margin-bottom:.7rem}
-  .vcard .blk{font-size:.86rem;color:var(--ink2);margin-bottom:.9rem}
-  .vcard .blk strong{display:block;font-family:var(--mono);font-size:.68rem;letter-spacing:.05em;text-transform:uppercase;margin-bottom:.3rem}
-  .vcard ul{list-style:none;padding:0;margin:0}
-  .vcard li{padding-left:1.1rem;position:relative;margin-bottom:.35rem}
-  .vcard .adv strong{color:var(--mint)}.vcard .adv li::before{content:"+";position:absolute;left:0;color:var(--mint);font-weight:700}
-  .vcard .dis strong{color:var(--coral)}.vcard .dis li::before{content:"–";position:absolute;left:0;color:var(--coral);font-weight:700}
-  .vcard.par{background:var(--mint-bg)}.vcard.agio{background:var(--coral-bg)}.vcard.des{background:var(--sky-bg)}
-
-  .factors{display:grid;grid-template-columns:repeat(2,1fr);gap:1rem;margin:1.4rem 0}
-  @media(max-width:760px){.factors{grid-template-columns:1fr}}
-  .factor{background:var(--soft);border:1px solid var(--line);border-radius:14px;padding:1.2rem 1.3rem}
-  .factor .fn{font-family:var(--mono);font-size:.74rem;color:var(--acc);margin-bottom:.4rem}
-  .factor h5{font-size:1rem;margin-bottom:.3rem;font-weight:600}
-  .factor p{font-size:.9rem;margin:0;color:var(--ink2)}
-
-  .t-sky{--acc:var(--sky);--acc-bg:var(--sky-bg)} .t-mint{--acc:var(--mint);--acc-bg:var(--mint-bg)}
-  .t-lilac{--acc:var(--lilac);--acc-bg:var(--lilac-bg)} .t-coral{--acc:var(--coral);--acc-bg:var(--coral-bg)}
-  .t-amber{--acc:var(--amber);--acc-bg:var(--amber-bg)} .t-rose{--acc:var(--rose);--acc-bg:var(--rose-bg)}
-  .t-teal{--acc:var(--teal);--acc-bg:var(--teal-bg)} .t-green{--acc:var(--green);--acc-bg:var(--green-bg)}
-  .t-plum{--acc:var(--plum);--acc-bg:var(--plum-bg)}
-
-  footer{padding:2.4rem 0 3.4rem;color:var(--ink3);font-size:.8rem;border-top:1px solid var(--line)}
-  footer p{max-width:none}
+  .formula-box { background: var(--surface-alt); border-left: 4px solid var(--primary); padding: 1.5rem; border-radius: 0 8px 8px 0; font-family: var(--mono); font-size: 0.95rem; margin: 1.5rem 0; overflow-x: auto; line-height: 1.6; color: var(--ink); box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);}
+  .concept-tag { display: inline-block; padding: 0.2rem 0.6rem; border-radius: 4px; font-size: 0.75rem; font-weight: 600; font-family: var(--mono); text-transform: uppercase; margin-right: 0.5rem; margin-bottom: 0.5rem; }
+  .tag-ltn { background: #E0E7FF; color: #3730A3; border: 1px solid #C7D2FE;}
+  .tag-ntnf { background: #DCFCE7; color: #0F766E; border: 1px solid #99F6E4;}
+  .tag-ntnb { background: #FEF3C7; color: #B45309; border: 1px solid #FDE68A;}
+  .tag-lft { background: #FCE7F3; color: #BE123C; border: 1px solid #FBCFE8;}
+  .text-teal { color: var(--teal); } .text-amber { color: var(--amber); } .text-rose { color: var(--rose); } .text-primary { color: var(--primary); }
 </style>
 </head>
 <body>
-<header class="hero wrap">
-  <div class="eyebrow">Renda fixa · curso interativo · base FGV/EPGE</div>
-  <h1>Apreçamento de títulos,<br>explicado e <span class="hi-sky">simulável</span>.</h1>
-  <p class="sub">Da <span class="hi-mint">curva de juros</span> ao <span class="hi-coral">ágio e deságio</span>, da <span class="hi-lilac">duration</span> ao <span class="hi-amber">crédito</span>: cada conceito com explicação completa e um app para você mexer e ver a teoria acontecer. Navegue pelas abas.</p>
+
+<nav>
+  <div class="nav-container">
+    <div class="brand">Crédito Privado <span>PRO</span></div>
+    <div class="tabs">
+      <button class="tab-btn active" onclick="switchTab('mod1', this)">1. Instrumentos e PU</button>
+      <button class="tab-btn" onclick="switchTab('mod2', this)">2. Tabela de Precificação</button>
+      <button class="tab-btn" onclick="switchTab('mod3', this)">3. Ágio vs. Deságio</button>
+      <button class="tab-btn" onclick="switchTab('mod4', this)">4. Choque e Marcação</button>
+      <button class="tab-btn" onclick="switchTab('mod5', this)">5. Tempo (Pull-to-Par)</button>
+      <button class="tab-btn" onclick="switchTab('mod6', this)">6. Matriz Tática</button>
+    </div>
+  </div>
+  <div id="progress"></div>
+</nav>
+
+<header class="header-section container">
+  <span class="eyebrow">A Matemática Exata do Mercado Financeiro</span>
+  <h1>Apreçamento e Estratégia em<br>Títulos de Renda Fixa.</h1>
+  <p class="lead">Uma imersão técnica e interativa na precificação de ativos (LTN, NTN-F, LFT, NTN-B). Entenda matematicamente o impacto das taxas de juro, o efeito do ágio/deságio e os pontos de viragem na marcação a mercado.</p>
 </header>
 
-<div class="tabbar"><div class="tabs">
-  <button class="tabbtn active" onclick="show('pA',this)"><span class="pip" style="background:var(--coral)"></span>Carteira real</button>
-  <button class="tabbtn" onclick="show('pB',this)"><span class="pip" style="background:var(--mint)"></span>Passo a passo</button>
-  <button class="tabbtn" onclick="show('p1',this)"><span class="pip" style="background:var(--sky)"></span>Curva de juros</button>
-  <button class="tabbtn" onclick="show('p2',this)"><span class="pip" style="background:var(--mint)"></span>Preço pelo YTM</button>
-  <button class="tabbtn" onclick="show('p3',this)"><span class="pip" style="background:var(--coral)"></span>Par · ágio · deságio</button>
-  <button class="tabbtn" onclick="show('p4',this)"><span class="pip" style="background:var(--amber)"></span>Preço × tempo</button>
-  <button class="tabbtn" onclick="show('p5',this)"><span class="pip" style="background:var(--rose)"></span>Sujo × limpo</button>
-  <button class="tabbtn" onclick="show('p6',this)"><span class="pip" style="background:var(--lilac)"></span>Duration</button>
-  <button class="tabbtn" onclick="show('p7',this)"><span class="pip" style="background:var(--teal)"></span>Replicação</button>
-  <button class="tabbtn" onclick="show('p8',this)"><span class="pip" style="background:var(--green)"></span>YTM × default</button>
-  <button class="tabbtn" onclick="show('p9',this)"><span class="pip" style="background:var(--plum)"></span>Spread por rating</button>
-</div></div>
+<main class="container">
 
-<main class="wrap">
+<section id="mod1" class="panel active">
+  <h2>1. Os Instrumentos de Renda Fixa e a Anatomia do PU</h2>
+  
+  <div class="grid-split">
+    <div>
+      <div class="prose">
+        <p>A Renda Fixa divide-se essencialmente na forma como o ativo é remunerado e como amortiza o seu capital. Baseando-nos nos títulos do Tesouro Nacional e do Crédito Privado, temos quatro grandes famílias:</p>
+        
+        <div style="margin: 1.5rem 0;">
+          <span class="concept-tag tag-ltn">LTN (Prefixado Zero Cupão)</span>
+          <p style="font-size: 0.9rem; margin-top: 0.2rem;">Letras do Tesouro Nacional. Não pagam juros no meio do caminho. O investidor adquire com um grande desconto e recebe o valor nominal (1.000) no final.</p>
+          
+          <span class="concept-tag tag-ntnf">NTN-F (Prefixado com Cupão)</span>
+          <p style="font-size: 0.9rem; margin-top: 0.2rem;">Pagam juros semestrais (cupões) e o principal no final. Possuem menor risco temporal (duration) que as LTN, pois devolvem capital mais cedo.</p>
 
-<!-- A CARTEIRA REAL -->
-<section id="pA" class="panel active t-coral">
-  <div class="ptag">Aplicação · sua carteira</div>
-  <h2>Os sete títulos que você trouxe</h2>
-  <div class="prose">
-    <p>Todas são <strong>debêntures incentivadas</strong> indexadas ao IPCA, de emissores AAA de infraestrutura, <strong>isentas de IR</strong> para pessoa física. Por serem tão parecidas, o que de fato diferencia o retorno é a <span class="em">taxa real</span> (a taxa do papel), o <strong>prazo/duration</strong> e o perfil de <strong>amortização</strong>. Compare a taxa do papel — nunca o PU (o porquê está no "Passo a passo").</p>
-  </div>
-  <table id="titTable">
-    <thead><tr><th>Código</th><th>Emissor</th><th class="num">Taxa real hoje</th><th class="num">Duration</th><th>Vencimento</th><th>Amortização</th><th class="num">PU</th></tr></thead>
-    <tbody>
-      <tr data-d="0.94"><td><strong>EGIE27</strong></td><td>Engie</td><td class="num">IPCA+5,90%</td><td class="num">0,94</td><td>15/07/2028</td><td>Anual (desde 2026)</td><td class="num">1.558,95</td></tr>
-      <tr data-d="2.5"><td><strong>PETR26</strong></td><td>Petrobras</td><td class="num">IPCA+4,22%</td><td class="num">2,5</td><td>15/01/2029</td><td>No vencimento</td><td class="num">1.393,44</td></tr>
-      <tr data-d="2.8"><td><strong>ENEV15</strong></td><td>Eneva</td><td class="num">IPCA+5,50%</td><td class="num">2,8</td><td>15/06/2030</td><td>Anual (desde 2028)</td><td class="num">1.365,73</td></tr>
-      <tr data-d="3.8"><td><strong>ELET14</strong></td><td>Eletrobras</td><td class="num">IPCA+6,32%</td><td class="num">3,8</td><td>15/09/2031</td><td>Anual (desde 2029)</td><td class="num">1.086,10</td></tr>
-      <tr data-d="4.2"><td><strong>CTGE15</strong></td><td>CTG Brasil</td><td class="num">IPCA+6,34%</td><td class="num">4,2</td><td>15/04/2031</td><td>No vencimento</td><td class="num">1.037,60</td></tr>
-      <tr data-d="5.6"><td><strong>TRPLA4</strong></td><td>CTEEP</td><td class="num">IPCA+6,26%</td><td class="num">5,6</td><td>15/10/2033</td><td>Anual (desde 2032)</td><td class="num">1.036,93</td></tr>
-      <tr data-d="9.0"><td><strong>VALEC0</strong></td><td>Vale</td><td class="num">IPCA+6,42%</td><td class="num">9,0</td><td>15/10/2039</td><td>No vencimento</td><td class="num">1.067,10</td></tr>
-    </tbody>
-  </table>
-  <div class="note"><span class="t">Atenção ao PU</span><p>O EGIE27 tem o maior PU (1.558,95) e <strong>não</strong> é o mais caro — é só o papel mais antigo, com mais IPCA acumulado no principal. Quem decide o retorno é a taxa real, não o PU.</p></div>
+          <span class="concept-tag tag-ntnb">NTN-B / NTN-C (Indexados)</span>
+          <p style="font-size: 0.9rem; margin-top: 0.2rem;">Garantem juro real acima da inflação (IPCA ou IGP-M). O capital é corrigido diariamente pela inflação e, sobre este VNA (Valor Nominal Atualizado), recai o cupão de juros.</p>
 
-  <div class="lab" style="margin-top:2.4rem">
-    <div class="pad"><h3 style="font-size:1.1rem;margin-bottom:.7rem">Taxa real hoje</h3><p style="font-size:.88rem;color:var(--ink2);margin:0">É esta a coluna que se compara: o retorno real, acima do IPCA, que cada papel entrega comprando hoje. Vai de IPCA+4,22% (Petrobras, papel disputado) a IPCA+6,42% (Vale, mas 9 anos de prazo).</p></div>
-    <div class="chart-box"><canvas id="cCmp"></canvas></div>
-  </div>
+          <span class="concept-tag tag-lft">LFT (Pós-Fixado Selic/CDI)</span>
+          <p style="font-size: 0.9rem; margin-top: 0.2rem;">Letras Financeiras do Tesouro. Acompanham diariamente a taxa básica (Selic). O seu preço base é o Par. Risco de marcação a mercado é praticamente nulo.</p>
+        </div>
 
-  <div class="subsec">
-    <h3>Como escolher entre um e outro — e por quê</h3>
-    <div class="prose"><p>Sendo todas AAA, IPCA+ e isentas, a decisão se resume a <strong>quanto rende</strong> e <strong>por quanto tempo</strong>, somados ao perfil de amortização e ao seu cenário de juros:</p></div>
-    <div class="factors">
-      <div class="factor"><div class="fn">01 · taxa real</div><h5>Quanto rende</h5><p>Igualados os demais fatores, maior taxa real é melhor. A Vale lidera (6,42%), a Petrobras fica atrás (4,22%) por ser muito procurada — "preço de marca".</p></div>
-      <div class="factor"><div class="fn">02 · prazo</div><h5>Duration × horizonte</h5><p>Case a duration ao momento em que vai precisar do dinheiro. EGIE27 (~1 ano) é curtíssima; Vale (9 anos) trava por muito tempo e oscila mais.</p></div>
-      <div class="factor"><div class="fn">03 · amortização</div><h5>Quando o caixa volta</h5><p>Papéis com amortização anual (EGIE, ELET, ENEV, TRPLA) devolvem principal pelo caminho; os "no vencimento" (PETR, CTGE, VALE) concentram o retorno no fim.</p></div>
-      <div class="factor"><div class="fn">04 · cenário</div><h5>Juros e inflação</h5><p>Vê queda de juros e pode vender antes? Duration longa (Vale) ganha mais. Precisa de liquidez/estabilidade? Duration curta (EGIE) protege.</p></div>
-    </div>
-    <div class="prose"><p>Atalho por horizonte — clique e veja quais papéis encaixam na tabela acima:</p></div>
-    <div class="seg"><span class="sl">Horizonte:</span><button id="recA" onclick="recommend('curto')">Até ~3 anos</button><button id="recB" onclick="recommend('medio')">~4 a 5 anos</button><button id="recC" onclick="recommend('longo')">5+ anos</button></div>
-    <p id="recWhy" style="font-size:.93rem;color:var(--ink2);max-width:72ch">Selecione um horizonte para destacar, na tabela acima, os papéis com a duration compatível.</p>
-  </div>
-
-  <div class="subsec">
-    <h3>Como cada um se comporta se os juros mexerem</h3>
-    <div class="prose"><p>A duration de cada papel estima a variação do PU quando a <strong>taxa real</strong> (ligada à Selic e à curva de juros) muda: <span class="num">ΔPU/PU ≈ − duration × Δjuros</span>. Quem tem duration maior balança mais. Mexa o choque e veja o efeito em cada papel da sua lista:</p></div>
-    <div class="lab">
-      <div class="pad">
-        <div class="ctrl"><label>Choque na taxa real <b id="lAdy">+1,0 p.p.</b></label><input type="range" id="iAdy" min="-2" max="2" step="0.1" value="1" oninput="renderSc()"></div>
-        <table><thead><tr><th>Papel</th><th class="num">Dur.</th><th class="num">PU atual</th><th class="num">Δ%</th><th class="num">PU estim.</th></tr></thead><tbody id="scRows"></tbody></table>
+        <h3>A Diferença: Preço Limpo vs Preço Sujo</h3>
+        <p>Para ativos que pagam juros intermédios, o valor no ecrã da sua corretora é o <strong>Preço Sujo</strong>: ele embute os juros que se acumularam (Juro Acruado) desde o último pagamento até hoje. Quando o cupão é pago, esse preço "cai" drasticamente, formando um gráfico em "dentes de serra". O <strong>Preço Limpo</strong> remove este efeito para permitir analisar a real valorização do título.</p>
       </div>
-      <div class="chart-box"><canvas id="cSc"></canvas></div>
     </div>
-    <div class="prose" style="margin-top:1.5rem">
-      <p><strong>E a inflação?</strong> Um choque de IPCA não entra nessa conta de juro real — ele aumenta o VNA (o principal corrigido) e, com ele, os cupons nominais e o principal a receber. Ou seja: IPCA maior significa mais caixa nominal e proteção do poder de compra, enquanto o retorno real (acima do IPCA) continua o mesmo. São dois efeitos independentes: a <span class="em">taxa real</span> mexe no preço de hoje (marcação a mercado); o <strong>IPCA</strong> mexe no tamanho dos pagamentos.</p>
-    </div>
-    <div class="note"><span class="t">Leitura</span><p>O EGIE27 (duration ~1) quase não se mexe; a Vale (duration 9) é a mais sensível — excelente para apostar em queda de juros, arriscada se você puder precisar vender numa alta. É uma estimativa de 1ª ordem (ignora a convexidade).</p></div>
-  </div>
-</section>
-
-<!-- B PASSO A PASSO -->
-<section id="pB" class="panel t-mint">
-  <div class="ptag">Anatomia · do começo ao fim</div>
-  <h2>Como um título funciona, passo a passo</h2>
-  <div class="prose"><p>Vamos abrir um título de verdade — a <strong>EGIE27</strong> (Engie), debênture incentivada IPCA+, AAA — e seguir cada etapa da vida dela, com as contas na mão. É o mesmo raciocínio que vale para qualquer um dos seus papéis.</p></div>
-
-  <div class="step"><span class="sn">1</span><div><h4>Nascimento</h4><p>A debênture foi emitida valendo <strong>R$ 1.000</strong> (valor de face), prometendo pagar <span class="em">IPCA + 5,9033% ao ano</span>. Vence em <strong>15/07/2028</strong>, paga cupom uma vez por ano (julho) e devolve o principal em parcelas anuais a partir de 2026.</p></div></div>
-  <div class="step"><span class="sn">2</span><div><h4>Correção pelo IPCA → o VNA</h4><p>O principal é corrigido pela inflação continuamente. Desde a emissão, o IPCA acumulou ≈ +50,9%, então hoje o principal atualizado — o <strong>VNA</strong> (Valor Nominal Atualizado) — vale:</p><div class="formula">VNA = 1.000 × 1,50876 = R$ 1.508,76</div></div></div>
-  <div class="step"><span class="sn">3</span><div><h4>O cupom</h4><p>A cada ano você recebe juros de ≈ 5,90% <strong>sobre o VNA</strong> (o principal já corrigido). Como o principal vai sendo amortizado, os juros em reais <strong>caem</strong> ao longo do tempo: ≈ R$ 89 em 2026, R$ 59 em 2027 e R$ 20 em 2028.</p></div></div>
-  <div class="step"><span class="sn">4</span><div><h4>A amortização</h4><p>O principal não volta tudo no fim: retorna <strong>33,33%</strong> em jul/2026, <strong>44,44%</strong> em jul/2027 e o restante em jul/2028. Como o dinheiro volta cedo, o prazo médio (a <strong>duration</strong>) é de só <span class="num">~0,94 ano</span>, mesmo o vencimento sendo em 2028.</p></div></div>
-  <div class="step"><span class="sn">5</span><div><h4>O preço de hoje (PU)</h4><p>O PU é a <strong>soma dos valores presentes</strong> de tudo que ainda falta receber, descontado pela taxa de negociação de hoje (5,9033%). Um exemplo de desconto: o último fluxo, R$ 297,12, é R$ 335,36 trazido a valor presente. Veja o fluxo completo:</p></div></div>
-
-  <table>
-    <thead><tr><th>Data</th><th>Tipo</th><th class="num">Você recebe (R$)</th><th class="num">Valor presente (R$)</th></tr></thead>
-    <tbody>
-      <tr><td>15/07/2026</td><td>Juros</td><td class="num">89,07</td><td class="num">88,46</td></tr>
-      <tr><td>15/07/2026</td><td>Amortização (33,33%)</td><td class="num">502,87</td><td class="num">499,45</td></tr>
-      <tr><td>15/07/2027</td><td>Juros</td><td class="num">58,90</td><td class="num">55,26</td></tr>
-      <tr><td>15/07/2027</td><td>Amortização (44,44%)</td><td class="num">670,53</td><td class="num">629,13</td></tr>
-      <tr><td>15/07/2028</td><td>Juros</td><td class="num">19,80</td><td class="num">17,54</td></tr>
-      <tr><td>17/07/2028</td><td>Principal final</td><td class="num">335,36</td><td class="num">297,12</td></tr>
-      <tr class="tot"><td colspan="3">Soma dos valores presentes = PU</td><td class="num">1.586,95</td></tr>
-    </tbody>
-  </table>
-  <div class="chart-box" style="height:320px;margin:1rem 0 1.6rem"><canvas id="cEg"></canvas></div>
-
-  <div class="step"><span class="sn">6</span><div><h4>VNA + juros corridos = PU</h4><p>O PU também pode ser lido como o VNA mais o cupom já corrido desde o último pagamento:</p><div class="formula">PU = 1.508,76 (VNA) + 78,19 (juros corridos) = R$ 1.586,95</div><p>Por isso o PU alto (R$ 1.586) <strong>não é "caro"</strong>: é só o principal já inflado por anos de IPCA. Compare a taxa, nunca o PU.</p></div></div>
-  <div class="step"><span class="sn">7</span><div><h4>Está no par</h4><p>A taxa de negociação de hoje (5,9033%) é igual à taxa de emissão (5,9033%) → o título está <strong>no par</strong> (% do PU Par = 100). Não há ágio nem deságio embutido. Se a taxa de hoje fosse menor, teria ágio; se maior, deságio.</p></div></div>
-  <div class="step"><span class="sn">8</span><div><h4>Até o vencimento</h4><p>Você recebe os cupons e as amortizações nas datas; o VNA segue corrigido pelo IPCA; no último pagamento (jul/2028) recebe o principal final corrigido mais o último cupom. Ao longo do caminho, o PU converge para o par.</p></div></div>
-  <div class="step"><span class="sn">9</span><div><h4>Nos diferentes cenários</h4><p><strong>Juros reais sobem</strong> → o PU cai hoje (marcação negativa), mas como a duration é ~1 ano o tombo é pequeno; segurando, você ainda reinveste os cupons a taxas melhores. <strong>Juros reais caem</strong> → o PU sobe (ganho de marcação). <strong>IPCA sobe</strong> → VNA, cupons e principal nominais sobem: você fica protegido, e o retorno real continua IPCA + 5,90%.</p></div></div>
-
-  <div class="note"><span class="t">Resumo do ciclo</span><p>Nasce a R$ 1.000 → o IPCA corrige o principal (VNA) → cupons (% sobre o VNA) e amortizações pingam ao longo do tempo → o PU de hoje é a soma desses fluxos a valor presente → no vencimento, o último principal corrigido fecha a conta. A taxa real define o retorno; o IPCA infla os valores; os juros de mercado mexem só no preço de hoje.</p></div>
-</section>
-
-<!-- 1 -->
-<section id="p1" class="panel t-sky">
-  <div class="ptag">Módulo 01 · estrutura a termo</div>
-  <h2>A curva de juros nasce dos preços</h2>
-  <div class="prose">
-    <p>Um <strong>título sem cupom</strong> (zero-coupon) é o tijolo mais simples da renda fixa: ele não paga nada no meio do caminho, só devolve um valor fixo — a <strong>face</strong> — na data de vencimento. Você compra por um preço abaixo da face, e todo o seu ganho é a diferença entre o que pagou e o que recebe lá na frente.</p>
-    <p>Esse desconto embute uma taxa de juros. Como o preço cresce até a face em <span class="em">n</span> anos, a taxa anual implícita — chamada de <strong>taxa à vista</strong> ou <em>spot</em> — é:</p>
-    <div class="formula">rₙ = (100 / Preço)^(1/n) − 1</div>
-    <div class="ex"><span class="t">Exemplo</span>Um zero de 2 anos cotado a 92,45 embute rₙ = (100/92,45)^(1/2) − 1 = <strong>4,00% a.a.</strong> É a taxa que faz 92,45 virar 100 em dois anos.</div>
-    <p>Quando você calcula a taxa spot para vários prazos e as coloca lado a lado, surge a <strong>estrutura a termo</strong> — a curva de juros. O formato dela conta uma história: <span class="hi-sky">subindo</span> (normal) costuma indicar economia/juros estáveis ou crescentes; <strong>invertida</strong> (caindo) sinaliza expectativa de queda de juros e, às vezes, recessão; plana indica transição.</p>
-    <p>Por que isso é o ponto de partida de tudo? Porque a curva é a <strong>régua de desconto</strong>: qualquer fluxo futuro — de um título com cupom, de uma debênture, de um financiamento — é trazido a valor presente usando a taxa do seu respectivo prazo. Sem a curva, não há preço justo.</p>
-  </div>
-  <div class="lab">
-    <div class="pad">
-      <div class="grid2">
-        <div class="ctrl"><label>Preço 1 ano</label><input type="number" id="z1" value="96.62" step="0.01" oninput="r1()"></div>
-        <div class="ctrl"><label>Preço 2 anos</label><input type="number" id="z2" value="92.45" step="0.01" oninput="r1()"></div>
-        <div class="ctrl"><label>Preço 3 anos</label><input type="number" id="z3" value="87.63" step="0.01" oninput="r1()"></div>
-        <div class="ctrl"><label>Preço 4 anos</label><input type="number" id="z4" value="83.06" step="0.01" oninput="r1()"></div>
+    
+    <div class="card-alt">
+      <h3 style="margin-top:0;">Simulador do Serrote (Juro Acruado)</h3>
+      <p style="font-size: 0.85rem; color: var(--ink-light); margin-bottom: 1.5rem;">Simule o comportamento de um ativo que paga um cupão semestral. Ajuste os dias decorridos para ver a inflação do Preço Sujo.</p>
+      <div class="control-group">
+        <label>Cupão Semestral Prometido <b id="lbl1_cupom">4,00</b></label>
+        <input type="range" id="inp1_cupom" min="1" max="10" step="0.5" value="4" oninput="updateMod1()">
       </div>
-      <div class="stat"><span>Spot 1 ano</span><b id="r1a">—</b></div>
-      <div class="stat"><span>Spot 2 anos</span><b id="r1b">—</b></div>
-      <div class="stat"><span>Spot 3 anos</span><b id="r1c">—</b></div>
-      <div class="stat"><span>Spot 4 anos</span><b id="r1d">—</b></div>
+      <div class="control-group">
+        <label>Dias úteis desde o último cupão <b id="lbl1_dias">60 dias</b></label>
+        <input type="range" id="inp1_dias" min="0" max="126" step="1" value="60" oninput="updateMod1()">
+      </div>
+      
+      <div class="grid-2" style="gap: 1rem; margin-top: 1.5rem;">
+        <div class="metric-box">
+          <div class="label">Preço Limpo (Técnico)</div>
+          <div class="value num text-primary">100,00</div>
+          <div class="sub">Valor puro de negociação.</div>
+        </div>
+        <div class="metric-box" style="border-color: var(--rose);">
+          <div class="label">Preço Sujo (O que Paga)</div>
+          <div class="value num text-rose" id="out1_sujo">101,90</div>
+          <div class="sub">Valor Base + Juro Decorrido.</div>
+        </div>
+      </div>
+
+      <div class="chart-container small"><canvas id="chartMod1"></canvas></div>
     </div>
-    <div class="chart-box"><canvas id="c1"></canvas></div>
   </div>
-  <div class="note"><span class="t">Mexa e observe</span><p>Baixe o preço de um prazo: a taxa daquele ponto sobe (preço e juro andam ao contrário). Os valores iniciais reproduzem o exemplo do material (3,50 / 4,00 / 4,50 / 4,75%).</p></div>
 </section>
 
-<!-- 2 -->
-<section id="p2" class="panel t-mint">
-  <div class="ptag">Módulo 02 · valor presente e YTM</div>
-  <h2>O preço é o valor presente dos fluxos</h2>
-  <div class="prose">
-    <p>Um título com cupom paga juros periódicos e devolve o principal no fim. Seu <strong>preço justo</strong> é a soma do valor presente de todos esses pagamentos. A taxa que usamos para descontar é o <strong>YTM</strong> (<em>yield to maturity</em>): a taxa única que, aplicada a todo o fluxo, devolve exatamente o preço de mercado. É a taxa interna de retorno do título se você carregá-lo até o fim, reinvestindo os cupons à mesma taxa.</p>
-    <div class="formula">P = C · [1 − (1+y)^−N] / y  +  F · (1+y)^−N</div>
-    <p>Onde <strong>C</strong> é o cupom por período, <strong>y</strong> é o YTM por período, <strong>N</strong> o número de períodos e <strong>F</strong> a face. O primeiro termo é o valor presente da "anuidade" de cupons; o segundo é o valor presente do principal.</p>
-    <div class="ex"><span class="t">Exemplo do material</span>Título de 5 anos, cupom de 5% com pagamento semestral (2,5 por período), YTM de 6,30% a.a. = 3,15% ao semestre, 10 períodos. O preço sai em <strong>94,50 por 100</strong> de face (ou 944,98 por 1.000). Como o YTM (6,30%) está acima do cupom (5%), o título vale menos que a face — está em deságio.</div>
-    <p>A consequência mais importante é a <strong>relação inversa</strong>: quando o YTM sobe, o preço cai; quando o YTM cai, o preço sobe. Descontar por uma taxa maior encolhe todos os valores presentes. É essa gangorra que move a marcação a mercado dos seus títulos todos os dias.</p>
-    <p>A frequência do cupom também importa: pagar semestralmente capitaliza mais vezes ao ano, então o cálculo usa a taxa e o cupom por período. Quanto mais frequente o pagamento, mais cedo o caixa volta para você.</p>
-  </div>
-  <div class="lab">
-    <div class="pad">
-      <div class="ctrl"><label>Cupom (% a.a.) <b id="l2c">5,0%</b></label><input type="range" id="i2c" min="0" max="15" step="0.1" value="5" oninput="r2()"></div>
-      <div class="ctrl"><label>YTM (% a.a.) <b id="l2y">6,3%</b></label><input type="range" id="i2y" min="1" max="15" step="0.1" value="6.3" oninput="r2()"></div>
-      <div class="ctrl"><label>Prazo (anos) <b id="l2n">5</b></label><input type="range" id="i2n" min="1" max="30" step="1" value="5" oninput="r2()"></div>
-      <div class="seg"><span class="sl">Cupom:</span><button id="f2a" onclick="setF2(1)">Anual</button><button id="f2s" class="active" onclick="setF2(2)">Semestral</button></div>
-      <div class="stat"><span>Preço (por 100)</span><b class="big" id="o2p">—</b></div>
-      <div class="stat"><span>Situação</span><b id="o2s">—</b></div>
+<section id="mod2" class="panel">
+  <h2>2. O Cálculo Aberto: Tabela de Precificação</h2>
+  
+  <div class="prose" style="max-width: 100%;">
+    <p>O mercado não adivinha preços. Ele projeta matematicamente cada fluxo futuro (cupões e principal) e traz tudo para o presente descontando por uma taxa. Essa taxa é o <strong>YTM (Yield to Maturity)</strong> ou <em>Taxa Exigida de Mercado</em>.</p>
+    
+    <div class="formula-box">
+      <strong>A Fórmula de Ouro do Valor Presente (VP):</strong><br><br>
+      Preço (PU) = Σ <span style="color:var(--primary);">[ Cupão / (1 + YTM)ᵗ ]</span> + <span style="color:var(--teal);">[ Principal / (1 + YTM)^N ]</span>
+      <br><br>
+      <span style="font-size: 0.8rem; color: var(--ink-light);">* t = período específico; N = prazo final do título. No Brasil, o desconto é vulgarmente anualizado sob base de 252 dias úteis, mas aqui simplificamos com anos exatos para total clareza teórica.</span>
     </div>
-    <div class="chart-box"><canvas id="c2"></canvas></div>
   </div>
-  <div class="note"><span class="t">Mexa e observe</span><p>Mantenha o cupom fixo e suba o YTM: o preço cai e cada barra de fluxo continua igual — o que muda é o quanto você paga hoje por elas. O gráfico mostra os pagamentos de cada período (a última inclui o principal).</p></div>
+  
+  <div class="card" style="margin-top: 2rem;">
+    <div class="grid-split">
+      <div>
+        <h3 style="margin-top: 0;">Configure o Ativo</h3>
+        <div class="control-group">
+          <label>Taxa de Emissão (O Cupão Fixo): <b id="lbl2_cupom" class="text-ink">6,00%</b></label>
+          <input type="range" id="inp2_cupom" min="1" max="15" step="0.5" value="6" oninput="updateMod2()">
+        </div>
+        <div class="control-group" style="background: var(--teal-bg); border-color: var(--teal);">
+          <label>Taxa de Mercado Hoje (YTM): <b id="lbl2_ytm" class="text-teal">8,00%</b></label>
+          <input type="range" id="inp2_ytm" min="1" max="15" step="0.5" value="8" oninput="updateMod2()">
+        </div>
+        <div class="control-group">
+          <label>Prazo do Título (Anos): <b id="lbl2_prazo" class="text-primary">5 Anos</b></label>
+          <input type="range" id="inp2_prazo" min="1" max="10" step="1" value="5" oninput="updateMod2()">
+        </div>
+
+        <div class="metric-box" style="background: var(--surface-alt); margin-top: 2rem;">
+          <div class="label">Preço Unitário (PU Base 100) = Soma do VP</div>
+          <div class="value num" id="out2_pu" style="font-size: 2.5rem; color: var(--primary);">92,01</div>
+          <div class="sub" id="out2_desc" style="font-size: 1rem; margin-top: 0.5rem;">Explicação gerada via JS.</div>
+        </div>
+      </div>
+      
+      <div style="display:flex; flex-direction: column;">
+        <h3 style="margin-top: 0; padding-bottom: 0.5rem;">Cálculo Linha a Linha</h3>
+        <div class="table-wrapper" style="margin: 0; box-shadow: none;">
+          <table id="table2">
+            <thead>
+              <tr>
+                <th>Ano (t)</th>
+                <th>Fluxo<br><span style="font-size: 0.7rem; font-weight:normal;">(Cupão + Principal)</span></th>
+                <th>Fator de Desconto<br><span style="font-size: 0.7rem; font-weight:normal; font-family:var(--mono);">1 / (1 + YTM)ᵗ</span></th>
+                <th class="num">VP<br><span style="font-size: 0.7rem; font-weight:normal;">Fluxo × Fator</span></th>
+              </tr>
+            </thead>
+            <tbody id="tbody2">
+              <!-- Gerado via JS -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
 </section>
 
-<!-- 3 PAR / AGIO / DESAGIO  (grande, mesclado) -->
-<section id="p3" class="panel t-coral">
-  <div class="ptag">Módulo 03 · descontos, prêmios e reinvestimento</div>
-  <h2>Par, ágio e deságio</h2>
-  <div class="prose">
-    <p>Tudo se resume a comparar o <strong>cupom</strong> do título com o <strong>YTM</strong> de mercado. Se o título promete um cupom maior do que o mercado paga hoje, ele vale mais que a face e você paga um <span class="hi-coral">prêmio (ágio)</span>. Se o cupom é igual ao YTM, ele vale exatamente a face (<span class="hi-mint">no par</span>). Se o cupom é menor, ele vale menos que a face e você compra com <span class="hi-sky">desconto (deságio)</span>.</p>
-    <div class="formula">Cupom &gt; YTM → ágio (preço &gt; 100)   ·   Cupom = YTM → par (100)   ·   Cupom &lt; YTM → deságio (preço &lt; 100)</div>
-    <div class="ex"><span class="t">Exemplo do material</span>Três títulos de 30 anos, todos com YTM de 5%. O de cupom 10% vale <strong>176,86</strong> (ágio); o de cupom 5% vale <strong>100,00</strong> (par); o de cupom 3% vale <strong>69,26</strong> (deságio). Mesmo YTM, preços bem diferentes — só por causa do cupom.</div>
-    <p>O ponto que mais confunde, e o mais importante: <strong>com o mesmo YTM, os três rendem o mesmo até o vencimento</strong>. O ágio/deságio apenas compensa a diferença de cupom. Um PU alto não é "caro", nem um PU baixo é "barato" em termos de retorno — quem manda no retorno é a taxa.</p>
-  </div>
-
-  <h3 style="margin-top:2.4rem">A mecânica do preço</h3>
-  <div class="prose"><p>Ajuste o YTM e o prazo e veja os três títulos do exemplo se afastarem (ou se aproximarem) da linha de par em 100.</p></div>
-  <div class="lab">
-    <div class="pad">
-      <div class="ctrl"><label>YTM de mercado (% a.a.) <b id="l3y">5,0%</b></label><input type="range" id="i3y" min="1" max="12" step="0.1" value="5" oninput="r3()"></div>
-      <div class="ctrl"><label>Prazo (anos) <b id="l3n">30</b></label><input type="range" id="i3n" min="2" max="30" step="1" value="30" oninput="r3()"></div>
-      <div class="stat"><span>Cupom 10% → preço</span><b id="o3a">—</b></div>
-      <div class="stat"><span>Cupom 5% → preço</span><b id="o3b">—</b></div>
-      <div class="stat"><span>Cupom 3% → preço</span><b id="o3c">—</b></div>
+<section id="mod3" class="panel">
+  <h2>3. A Balança: Par, Ágio e Deságio</h2>
+  
+  <div class="grid-split">
+    <div>
+      <div class="prose">
+        <p>Um conceito que assusta muitos investidores iniciantes é comprar algo acima do valor nominal (PU > 100). "Estou a pagar caro?". <strong>Não.</strong></p>
+        <ul>
+          <li><strong>ÁGIO (Preço > 100):</strong> Ocorre quando o título paga um <em>Cupão Superior</em> à taxa de mercado. Você paga um "prémio" inicial caro para ter o direito de receber fluxos de caixa gordos garantidos.</li>
+          <li><strong>DESÁGIO (Preço < 100):</strong> Ocorre quando o título paga um <em>Cupão Inferior</em> à taxa de mercado. O emissor tem de lhe dar um desconto brutal na compra, para que o ganho de capital até ao final compense a falta de cupões de juro.</li>
+          <li><strong>NO PAR (Preço = 100):</strong> Cupão exato = Taxa de Mercado.</li>
+        </ul>
+      </div>
+      <div class="analogy">
+        <span class="analogy-title">O Destino é Igual, O Caminho Muda</span>
+        <p>Mesmo que pague 115 num título de Ágio, ou 80 num de Deságio, <strong>se ambos tiverem um YTM de 8% hoje, e se os carregar até ao final, o seu retorno anualizado será exatamente 8% em ambos.</strong> O Ágio paga mais a meio (risco reduzido), o Deságio paga tudo no fim (risco e volatilidade máxima).</p>
+      </div>
     </div>
-    <div class="chart-box"><canvas id="c3"></canvas></div>
-  </div>
 
-  <div class="subsec">
-    <h3>Aplicação: juros, inflação e reinvestimento</h3>
-    <div class="prose">
-      <p>Agora um exemplo aplicado com <strong>três debêntures IPCA+</strong> de mesmo emissor AAA, vencimento em 4 anos e <strong>mesma taxa de mercado hoje (IPCA + 6%)</strong> — mudando só o cupom: 6% (par), 9% (ágio) e 3% (deságio). Repare na tabela: o total recebido é diferente, mas a taxa interna é a mesma. O ágio paga cupons gordos e custa mais na entrada; o deságio, o contrário.</p>
-      <p>E a <strong>inflação</strong>? O cupom incide sobre o VNA (o principal corrigido pelo IPCA). Então inflação mais alta não muda a taxa real — ela aumenta o <strong>valor nominal</strong> de cada cupom e do principal, gerando mais caixa para reinvestir. O retorno real continua IPCA + 6%. É exatamente essa a proteção do indexador.</p>
-    </div>
-    <table>
-      <thead><tr><th>Momento</th><th class="num">Par · 6%</th><th class="num">Ágio · 9%</th><th class="num">Deságio · 3%</th></tr></thead>
-      <tbody>
-        <tr><td>Hoje (custo)</td><td class="num neg">−100,00</td><td class="num neg">−110,40</td><td class="num neg">−89,60</td></tr>
-        <tr><td>Anos 1 a 3 — cupom</td><td class="num pos">+6,00</td><td class="num pos">+9,00</td><td class="num pos">+3,00</td></tr>
-        <tr><td>Ano 4 — cupom + principal</td><td class="num pos">+106,00</td><td class="num pos">+109,00</td><td class="num pos">+103,00</td></tr>
-        <tr class="tot"><td>Total recebido</td><td class="num">124,00</td><td class="num">136,00</td><td class="num">112,00</td></tr>
-        <tr class="tot"><td>Taxa interna (real)</td><td class="num">IPCA+6%</td><td class="num">IPCA+6%</td><td class="num">IPCA+6%</td></tr>
-      </tbody>
-    </table>
-
-    <div class="prose" style="margin-top:1.6rem">
-      <p>A taxa que você "trava" pressupõe <strong>reinvestir os cupons à mesma taxa</strong>. Quando a Selic e os juros reais mexem, o reinvestimento muda — e aí ágio e deságio se comportam de formas opostas. Escolha o cenário e a estratégia:</p>
-    </div>
-    <div class="seg"><span class="sl">Juros reais:</span><button id="cMan" class="active" onclick="setCen('mantem')">Mantêm 6%</button><button id="cUp" onclick="setCen('sobem')">Sobem → 9%</button><button id="cDn" onclick="setCen('caem')">Caem → 3%</button></div>
-    <div class="seg"><span class="sl">Estratégia:</span><button id="eHold" class="active" onclick="setEstr('hold')">Segura até o fim</button><button id="eSell" onclick="setEstr('sell')">Vende em 1 ano</button></div>
-    <div class="cards3" style="margin-top:1.2rem">
-      <div class="pad"><div class="stat"><span>Par (6%)</span><b id="valPar" style="color:var(--mint)">—</b></div><div style="font-size:.78rem;color:var(--ink3)" id="subPar"></div></div>
-      <div class="pad"><div class="stat"><span>Ágio (9%)</span><b id="valAgio" style="color:var(--coral)">—</b></div><div style="font-size:.78rem;color:var(--ink3)" id="subAgio"></div></div>
-      <div class="pad"><div class="stat"><span>Deságio (3%)</span><b id="valDes" style="color:var(--sky)">—</b></div><div style="font-size:.78rem;color:var(--ink3)" id="subDes"></div></div>
-    </div>
-    <div class="chart-box" style="margin-top:.4rem"><canvas id="c3sim"></canvas></div>
-    <div class="note"><span class="t" id="simTag">Quem ganha aqui</span><p id="simWhy"></p></div>
-  </div>
-
-  <div class="subsec">
-    <h3>Vantagens e desvantagens</h3>
-    <div class="cards3">
-      <div class="vcard par"><h4 style="color:var(--mint)">No par</h4>
-        <div class="blk adv"><strong>Vantagens</strong><ul><li>Leitura simples: preço = face.</li><li>Sem prêmio nem desconto a amortizar.</li><li>Reinvestimento intermediário.</li></ul></div>
-        <div class="blk dis"><strong>Cuidados</strong><ul><li>Não brilha em nenhum cenário específico.</li></ul></div></div>
-      <div class="vcard agio"><h4 style="color:var(--coral)">Ágio · cupom alto</h4>
-        <div class="blk adv"><strong>Vantagens</strong><ul><li>Mais caixa no caminho (renda corrente).</li><li>Em alta de juros, reinveste mais a taxas melhores.</li><li>Menor duration → preço oscila menos.</li></ul></div>
-        <div class="blk dis"><strong>Cuidados</strong><ul><li>Paga prêmio acima do par.</li><li>Maior risco de reinvestimento se os juros caem.</li><li>PU desce rumo ao par com o tempo.</li></ul></div></div>
-      <div class="vcard des"><h4 style="color:var(--sky)">Deságio · cupom baixo</h4>
-        <div class="blk adv"><strong>Vantagens</strong><ul><li>Compra com desconto.</li><li>Retorno mais travado (depende menos de reinvestir).</li><li>Mais ganho de capital se os juros caem.</li></ul></div>
-        <div class="blk dis"><strong>Cuidados</strong><ul><li>Menos caixa no caminho.</li><li>Mais perda de marcação se os juros sobem e vender.</li></ul></div></div>
+    <div>
+      <h3 style="margin-top:0; text-align: center; font-size: 1.1rem;">Fluxo de Caixa Acumulado (Exemplo YTM 6%)</h3>
+      <div class="chart-container small"><canvas id="chartMod3"></canvas></div>
     </div>
   </div>
-
-  <div class="subsec">
-    <h3>Como os gestores fazem — e o que fica com você</h3>
-    <div class="prose"><p>Um gestor ativo de renda fixa forma uma visão de juros e inflação e posiciona a carteira para capturar o movimento. Na prática, são quatro alavancas:</p></div>
-    <div class="factors">
-      <div class="factor"><div class="fn">01 · duration</div><h5>Posiciona o prazo</h5><p>Acredita em queda de juros? Alonga (cupom baixo / deságio) para maximizar o ganho de preço. Acredita em alta? Encurta e prefere cupom alto (ágio) para reinvestir melhor.</p></div>
-      <div class="factor"><div class="fn">02 · marcação</div><h5>Gira o ganho de capital</h5><p>Compra com juro real alto (preço baixo) e vende quando ele recua (preço sobe), realizando o ganho — o que o simulador mostra em "vende em 1 ano".</p></div>
-      <div class="factor"><div class="fn">03 · reinvestimento</div><h5>Reaplica os cupons</h5><p>Reinveste cada cupom na melhor taxa disponível, captando spreads que abrem em estresse. Não deixa caixa parado.</p></div>
-      <div class="factor"><div class="fn">04 · seleção</div><h5>Escolhe o crédito</h5><p>Analisa emissores, diversifica e acessa emissões primárias — a parte que exige estrutura e justifica a gestão.</p></div>
-    </div>
-    <div class="prose">
-      <p>O resultado econômico de <strong>um título</strong> — cupons, caminho rumo ao par e ganho de capital — é inteiramente seu na <strong>compra direta</strong>. Você não paga taxa de administração e, em debênture incentivada, é isento de IR. Um fundo que cobra ~1% a.a. sobre um IPCA+6% entrega ~IPCA+5% líquido de taxa; comprando direto você fica com ~IPCA+6%. Em 4 anos, essa diferença é dinheiro real.</p>
-      <p>O que você abre mão ao comprar direto: <strong>diversificação</strong>, análise de crédito, <strong>liquidez</strong> (o secundário de debênture pode ser raso) e acesso a primárias. A mecânica de retorno é replicável; a gestão de risco e a seleção é o que o gestor de fato agrega.</p>
-      <p><strong>Cupons e reinvestimento.</strong> A taxa do papel só se concretiza inteira se você reinveste cada cupom a uma taxa igual ou maior que a da compra. Juros sobem → reinveste melhor → realizado acima do esperado (e o ágio brilha). Juros caem → reinveste pior → realizado abaixo do esperado, a menos que você realize ganho de capital vendendo. Na prática: não deixe cupom parado, aproveite a abertura de juros para reaplicar mais alto, realize ganho na queda forte e monte uma escada de vencimentos.</p>
-    </div>
-  </div>
-  <div class="note"><span class="t">A regra que une tudo</span><p>Juros <strong>sobem</strong> → o ágio tende a se sair melhor (reinveste cupom alto na taxa nova). Juros <strong>caem</strong> → o deságio brilha (mais ganho de capital, menos reinvestimento barato). Cupom baixo = mais duration = mais sensível a juros, para o bem e para o mal.</p></div>
 </section>
 
-<!-- 4 -->
-<section id="p4" class="panel t-amber">
-  <div class="ptag">Módulo 04 · efeito do tempo</div>
-  <h2>O preço converge ao par (pull to par)</h2>
-  <div class="prose">
-    <p>Mantendo o YTM <strong>constante</strong>, o tempo empurra o preço de qualquer título para o valor de face. A razão é simples: no vencimento o título vale exatamente a face, então o prêmio (ou o desconto) precisa desaparecer até lá.</p>
-    <p>O título de <span class="hi-coral">cupom alto</span> (ágio) começa acima de 100 e <strong>desce</strong> ano a ano — é a amortização do prêmio. O de <span class="hi-sky">cupom baixo</span> (deságio) começa abaixo de 100 e <strong>sobe</strong>. O título no par fica em 100. E o título <strong>sem cupom</strong> sobe de forma suave e contínua, por juros compostos, partindo bem lá de baixo.</p>
-    <p>Há uma lição prática direta para o cliente: ver o PU de um título de ágio <strong>cair</strong> com o tempo é completamente normal — não é perda. Ele está apenas devolvendo o prêmio enquanto te paga os cupons gordos. Já a serrilha que aparece no extrato (sobe entre cupons, cai na data do cupom) é o preço sujo — assunto do próximo módulo.</p>
+<section id="mod4" class="panel">
+  <h2>4. O Laboratório de Choque (Marcação a Mercado)</h2>
+  
+  <div class="prose" style="max-width: 100%;">
+    <p>O que acontece ao seu património se as taxas de juro no mercado subirem ou descerem abruptamente amanhã? Aqui entra o conceito de <strong>Duration</strong> (Sensibilidade/Prazo Médio). Um título com muito Deságio não lhe devolve o dinheiro cedo (cupões baixos), logo, a sua duration é longa. Uma duration longa significa que este título vai <strong>explodir de valor</strong> se os juros caírem, mas vai <strong>derreter</strong> se os juros subirem.</p>
   </div>
-  <div class="lab">
-    <div class="pad">
-      <div class="ctrl"><label>YTM constante (% a.a.) <b id="l4y">5,0%</b></label><input type="range" id="i4y" min="2" max="10" step="0.1" value="5" oninput="r4()"></div>
-      <div class="stat"><span>Cupom 10% hoje</span><b id="o4a">—</b></div>
-      <div class="stat"><span>Cupom 5% hoje</span><b id="o4b">—</b></div>
-      <div class="stat"><span>Cupom 3% hoje</span><b id="o4c">—</b></div>
-      <div class="stat"><span>Zero-coupon hoje</span><b id="o4z">—</b></div>
+
+  <div class="card-alt" style="margin-top: 2rem;">
+    <div class="grid-split">
+      <div>
+        <h3 style="margin-top: 0;">Teste de Esforço (Stress Test)</h3>
+        <p style="font-size: 0.9rem; color: var(--ink-light);">Simularemos 3 Títulos com Prazo de 10 Anos. Todos foram comprados a uma <strong>Taxa Base de 6% (YTM)</strong>.<br>Aplique um choque de juro na economia amanhã:</p>
+        
+        <div class="control-group" style="margin-top: 1.5rem; background: var(--surface); border: 2px solid var(--border-dark);">
+          <label>Cenário Macro: <b id="lbl4_choque" class="text-ink">Sem Choque (0%)</b></label>
+          <input type="range" id="inp4_choque" min="-4" max="4" step="1" value="0" oninput="updateMod4()">
+          <div style="display:flex; justify-content: space-between; font-size: 0.75rem; color: var(--ink-light); margin-top: 0.5rem; font-weight:600;">
+            <span class="text-teal">← JURO CAI (Ganho)</span>
+            <span class="text-rose">JURO SOBE (Perda) →</span>
+          </div>
+        </div>
+
+        <div class="analogy" id="box4_insight" style="margin: 2rem 0 0 0; background: var(--surface);">
+          <span class="analogy-title" style="color: var(--ink);">Comportamento Tático</span>
+          <p id="txt4_insight" style="color: var(--ink-light);">Mova o cursor de choque. Repare atentamente em quem perde ou ganha mais percentualmente.</p>
+        </div>
+      </div>
+
+      <div>
+        <h3 style="margin-top:0; font-size: 1.1rem; border-bottom: 2px solid var(--border); padding-bottom: 0.5rem;">Extrato da Marcação a Mercado</h3>
+        <div class="table-wrapper" style="margin-top: 1rem; box-shadow:none; border:none; background: transparent;">
+          <table style="background: white; border: 1px solid var(--border); border-radius: 8px;">
+            <thead>
+              <tr>
+                <th>Perfil do Ativo<br><span style="font-weight:normal">(Prazo: 10a)</span></th>
+                <th class="num">PU Inicial<br><span style="font-size:0.7rem;font-weight:normal">(YTM base 6%)</span></th>
+                <th class="num">PU Marcado<br><span style="font-size:0.7rem;font-weight:normal" id="tbl4_ytm_novo">(Novo YTM)</span></th>
+                <th class="num">Variação<br>de Capital</th>
+              </tr>
+            </thead>
+            <tbody id="tbody4">
+              <!-- Gerado via JS -->
+            </tbody>
+          </table>
+        </div>
+        
+        <div class="chart-container" style="height: 180px;"><canvas id="chartMod4"></canvas></div>
+      </div>
     </div>
-    <div class="chart-box"><canvas id="c4"></canvas></div>
   </div>
-  <div class="note"><span class="t">Mexa e observe</span><p>Mude o YTM: todas as linhas se reposicionam, mas todas terminam em 100 no vencimento. O ponto de chegada é sempre a face.</p></div>
 </section>
 
-<!-- 5 -->
-<section id="p5" class="panel t-rose">
-  <div class="ptag">Módulo 05 · juro acruado</div>
-  <h2>Preço sujo × preço limpo</h2>
-  <div class="prose">
-    <p>Entre dois pagamentos de cupom, o título vai "rendendo" um juro que ainda não foi pago — o <strong>juro acruado</strong>. Quem compra no meio do período precisa pagar ao vendedor esse juro já corrido, porque vai embolsar o cupom inteiro na próxima data.</p>
-    <div class="formula">Juro acruado = Cupom × (dias desde o último cupom ÷ dias do período)</div>
-    <p>O <strong>preço sujo</strong> (dirty) é o que efetivamente troca de mãos na liquidação: inclui o juro acruado. O <strong>preço limpo</strong> (clean) tira esse juro:</p>
-    <div class="formula">Preço limpo = Preço sujo − Juro acruado</div>
-    <p>Por isso o preço sujo desenha um <strong>dente de serra</strong>: sobe ao longo do período acumulando juro e, na data do cupom, despenca pelo valor do cupom pago. O preço limpo segue contínuo. Cotações e marcação a mercado usam o preço limpo justamente para comparar títulos sem o "inchaço" do cupom a vencer.</p>
-  </div>
-  <div class="lab">
-    <div class="pad">
-      <div class="ctrl"><label>Cupom do período (por 100) <b id="l5c">3,00</b></label><input type="range" id="i5c" min="1" max="6" step="0.25" value="3" oninput="r5()"></div>
-      <div class="ctrl"><label>Dias desde o último cupom <b id="l5d">90</b></label><input type="range" id="i5d" min="0" max="360" step="5" value="90" oninput="r5()"></div>
-      <div class="stat"><span>Juro acruado</span><b id="o5acc">—</b></div>
-      <div class="stat"><span>Preço limpo</span><b id="o5cl">—</b></div>
-      <div class="stat"><span>Preço sujo (pago)</span><b class="big" id="o5dt">—</b></div>
+<section id="mod5" class="panel">
+  <h2>5. O Relógio: "Pull-to-Par" (Convergência)</h2>
+  
+  <div class="grid-split">
+    <div>
+      <div class="prose">
+        <p>Na ausência de choques nas taxas de juro, as linhas de preço de qualquer título convergem inescapavelmente para o valor Nominal (100) no dia do vencimento.</p>
+        <ul>
+          <li><strong>O Ágio é Amortizado:</strong> Quem comprou a 129,00 vai ver a sua cotação "sangrar" ano após ano, convergindo para 100. Isto <strong>não é um prejuízo</strong> real, porque a amortização é compensada pelos juros extraordinariamente elevados que recebe anualmente.</li>
+          <li><strong>O Deságio Valoriza:</strong> Quem comprou a 70,00 vai ver a linha subir devagar. É daqui que vem quase todo o seu retorno, já que o cupão é miserável.</li>
+        </ul>
+      </div>
     </div>
-    <div class="chart-box"><canvas id="c5"></canvas></div>
+    
+    <div class="card">
+      <h3 style="margin-top:0; font-size: 1.1rem; text-align: center;">O Magnetismo do Vencimento (Eixo 100)</h3>
+      <p style="text-align: center; font-size: 0.85rem; color: var(--ink-light);">Eixo X: Anos para o término.</p>
+      <div class="chart-container"><canvas id="chartMod5"></canvas></div>
+    </div>
   </div>
-  <div class="note"><span class="t">Mexa e observe</span><p>Aumente os dias desde o último cupom: o juro acruado e o preço sujo sobem juntos. O gráfico mostra o dente de serra do preço sujo contra a linha estável do preço limpo.</p></div>
 </section>
 
-<!-- 6 -->
-<section id="p6" class="panel t-lilac">
-  <div class="ptag">Módulo 06 · sensibilidade a juros</div>
-  <h2>Duration: o quanto o preço balança</h2>
-  <div class="prose">
-    <p>A pergunta central da gestão de renda fixa é: se o juro mexer, quanto o preço muda? A <strong>duration</strong> responde. A <strong>duration de Macaulay</strong> é o prazo médio dos fluxos, ponderado pelo valor presente de cada um — em outras palavras, "quando, em média, você recebe o seu dinheiro de volta", medido em anos.</p>
-    <div class="formula">MacD = Σ [ t × VP(fluxoₜ) ] ÷ Preço</div>
-    <p>A <strong>duration modificada</strong> transforma isso numa medida direta de sensibilidade. A relação é quase mágica:</p>
-    <div class="formula">ModD = MacD ÷ (1 + y)        ΔP/P ≈ − ModD × Δy</div>
-    <div class="ex"><span class="t">Leitura rápida</span>Se a duration modificada é 7 e o juro sobe 1 ponto percentual, o preço cai cerca de <strong>7%</strong>. Se cai 1 ponto, sobe ~7%.</div>
-    <p>O que aumenta a duration: <strong>cupom menor</strong> (mais peso do principal lá no fim) e <strong>prazo maior</strong>. YTM mais alto reduz um pouco. Por isso um título de deságio (cupom baixo) é mais sensível a juros que um de ágio de mesmo prazo.</p>
-    <p>Há um detalhe a favor do investidor: a relação preço×juro não é uma reta, é uma curva (<strong>convexidade</strong>). A duration é a aproximação linear; em choques grandes ela erra, e o erro é do lado bom — o preço cai menos e sobe mais do que a duration prevê. Veja isso comparando as duas barras no app.</p>
+<section id="mod6" class="panel">
+  <h2>6. O Cheat Sheet: Matriz de Decisão Tática</h2>
+  
+  <div class="prose" style="max-width: 100%;">
+    <p>Na gestão de crédito privado, acertar o momento macroeconómico garante 80% do seu sucesso. Escolha qual a sua visão para os Juros (Selic/Curva Futura) e deixe a matriz recomendar os papéis táticos.</p>
   </div>
-  <div class="lab">
-    <div class="pad">
-      <div class="ctrl"><label>Cupom (% a.a.) <b id="l6c">6,0%</b></label><input type="range" id="i6c" min="0" max="15" step="0.5" value="6" oninput="r6()"></div>
-      <div class="ctrl"><label>YTM (% a.a.) <b id="l6y">6,0%</b></label><input type="range" id="i6y" min="1" max="14" step="0.5" value="6" oninput="r6()"></div>
-      <div class="ctrl"><label>Prazo (anos) <b id="l6n">10</b></label><input type="range" id="i6n" min="1" max="30" step="1" value="10" oninput="r6()"></div>
-      <div class="ctrl"><label>Choque de juros Δy <b id="l6d">+1,0%</b></label><input type="range" id="i6d" min="-3" max="3" step="0.1" value="1" oninput="r6()"></div>
-      <div class="stat"><span>Duration de Macaulay</span><b id="o6m">—</b></div>
-      <div class="stat"><span>Duration modificada</span><b id="o6mod">—</b></div>
-    </div>
-    <div class="chart-box"><canvas id="c6"></canvas></div>
-  </div>
-  <div class="note"><span class="t">Mexa e observe</span><p>Baixe o cupom e veja a duration subir. Aumente o |Δy| e veja a diferença entre a aproximação (duration) e o reapreçamento exato crescer — é a convexidade aparecendo.</p></div>
-</section>
 
-<!-- 7 -->
-<section id="p7" class="panel t-teal">
-  <div class="ptag">Módulo 07 · lei do preço único</div>
-  <h2>Um título com cupom é uma carteira de zeros</h2>
-  <div class="prose">
-    <p>Aqui está uma das ideias mais elegantes da renda fixa: qualquer título com cupom pode ser <strong>replicado</strong> por uma cesta de títulos sem cupom — um zero para cada data de pagamento. Um título de 3 anos com cupom C precisa de um zero que pague C no ano 1, outro que pague C no ano 2, e um terceiro que pague C + a face no ano 3.</p>
-    <p>O <strong>custo</strong> de montar essa cesta é a soma dos preços desses zeros, cada um cotado pela sua taxa spot. E aqui entra a <strong>lei do preço único</strong> (não-arbitragem): como a cesta entrega exatamente o mesmo fluxo do título com cupom, o custo da cesta <strong>tem</strong> de ser igual ao preço do título. Se fosse diferente, alguém compraria o barato, venderia o caro e embolsaria a diferença sem risco — e o mercado fecharia esse buraco na hora.</p>
-    <div class="ex"><span class="t">Exemplo do material</span>Cupom de 10% (3 anos), com zeros cotados a 96,62 / 92,45 / 87,63. Faces necessárias: 10, 10 e 110. Custo = 10×0,9662 + 10×0,9245 + 110×0,8763 = <strong>115,30 por 100</strong> (1.153 por 1.000) — exatamente o preço do título.</div>
-    <p>A consequência é profunda: o jeito "certo" de precificar é descontar cada fluxo pela taxa spot do seu prazo (a curva do Módulo 1), não por um YTM único. O YTM é uma média conveniente; a curva é a verdade sem arbitragem.</p>
-  </div>
-  <div class="lab">
-    <div class="pad">
-      <div class="ctrl"><label>Cupom anual (por 100) <b id="l7c">10,0</b></label><input type="range" id="i7c" min="0" max="15" step="0.5" value="10" oninput="r7()"></div>
-      <table>
-        <thead><tr><th>Zero</th><th class="num">Face necessária</th><th class="num">Custo</th></tr></thead>
-        <tbody id="o7rows"></tbody>
-        <tr class="tot"><td>Custo total = preço</td><td></td><td class="num" id="o7tot">—</td></tr>
-      </table>
+  <div class="card-alt" style="margin-top: 2rem;">
+    <div style="text-align: center; margin-bottom: 2rem;">
+      <label style="font-weight: 600; font-size: 1.2rem; color: var(--ink); display:block; margin-bottom:1rem;">O que vai acontecer aos Juros nos próximos 2 anos?</label>
+      <div class="btn-group" style="justify-content: center;">
+        <button id="btn6_cai" onclick="updateMod6('cai')">Queda Agressiva de Juros</button>
+        <button id="btn6_man" class="active" onclick="updateMod6('man')">Estabilização / Manutenção</button>
+        <button id="btn6_sub" onclick="updateMod6('sub')">Subida Agressiva de Juros</button>
+      </div>
     </div>
-    <div class="chart-box"><canvas id="c7"></canvas></div>
-  </div>
-  <div class="note"><span class="t">Mexa e observe</span><p>Mude o cupom: as faces necessárias dos zeros mudam e o custo total acompanha. Esse custo é, por não-arbitragem, o preço justo do título com cupom.</p></div>
-</section>
 
-<!-- 8 -->
-<section id="p8" class="panel t-green">
-  <div class="ptag">Módulo 08 · risco de crédito</div>
-  <h2>YTM prometido ≠ retorno esperado</h2>
-  <div class="prose">
-    <p>Até aqui assumimos que o emissor paga tudo. Num título com risco de <strong>default</strong>, isso deixa de ser garantido — e abre um abismo entre dois números que muita gente confunde.</p>
-    <p>O <strong>YTM prometido</strong> é calculado como se todos os pagamentos ocorressem integralmente. Por isso, quanto mais arriscado o título (mais barato ele é negociado), maior o YTM prometido — pode chegar a dois dígitos. Mas o <strong>retorno esperado</strong> leva em conta a probabilidade de calote e a <strong>recuperação</strong> (quanto se recebe se houver default):</p>
-    <div class="formula">Fluxo esperado = (1 − prob. default) × face + prob. default × recuperação</div>
-    <p>O mercado precifica o título para que o retorno <em>esperado</em> remunere o investidor — não o prometido. Resultado: conforme o risco cresce, o YTM prometido dispara, mas o retorno esperado sobe muito pouco. A diferença entre eles é, essencialmente, a <strong>perda esperada</strong> por inadimplência (mais um prêmio de risco).</p>
-    <div class="ex"><span class="t">No material (Avant Bond, 1 ano)</span>Sem risco: preço 961,54, YTM 4%, esperado 4%. Com 50% de chance de default: o YTM prometido salta para ~10,6%, mas o retorno esperado é só ~5%. O YTM gordo é uma promessa, não uma expectativa.</div>
-    <p>A lição para o investidor: não confunda o YTM atraente de um <em>high yield</em> com o que você realmente espera ganhar. Spread alto demais pode estar sinalizando risco real, não "oportunidade".</p>
-  </div>
-  <div class="lab">
-    <div class="pad">
-      <div class="ctrl"><label>Taxa livre de risco (% a.a.) <b id="l8r">4,0%</b></label><input type="range" id="i8r" min="0" max="12" step="0.1" value="4" oninput="r8()"></div>
-      <div class="ctrl"><label>Probabilidade de default <b id="l8p">20%</b></label><input type="range" id="i8p" min="0" max="100" step="1" value="20" oninput="r8()"></div>
-      <div class="ctrl"><label>Recuperação no calote <b id="l8rec">40%</b></label><input type="range" id="i8rec" min="0" max="100" step="1" value="40" oninput="r8()"></div>
-      <div class="stat"><span>Preço (face 100)</span><b id="o8price">—</b></div>
-      <div class="stat"><span>YTM prometido</span><b id="o8ytm">—</b></div>
-      <div class="stat"><span>Retorno esperado</span><b class="big" id="o8exp">—</b></div>
-    </div>
-    <div class="chart-box"><canvas id="c8"></canvas></div>
-  </div>
-  <div class="note"><span class="t">Mexa e observe</span><p>Suba a probabilidade de default: a linha do YTM prometido dispara, enquanto a do retorno esperado mal se move. O abismo entre as duas é o risco de crédito.</p></div>
-</section>
+    <div class="matrix-grid">
+      <!-- Cabeçalhos das Colunas -->
+      <div class="matrix-hdr-side"></div>
+      <div class="matrix-cell header" style="flex-direction: column;">
+        <span style="color: var(--primary); font-size: 1.1rem; margin-bottom: 0.5rem;">Foco em ÁGIO</span>
+        <span style="font-weight:normal; font-size:0.8rem;">(Cupões Altos, Duration Curta)</span>
+      </div>
+      <div class="matrix-cell header" style="flex-direction: column;">
+        <span style="color: var(--amber); font-size: 1.1rem; margin-bottom: 0.5rem;">Foco em DESÁGIO</span>
+        <span style="font-weight:normal; font-size:0.8rem;">(Cupões Baixos, Duration Longa)</span>
+      </div>
+      
+      <!-- Linha 1: Decisão de Compra -->
+      <div class="matrix-cell header matrix-hdr-side" style="background:transparent; justify-content:flex-end;">
+        <div style="text-align:right;">Se for<br><strong style="color:var(--teal); font-size:1.4rem;">COMPRAR</strong></div>
+      </div>
+      <div class="matrix-cell" id="mx_compra_agio"></div>
+      <div class="matrix-cell" id="mx_compra_des"></div>
 
-<!-- 9 -->
-<section id="p9" class="panel t-plum">
-  <div class="ptag">Módulo 09 · spread de crédito</div>
-  <h2>Quanto pior o rating, maior o juro exigido</h2>
-  <div class="prose">
-    <p>O <strong>rating</strong> é a nota de qualidade de crédito atribuída por agências (Moody's, S&amp;P): <strong>AAA</strong> é o topo; tudo abaixo de BBB−/Baa3 entra no território <em>high yield</em> ("junk"). Quanto pior a nota, maior a probabilidade de default percebida e, portanto, maior o YTM que o mercado exige para emprestar.</p>
-    <div class="formula">Spread de crédito = YTM do título − YTM do Treasury de mesmo prazo</div>
-    <p>O spread é o <strong>prêmio por risco de crédito</strong>: o pagamento extra por assumir a chance de calote. Como mostra o app, ele tem dois comportamentos típicos: cresce com <strong>prazos mais longos</strong> (mais tempo para algo dar errado) e com <strong>ratings piores</strong> (a curva BBB fica bem acima da AAA, que fica acima do Treasury).</p>
-    <p>Em crises, os spreads <strong>explodem</strong> — em 2008 os prêmios de crédito chegaram a níveis recordes, à medida que o mercado passou a precificar default em massa. São justamente esses momentos de abertura de spread que os gestores buscam para comprar crédito barato.</p>
-    <p>A lição: comprar crédito é ser pago para correr risco. O spread precisa cobrir a perda esperada por default <strong>e</strong> deixar um prêmio. Um spread generoso demais raramente é almoço grátis — costuma ser o mercado avisando que o risco é real.</p>
-  </div>
-  <div class="lab">
-    <div class="pad">
-      <div class="ctrl"><label>Prazo (anos) <b id="l9n">10</b></label><input type="range" id="i9n" min="1" max="30" step="1" value="10" oninput="r9()"></div>
-      <div class="stat"><span>YTM Treasury</span><b id="o9t">—</b></div>
-      <div class="stat"><span>YTM AAA · spread</span><b id="o9a">—</b></div>
-      <div class="stat"><span>YTM BBB · spread</span><b id="o9b">—</b></div>
+      <!-- Linha 2: Gestão de Carteira -->
+      <div class="matrix-cell header matrix-hdr-side" style="background:transparent; justify-content:flex-end;">
+        <div style="text-align:right;">Se já<br><strong style="color:var(--ink); font-size:1.4rem;">TIVER</strong></div>
+      </div>
+      <div class="matrix-cell" id="mx_tenho_agio"></div>
+      <div class="matrix-cell" id="mx_tenho_des"></div>
     </div>
-    <div class="chart-box"><canvas id="c9"></canvas></div>
   </div>
-  <div class="note"><span class="t">Mexa e observe</span><p>Mude o prazo e leia o spread de cada rating sobre o Treasury. Ele aumenta para prazos longos e para notas piores — o desenho clássico das curvas por rating.</p></div>
 </section>
 
 </main>
 
-<footer class="wrap">
-  <p>Curso interativo construído a partir dos conceitos de <em>Apreçamento de Títulos de Renda Fixa</em> (EPGE/FGV, Tiago Carvalho Machado de Souza), combinado ao material aplicado de par, ágio e deságio. Cálculos com composição periódica e aproximações para fins didáticos; valores em % do valor de face. Não é recomendação de investimento — confirme PU, fluxo e taxa na fonte oficial e avalie suitability antes de decidir.</p>
+<footer>
+  <div class="container">
+    <p>Masterclass Interativa de Crédito Privado e Renda Fixa. Os simuladores adotam anos de 360/365 dias simplificados matematicamente para fins didáticos, isolando variáveis como duration, YTM e convexity. Esta aplicação visa fins educacionais baseados nos manuais de marcação a mercado. Não constitui aconselhamento financeiro.</p>
+  </div>
 </footer>
 
 <script>
-  const $=id=>document.getElementById(id), v=id=>parseFloat($(id).value), setv=(id,t)=>$(id).textContent=t;
-  const pct=(x,d=2)=>x.toFixed(d).replace('.',',')+'%', n2=x=>x.toFixed(2).replace('.',',');
-  const ACC={sky:'#4F95D6',mint:'#2FA98C',coral:'#E07C5E',amber:'#CE9322',rose:'#D26D8C',lilac:'#8B79C4',teal:'#2E9AA4',green:'#6AA04B',plum:'#A66BA6',gray:'#C9C7CF',slate:'#23232B'};
-  const GRID='#EFEEF4',TXT='#56565F';
-
-  function priceP(coupon,ytm,years,m){const c=coupon/m,y=ytm/100/m,N=Math.round(years*m);let p=0;for(let t=1;t<=N;t++)p+=c/Math.pow(1+y,t);p+=100/Math.pow(1+y,N);return p;}
-  function macD(coupon,ytm,years,m){const c=coupon/m,y=ytm/100/m,N=Math.round(years*m),pr=priceP(coupon,ytm,years,m);let s=0;for(let t=1;t<=N;t++){const cf=(t<N?c:c+100);s+=(t/m)*cf/Math.pow(1+y,t);}return s/pr;}
-  function spot(p,n){return Math.pow(100/p,1/n)-1;}
-
-  function gopts(yT,xT,legend){return{responsive:true,maintainAspectRatio:false,interaction:{intersect:false},
-    plugins:{legend:{display:!!legend,labels:{color:TXT,boxWidth:12,font:{family:"'IBM Plex Sans'",size:11}}}},
-    scales:{x:{title:{display:!!xT,text:xT,color:TXT,font:{size:11}},grid:{color:GRID},ticks:{color:TXT,font:{family:"'IBM Plex Mono'",size:10}}},
-      y:{title:{display:!!yT,text:yT,color:TXT,font:{size:11}},grid:{color:GRID},ticks:{color:TXT,font:{family:"'IBM Plex Mono'",size:10}}}}};}
-
-  const CH={};
-  const INIT={pA:initA,pB:initB,p1:init1,p2:init2,p3:init3,p4:init4,p5:init5,p6:init6,p7:init7,p8:init8,p9:init9};
-  function show(id,btn){document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));document.querySelectorAll('.tabbtn').forEach(b=>b.classList.remove('active'));$(id).classList.add('active');btn.classList.add('active');if(INIT[id]){INIT[id]();INIT[id]=null;}}
-
-  /* 1 */
-  function init1(){CH.c1=new Chart($('c1'),{type:'line',data:{labels:['1','2','3','4'],datasets:[{label:'Taxa spot',data:[],borderColor:ACC.sky,backgroundColor:'rgba(79,149,214,.12)',fill:true,tension:.25,pointRadius:4,pointBackgroundColor:ACC.sky}]},options:gopts('% a.a.','prazo (anos)')});r1();}
-  function r1(){const ps=[v('z1'),v('z2'),v('z3'),v('z4')],rs=ps.map((p,i)=>spot(p,i+1)*100);['r1a','r1b','r1c','r1d'].forEach((id,i)=>setv(id,pct(rs[i])));CH.c1.data.datasets[0].data=rs;CH.c1.update();}
-
-  /* 2 */
-  let f2=2;
-  function setF2(m){f2=m;$('f2a').classList.toggle('active',m===1);$('f2s').classList.toggle('active',m===2);r2();}
-  function init2(){CH.c2=new Chart($('c2'),{type:'bar',data:{labels:[],datasets:[{label:'Fluxo recebido',data:[],backgroundColor:ACC.mint,borderRadius:3}]},options:gopts('por 100','período')});r2();}
-  function r2(){const c=v('i2c'),y=v('i2y'),N=v('i2n');setv('l2c',pct(c,1));setv('l2y',pct(y,1));setv('l2n',N);const p=priceP(c,y,N,f2);setv('o2p',n2(p));
-    $('o2s').innerHTML=p>100.05?'<span class="badge" style="background:var(--coral-bg);color:var(--coral)">ágio</span>':p<99.95?'<span class="badge" style="background:var(--sky-bg);color:var(--sky)">deságio</span>':'<span class="badge">no par</span>';
-    const per=Math.round(N*f2),cc=c/f2,labs=[],data=[];for(let t=1;t<=per;t++){labs.push(t);data.push(+(cc+(t===per?100:0)).toFixed(2));}CH.c2.data.labels=labs;CH.c2.data.datasets[0].data=data;CH.c2.update();}
-
-  /* 3 mecânica */
-  function init3(){
-    CH.c3=new Chart($('c3'),{type:'bar',data:{labels:['Cupom 10%','Cupom 5%','Cupom 3%'],datasets:[{data:[],backgroundColor:[ACC.coral,ACC.mint,ACC.sky],borderRadius:5}]},options:gopts('preço por 100','')});
-    CH.c3sim=new Chart($('c3sim'),{type:'bar',data:{labels:['Par','Ágio','Deságio'],datasets:[{data:[],backgroundColor:[ACC.mint,ACC.coral,ACC.sky],borderRadius:5}]},options:gopts('retorno real','')});
-    r3();render3();
+  const $ = id => document.getElementById(id);
+  const v = id => parseFloat($(id).value);
+  const fmt = (n, d=2) => n.toFixed(d).replace('.', ',');
+  const pct = (n, d=2) => fmt(n, d) + '%';
+  
+  const C_PRI = '#2563EB', C_TEA = '#0D9488', C_AMB = '#D97706', C_ROS = '#E11D48', C_INK = '#0F172A', C_LGT = '#94A3B8';
+  Chart.defaults.font.family = "'IBM Plex Sans', system-ui, sans-serif";
+  Chart.defaults.color = '#475569';
+  const gridOptions = { color: '#E2E8F0' };
+  const CH = {}; 
+  
+  function calcVP(cupom, ytm_pct, anos) {
+    if(anos === 0) return 100;
+    let vp = 0;
+    const y = ytm_pct / 100;
+    for(let t=1; t<=anos; t++) { vp += cupom / Math.pow(1+y, t); }
+    vp += 100 / Math.pow(1+y, anos);
+    return vp;
   }
-  function r3(){const y=v('i3y'),N=v('i3n');setv('l3y',pct(y,1));setv('l3n',N);const a=priceP(10,y,N,1),b=priceP(5,y,N,1),c=priceP(3,y,N,1);setv('o3a',n2(a));setv('o3b',n2(b));setv('o3c',n2(c));CH.c3.data.datasets[0].data=[+a.toFixed(2),+b.toFixed(2),+c.toFixed(2)];CH.c3.options.scales.y.suggestedMin=Math.min(c,60);CH.c3.update();}
 
-  /* 3 simulador reinvestimento */
-  const B3=[{k:'par',c:6,p:100},{k:'agio',c:9,p:110.40},{k:'des',c:3,p:89.60}];
-  let cen='mantem',estr='hold';const RATE={mantem:0.06,sobem:0.09,caem:0.03};
-  const NAR={
-    mantem_hold:'Sem mudança nos juros, os três entregam o mesmo IPCA + 6,00% a.a. — a taxa travada na compra. O ágio/deságio só mudou o caminho, não o destino.',
-    mantem_sell:'Vendendo em 1 ano sem mexida nos juros, os três rendem ~6% no ano (o próprio carrego). Você recebeu a taxa pelo tempo parado.',
-    sobem_hold:'Juros sobem e você segura: todos acima de 6%, pois os cupons são reinvestidos a 9%. O ágio ganha mais (≈ IPCA+6,34%) — tem mais cupom para reaplicar na taxa nova; o deságio aproveita menos (≈ IPCA+6,14%).',
-    sobem_sell:'Juros sobem e você vende em 1 ano: prejuízo de marcação em todos. O deságio perde mais (≈ −2,0%) por ter maior duration; o ágio se defende melhor (≈ −1,3%). Segurar e reinvestir teria sido melhor.',
-    caem_hold:'Juros caem e você segura: todos abaixo de 6%, pois os cupons rendem só 3% reaplicados. O deságio sofre menos (≈ IPCA+5,87%); o ágio é o mais penalizado (≈ IPCA+5,67%).',
-    caem_sell:'Juros caem e você vende em 1 ano: ganho de capital gordo (≈ +14% a +15% no ano). O deságio ganha mais (≈ +15,0%) — maior duration, preço sobe mais. Esta é a oportunidade de realizar a marcação.'
+  function switchTab(modId, btnElement) {
+    document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    $(modId).classList.add('active');
+    btnElement.classList.add('active');
+
+    if(modId === 'mod1' && !CH.c1) initMod1();
+    if(modId === 'mod2') updateMod2(); 
+    if(modId === 'mod3' && !CH.c3) initMod3();
+    if(modId === 'mod4' && !CH.c4) initMod4();
+    if(modId === 'mod5' && !CH.c5) initMod5();
+    if(modId === 'mod6') updateMod6('man'); 
+  }
+
+  window.addEventListener('scroll', () => {
+    const h = document.documentElement;
+    $('progress').style.width = (h.scrollTop / (h.scrollHeight - h.clientHeight) * 100) + '%';
+  });
+
+  // --- MÓDULO 1 ---
+  function initMod1() {
+    CH.c1 = new Chart($('chartMod1'), {
+      type: 'line',
+      data: { labels: [], datasets: [
+        { label: 'Preço Limpo (PU Técnico)', data: [], borderColor: C_PRI, borderDash: [5,5], borderWidth: 2, pointRadius: 0, tension: 0 },
+        { label: 'Preço Sujo (Serrote)', data: [], borderColor: C_ROS, borderWidth: 2, pointRadius: 0, tension: 0 }
+      ]},
+      options: { 
+        maintainAspectRatio: false, 
+        plugins: { legend: { position: 'bottom' } }, 
+        scales: { x: { title:{display:true, text:'Decurso do Tempo (Meses)'}, grid: {display:false} }, y: { grid: gridOptions } } 
+      }
+    });
+    updateMod1();
+  }
+
+  function updateMod1() {
+    if(!CH.c1) return;
+    const cupom = v('inp1_cupom'), dias = v('inp1_dias');
+    $('lbl1_cupom').innerText = fmt(cupom);
+    $('lbl1_dias').innerText = dias + ' dias';
+    
+    // Simplificando o semestre para 126 dias úteis.
+    const acruado = cupom * (dias / 126);
+    $('out1_sujo').innerText = fmt(100 + acruado);
+
+    const labels = [], limpo = [], sujo = [];
+    // Simular 3 semestres completos
+    for(let t=0; t<=126*3; t+=14) { 
+      const fracaoSemestre = t / 126;
+      const fracaoAtual = fracaoSemestre - Math.floor(fracaoSemestre);
+      labels.push(fmt(fracaoSemestre, 1));
+      limpo.push(100);
+      
+      // Queda do ralo
+      if (fracaoAtual === 0 && t > 0) {
+        sujo.push(100); 
+      } else {
+        sujo.push(100 + cupom * fracaoAtual);
+      }
+    }
+    CH.c1.data.labels = labels;
+    CH.c1.data.datasets[0].data = limpo;
+    CH.c1.data.datasets[1].data = sujo;
+    CH.c1.update();
+  }
+
+  // --- MÓDULO 2 ---
+  function updateMod2() {
+    const cupom = v('inp2_cupom');
+    const ytm = v('inp2_ytm');
+    const prazo = parseInt(v('inp2_prazo'));
+    
+    $('lbl2_cupom').innerText = fmt(cupom) + '%';
+    $('lbl2_ytm').innerText = fmt(ytm) + '%';
+    $('lbl2_prazo').innerText = prazo + (prazo===1 ? ' Ano' : ' Anos');
+    
+    const pu = calcVP(cupom, ytm, prazo);
+    $('out2_pu').innerText = fmt(pu);
+    
+    const box = $('out2_pu').parentElement;
+    const desc = $('out2_desc');
+    
+    if (Math.abs(ytm - cupom) < 0.05) {
+      box.style.borderColor = C_INK;
+      desc.innerHTML = `<strong>No Par</strong>. Fluxos = Taxa Exigida.`;
+    } else if (ytm < cupom) {
+      box.style.borderColor = C_TEA;
+      desc.innerHTML = `<strong>Ágio</strong>. Cupão elevado gera prémio de compra.`;
+    } else {
+      box.style.borderColor = C_AMB;
+      desc.innerHTML = `<strong>Deságio</strong>. Cupão fraco obriga a dar desconto no preço hoje.`;
+    }
+
+    const tbody = $('tbody2');
+    tbody.innerHTML = '';
+    let soma = 0;
+    
+    for(let i=1; i<=prazo; i++) {
+      let principal = (i === prazo) ? 100 : 0;
+      let fluxo = cupom + principal;
+      let fator = 1 / Math.pow(1 + ytm/100, i);
+      let vp = fluxo * fator;
+      soma += vp;
+      
+      tbody.innerHTML += `
+        <tr>
+          <td>Ano ${i}</td>
+          <td>R$ ${fmt(cupom)} ${principal ? '+ R$ 100 (Capital)' : ''}</td>
+          <td style="font-family: var(--mono);">${fator.toFixed(5)}</td>
+          <td class="num ${i===prazo ? 'text-primary' : ''}">R$ ${fmt(vp)}</td>
+        </tr>
+      `;
+    }
+    
+    tbody.innerHTML += `
+      <tr class="total">
+        <td colspan="3" style="text-align:right;">Preço Exato Unitário =</td>
+        <td class="num" style="font-size:1.1rem; color:var(--primary);">R$ ${fmt(soma)}</td>
+      </tr>
+    `;
+  }
+
+  // --- MÓDULO 3 ---
+  function initMod3() {
+    CH.c3 = new Chart($('chartMod3'), {
+      type: 'bar',
+      data: { labels: ['Custo Hoje (Pagamento)', 'Total Recebido nos Cupons', 'Resgate Final', 'Retorno Final Efetivo'], datasets: [
+        { label: 'Ágio (C:12% / YTM 8%)', data: [-115.97, 60, 100, 44.03], backgroundColor: C_PRI, borderRadius: 4 },
+        { label: 'Deságio (C:2% / YTM 8%)', data: [-76.04, 10, 100, 33.96], backgroundColor: C_AMB, borderRadius: 4 }
+      ]},
+      options: { 
+        maintainAspectRatio: false, 
+        plugins: { legend: { position: 'bottom' } }, 
+        scales: { y: { grid: gridOptions } } 
+      }
+    });
+  }
+
+  // --- MÓDULO 4 ---
+  function initMod4() {
+    CH.c4 = new Chart($('chartMod4'), {
+      type: 'bar',
+      data: { labels: ['Ágio (Cupão 10%)', 'Par (Cupão 6%)', 'Deságio (Cupão 2%)'], datasets: [
+        { label: 'Variação de Capital (%)', data: [0,0,0], backgroundColor: C_PRI, borderRadius: 6 }
+      ]},
+      options: { 
+        maintainAspectRatio: false, 
+        plugins: { legend: { display: false } }, 
+        scales: { y: { grid: gridOptions, ticks: {callback: v => v+'%'} } } 
+      }
+    });
+    updateMod4();
+  }
+
+  function updateMod4() {
+    if(!CH.c4) return;
+    const chq = v('inp4_choque');
+    const lbl = $('lbl4_choque');
+    const ytmIni = 6.0;
+    const ytmNovo = ytmIni + chq;
+    const prazo = 10;
+    
+    if (chq === 0) { lbl.innerText = "Taxas Estáveis (YTM 6%)"; lbl.style.color = C_INK; }
+    else if (chq > 0) { lbl.innerText = `SUBIDA (YTM ${ytmNovo}%)`; lbl.style.color = C_ROS; }
+    else { lbl.innerText = `DESCIDA (YTM ${ytmNovo}%)`; lbl.style.color = C_TEA; }
+
+    $('tbl4_ytm_novo').innerText = `(YTM ${ytmNovo}%)`;
+
+    // Perfis fixos para o stress test de 10 anos
+    const perfis = [
+      { nome: "Ágio 10%", cupom: 10 },
+      { nome: "Par 6%", cupom: 6 },
+      { nome: "Deságio 2%", cupom: 2 }
+    ];
+
+    const tbody = $('tbody4');
+    tbody.innerHTML = '';
+    const chartData = [];
+    const bgColors = [];
+
+    perfis.forEach(p => {
+      const puOld = calcVP(p.cupom, ytmIni, prazo);
+      const puNew = calcVP(p.cupom, ytmNovo, prazo);
+      const varPct = ((puNew / puOld) - 1) * 100;
+      
+      chartData.push(varPct);
+      bgColors.push(varPct >= 0 ? C_TEA : C_ROS);
+
+      const colorClass = varPct > 0 ? "text-teal" : (varPct < 0 ? "text-rose" : "");
+      const sinal = varPct > 0 ? "+" : "";
+
+      tbody.innerHTML += `
+        <tr>
+          <td><strong>${p.nome}</strong></td>
+          <td class="num">${fmt(puOld)}</td>
+          <td class="num">${fmt(puNew)}</td>
+          <td class="num ${colorClass}"><strong>${sinal}${fmt(varPct)}%</strong></td>
+        </tr>
+      `;
+    });
+
+    CH.c4.data.datasets[0].data = chartData;
+    CH.c4.data.datasets[0].backgroundColor = bgColors;
+    CH.c4.update();
+
+    const box = $('box4_insight');
+    const txt = $('txt4_insight');
+    if (chq > 0) {
+      box.style.borderLeftColor = C_ROS; box.style.background = 'var(--rose-bg)';
+      txt.innerHTML = `<strong>Derrocada de Preços:</strong> Juros a subir causam perdas na marcação. Repare que o Deságio perde uns absurdos <strong>${fmt(Math.abs(chartData[2]))}%</strong>. Ele é o mais tóxico numa subida porque o seu capital está retido no vencimento (alta duration).`;
+    } else if (chq < 0) {
+      box.style.borderLeftColor = C_TEA; box.style.background = 'var(--teal-bg)';
+      txt.innerHTML = `<strong>Oportunidade Brilhante:</strong> Com juros a cair, os preços explodem. O Deságio é a arma secreta: sobe vertiginosamente <strong>${fmt(chartData[2])}%</strong>. Os fundos alavancam com ativos desagiados quando preveem quedas da Selic.`;
+    } else {
+      box.style.borderLeftColor = C_INK; box.style.background = 'var(--surface)';
+      txt.innerHTML = "Situação base. Os PUs refletem exatamente a taxa de emissão = taxa de mercado.";
+    }
+  }
+
+  // --- MÓDULO 5 ---
+  function initMod5() {
+    const lbls = [], dAgio = [], dPar = [], dDes = [];
+    for(let t=15; t>=0; t--) {
+      lbls.push(t);
+      dAgio.push(t===0 ? 100 : calcVP(12, 6, t));
+      dPar.push(t===0 ? 100 : calcVP(6, 6, t));
+      dDes.push(t===0 ? 100 : calcVP(1, 6, t));
+    }
+
+    CH.c5 = new Chart($('chartMod5'), {
+      type: 'line',
+      data: { labels: lbls, datasets: [
+        { label: 'Ágio (C: 12%) - Amortiza Rumo a 100', data: dAgio, borderColor: C_PRI, tension: 0.2, pointRadius:0, borderWidth:3 },
+        { label: 'Deságio (C: 1%) - Sobe Rumo a 100', data: dDes, borderColor: C_AMB, tension: 0.2, pointRadius:0, borderWidth:3 },
+        { label: 'Linha Nominal (Valor 100)', data: dPar, borderColor: C_INK, borderDash:[5,5], tension: 0, pointRadius:0, borderWidth:1 }
+      ]},
+      options: { 
+        maintainAspectRatio: false, 
+        plugins: { legend: {position: 'bottom'} },
+        scales: { x: { reverse: true }, y: { grid: gridOptions } } 
+      }
+    });
+  }
+
+  // --- MÓDULO 6 ---
+  function updateMod6(cenario) {
+    $('btn6_cai').classList.remove('active'); $('btn6_man').classList.remove('active'); $('btn6_sub').classList.remove('active');
+    $('btn6_'+cenario).classList.add('active');
+
+    const mCA = $('mx_compra_agio'), mCD = $('mx_compra_des');
+    const mTA = $('mx_tenho_agio'), mTD = $('mx_tenho_des');
+    [mCA, mCD, mTA, mTD].forEach(e => { e.classList.remove('win', 'lose', 'neutral'); });
+
+    const iconWin = `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--teal)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>`;
+    const iconLose = `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--rose)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>`;
+    const iconNeu = `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--amber)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="8" y1="12" x2="16" y2="12"></line></svg>`;
+
+    if (cenario === 'cai') {
+      mCA.classList.add('neutral');
+      mCA.innerHTML = `<h4>${iconNeu} Aceitável, Mas...</h4><p>Tem pouca duration, por isso o preço não vai subir muito com a queda dos juros.</p>`;
+      mCD.classList.add('win');
+      mCD.innerHTML = `<h4>${iconWin} COMPRA TÁTICA (ALL IN)</h4><p>A alavanca da Duration. O mercado vai comprar desesperadamente papéis longos desagiados. O preço na tela vai voar.</p>`;
+      mTA.classList.add('lose');
+      mTA.innerHTML = `<h4>${iconLose} Problema de Reinvestimento</h4><p>Recebe cupões enormes, mas o juro desceu! Vai ter de os reinvestir em produtos a render uma miséria.</p>`;
+      mTD.classList.add('win');
+      mTD.innerHTML = `<h4>${iconWin} VENDER E EMBOLSAR</h4><p>Bingo! A marcação a mercado deu-lhe anos de rentabilidade num único dia. Venda e ponha o ganho de capital no bolso.</p>`;
+    } 
+    else if (cenario === 'sub') {
+      mCA.classList.add('win');
+      mCA.innerHTML = `<h4>${iconWin} COMPRA DEFENSIVA</h4><p>Defende bem o portefólio porque sofre pouco com a subida. E traz imenso caixa rápido para reaplicar nas novas taxas altas.</p>`;
+      mCD.classList.add('lose');
+      mCD.innerHTML = `<h4>${iconLose} FUJA DISTO</h4><p>Duration elevadíssima. É um suicídio tático: o PU vai ser trucidado na marcação a mercado.</p>`;
+      mTA.classList.add('win');
+      mTA.innerHTML = `<h4>${iconWin} MANTER (Cash Cow)</h4><p>Sente-se, receba os cupões imensos e reinvista-os à taxa altíssima do novo cenário macroeconómico.</p>`;
+      mTD.classList.add('lose');
+      mTD.innerHTML = `<h4>${iconLose} NÃO VENDA EM PÂNICO</h4><p>A sua tela está a sangrar sangue vermelho vivo. Mas não faça nada. Segure e deixe o Pull-to-Par devolver o preço aos 100 gradualmente.</p>`;
+    }
+    else {
+      mCA.classList.add('neutral');
+      mCA.innerHTML = `<h4>${iconNeu} Excelente p/ Renda</h4><p>Garante um fluxo constante (Cash Flow) para quem vive de rentabilidade passiva.</p>`;
+      mCD.classList.add('neutral');
+      mCD.innerHTML = `<h4>${iconNeu} Bom p/ Previdência</h4><p>Bom se não precisa do dinheiro agora. Funciona como um Zero-Cupão sintético para alvos futuros.</p>`;
+      mTA.classList.add('neutral');
+      mTA.innerHTML = `<h4>${iconNeu} Buy & Hold</h4><p>A máquina funciona como um relógio. Vá reinvestindo as sobras.</p>`;
+      mTD.classList.add('neutral');
+      mTD.innerHTML = `<h4>${iconNeu} Deixar Maturar</h4><p>Observe passivamente a linha a valorizar até aos 100.</p>`;
+    }
+  }
+
+  window.onload = () => {
+    initMod1();
+    updateMod2(); 
   };
-  function setCen(c){cen=c;['cMan','cUp','cDn'].forEach((id,i)=>$(id).classList.toggle('active',['mantem','sobem','caem'][i]===c));render3();}
-  function setEstr(e){estr=e;$('eHold').classList.toggle('active',e==='hold');$('eSell').classList.toggle('active',e==='sell');render3();}
-  function holdRet(b,r){let fv=0;for(let t=1;t<=4;t++)fv+=b.c*Math.pow(1+r,4-t);fv+=100;return Math.pow(fv/b.p,1/4)-1;}
-  function sell1(b,y){let p1=0;for(let t=1;t<=3;t++)p1+=b.c/Math.pow(1+y,t);p1+=100/Math.pow(1+y,3);return (b.c+p1)/b.p-1;}
-  function render3(){const r=RATE[cen],vals=B3.map(b=>estr==='hold'?holdRet(b,r):sell1(b,r));
-    const ids={par:['valPar','subPar'],agio:['valAgio','subAgio'],des:['valDes','subDes']};
-    B3.forEach((b,i)=>{const x=vals[i]*100,[vi,si]=ids[b.k];if(estr==='hold'){setv(vi,'IPCA + '+n2(x)+'%');setv(si,'real a.a. · 4 anos');}else{setv(vi,(x>=0?'+':'')+x.toFixed(1).replace('.',',')+'%');setv(si,'retorno real no 1º ano');}});
-    setv('simTag',estr==='hold'?'Retorno real anualizado (4 anos)':'Retorno real no 1º ano');setv('simWhy',NAR[cen+'_'+estr]);
-    if(CH.c3sim){CH.c3sim.data.datasets[0].data=vals.map(x=>+(x*100).toFixed(3));CH.c3sim.options.scales.y.title.text=estr==='hold'?'retorno real a.a.':'retorno no 1º ano';CH.c3sim.update();}}
-
-  /* 4 */
-  function init4(){CH.c4=new Chart($('c4'),{type:'line',data:{labels:[],datasets:[
-    {label:'Cupom 10%',data:[],borderColor:ACC.coral,pointRadius:0,tension:.2},
-    {label:'Cupom 5%',data:[],borderColor:ACC.mint,pointRadius:0,tension:.2},
-    {label:'Cupom 3%',data:[],borderColor:ACC.sky,pointRadius:0,tension:.2},
-    {label:'Zero-coupon',data:[],borderColor:ACC.lilac,borderDash:[5,4],pointRadius:0,tension:.2}]},options:gopts('preço (% face)','anos até o vencimento',true)});r4();}
-  function r4(){const y=v('i4y');setv('l4y',pct(y,1));const labs=[],a=[],b=[],c=[],z=[];for(let tau=30;tau>=0;tau--){labs.push(tau);a.push(+priceP(10,y,tau,1).toFixed(2));b.push(+priceP(5,y,tau,1).toFixed(2));c.push(+priceP(3,y,tau,1).toFixed(2));z.push(+(100/Math.pow(1+y/100,tau)).toFixed(2));}CH.c4.data.labels=labs;[a,b,c,z].forEach((d,i)=>CH.c4.data.datasets[i].data=d);CH.c4.update();setv('o4a',n2(priceP(10,y,30,1)));setv('o4b',n2(priceP(5,y,30,1)));setv('o4c',n2(priceP(3,y,30,1)));setv('o4z',n2(100/Math.pow(1+y/100,30)));}
-
-  /* 5 */
-  function init5(){CH.c5=new Chart($('c5'),{type:'line',data:{labels:[],datasets:[
-    {label:'Preço sujo',data:[],borderColor:ACC.rose,pointRadius:0,tension:0},
-    {label:'Preço limpo',data:[],borderColor:ACC.mint,borderDash:[5,4],pointRadius:0}]},options:gopts('preço por 100','tempo (períodos)',true)});r5();}
-  function r5(){const c=v('i5c'),d=v('i5d');setv('l5c',n2(c));setv('l5d',d);const acc=c*(d/360);setv('o5acc',n2(acc));setv('o5cl',n2(100));setv('o5dt',n2(100+acc));
-    const labs=[],sujo=[],limpo=[];for(let t=0;t<=108;t++){const frac=(t%36)/36;labs.push((t/36).toFixed(1));sujo.push(+(100+c*frac).toFixed(2));limpo.push(100);}CH.c5.data.labels=labs;CH.c5.data.datasets[0].data=sujo;CH.c5.data.datasets[1].data=limpo;CH.c5.update();}
-
-  /* 6 */
-  function init6(){CH.c6=new Chart($('c6'),{type:'bar',data:{labels:['Aproximação (duration)','Reapreçamento exato'],datasets:[{data:[],backgroundColor:[ACC.lilac,ACC.slate],borderRadius:5}]},options:gopts('Δ preço (%)','')});r6();}
-  function r6(){const c=v('i6c'),y=v('i6y'),N=v('i6n'),dy=v('i6d');setv('l6c',pct(c,1));setv('l6y',pct(y,1));setv('l6n',N);setv('l6d',(dy>=0?'+':'')+pct(dy,1));
-    const mac=macD(c,y,N,1),mod=mac/(1+y/100);setv('o6m',mac.toFixed(2).replace('.',',')+' anos');setv('o6mod',mod.toFixed(2).replace('.',',')+' anos');
-    const approx=-mod*dy,p0=priceP(c,y,N,1),p1=priceP(c,y+dy,N,1),exact=(p1/p0-1)*100;CH.c6.data.datasets[0].data=[+approx.toFixed(2),+exact.toFixed(2)];CH.c6.update();}
-
-  /* 7 */
-  const Z=[96.62,92.45,87.63];
-  function init7(){CH.c7=new Chart($('c7'),{type:'bar',data:{labels:['Zero 1a','Zero 2a','Zero 3a'],datasets:[{label:'Custo de cada zero',data:[],backgroundColor:ACC.teal,borderRadius:4}]},options:gopts('custo por 100','')});r7();}
-  function r7(){const c=v('i7c');setv('l7c',n2(c));const faces=[c,c,c+100],costs=faces.map((f,i)=>f*Z[i]/100);let tot=0,rows='';['1 ano','2 anos','3 anos'].forEach((lab,i)=>{tot+=costs[i];rows+=`<tr><td>${lab}</td><td class="num">${n2(faces[i])}</td><td class="num">${n2(costs[i])}</td></tr>`;});$('o7rows').innerHTML=rows;setv('o7tot',n2(tot));CH.c7.data.datasets[0].data=costs.map(x=>+x.toFixed(2));CH.c7.update();}
-
-  /* 8 */
-  function init8(){CH.c8=new Chart($('c8'),{type:'line',data:{labels:[],datasets:[
-    {label:'YTM prometido',data:[],borderColor:ACC.green,pointRadius:0,tension:.2},
-    {label:'Retorno esperado',data:[],borderColor:ACC.coral,borderDash:[5,4],pointRadius:0,tension:.2}]},options:gopts('% a.a.','probabilidade de default (%)',true)});r8();}
-  function r8(){const rf=v('i8r'),pd=v('i8p')/100,rec=v('i8rec')/100;setv('l8r',pct(rf,1));setv('l8p',Math.round(pd*100)+'%');setv('l8rec',Math.round(rec*100)+'%');
-    const expCF=(1-pd)*100+pd*rec*100,price=expCF/(1+rf/100);setv('o8price',n2(price));setv('o8ytm',pct((100/price-1)*100));setv('o8exp',pct((expCF/price-1)*100));
-    const labs=[],yp=[],ep=[];for(let q=0;q<=100;q+=5){const p=q/100,e=(1-p)*100+p*rec*100,pr=e/(1+rf/100);labs.push(q);yp.push(+((100/pr-1)*100).toFixed(2));ep.push(+((e/pr-1)*100).toFixed(2));}CH.c8.data.labels=labs;CH.c8.data.datasets[0].data=yp;CH.c8.data.datasets[1].data=ep;CH.c8.update();}
-
-  /* 9 */
-  const MAT=[1,2,3,5,7,10,15,20,30],TRE=[0.15,0.35,0.6,1.1,1.5,1.85,2.3,2.6,2.75],AAAc=[0.45,0.7,1.0,1.7,2.2,2.65,3.3,3.9,4.0],BBBc=[0.95,1.3,1.7,2.6,3.2,3.7,4.2,4.35,4.4];
-  function near(arr,n){let bi=0,bd=1e9;MAT.forEach((m,i)=>{const d=Math.abs(m-n);if(d<bd){bd=d;bi=i;}});return arr[bi];}
-  function init9(){CH.c9=new Chart($('c9'),{type:'line',data:{labels:MAT,datasets:[
-    {label:'Treasury',data:TRE,borderColor:ACC.amber,pointRadius:2,tension:.3},
-    {label:'AAA',data:AAAc,borderColor:ACC.sky,pointRadius:2,tension:.3},
-    {label:'BBB',data:BBBc,borderColor:ACC.plum,pointRadius:2,tension:.3}]},options:gopts('YTM (%)','prazo (anos)',true)});r9();}
-  function r9(){const n=v('i9n');setv('l9n',n);const t=near(TRE,n),a=near(AAAc,n),b=near(BBBc,n);setv('o9t',pct(t));setv('o9a',pct(a)+'  ·  +'+pct(a-t));setv('o9b',pct(b)+'  ·  +'+pct(b-t));}
-
-  /* A carteira real */
-  const TIT=[
-    {cod:'EGIE27',tx:5.9033,dur:0.94,pu:1558.95},
-    {cod:'PETR26',tx:4.2186,dur:2.5,pu:1393.44},
-    {cod:'ENEV15',tx:5.50,dur:2.8,pu:1365.73},
-    {cod:'ELET14',tx:6.317,dur:3.8,pu:1086.10},
-    {cod:'CTGE15',tx:6.3423,dur:4.2,pu:1037.60},
-    {cod:'TRPLA4',tx:6.2607,dur:5.6,pu:1036.93},
-    {cod:'VALEC0',tx:6.4203,dur:9.0,pu:1067.10}
-  ];
-  function initA(){
-    const s=[...TIT].sort((a,b)=>b.tx-a.tx);
-    CH.cmp=new Chart($('cCmp'),{type:'bar',data:{labels:s.map(t=>t.cod),datasets:[{data:s.map(t=>+t.tx.toFixed(2)),backgroundColor:ACC.coral,borderRadius:5}]},options:Object.assign(gopts('IPCA + (% a.a.)',''),{indexAxis:'y'})});
-    CH.sc=new Chart($('cSc'),{type:'bar',data:{labels:[],datasets:[{data:[],backgroundColor:[],borderRadius:5}]},options:gopts('Δ no PU (%)','')});
-    renderSc();
-  }
-  function renderSc(){
-    const dy=v('iAdy');setv('lAdy',(dy>=0?'+':'')+dy.toFixed(1).replace('.',',')+' p.p.');
-    const ord=[...TIT].sort((a,b)=>a.dur-b.dur),chg=ord.map(t=>-t.dur*dy);
-    CH.sc.data.labels=ord.map(t=>t.cod);CH.sc.data.datasets[0].data=chg.map(x=>+x.toFixed(2));
-    CH.sc.data.datasets[0].backgroundColor=chg.map(x=>x>=0?ACC.mint:ACC.coral);CH.sc.update();
-    let rows='';ord.forEach((t,i)=>{const np=t.pu*(1+chg[i]/100);rows+=`<tr><td><strong>${t.cod}</strong></td><td class="num">${t.dur.toFixed(2).replace('.',',')}</td><td class="num">${n2(t.pu)}</td><td class="num ${chg[i]>=0?'pos':'neg'}">${(chg[i]>=0?'+':'')+n2(chg[i])}%</td><td class="num">${n2(np)}</td></tr>`;});
-    $('scRows').innerHTML=rows;
-  }
-  function recommend(h){
-    const map={curto:[0,3],medio:[3,5],longo:[5,99]},lo=map[h][0],hi=map[h][1];
-    document.querySelectorAll('#titTable tbody tr').forEach(tr=>{const d=parseFloat(tr.dataset.d),m=d>lo&&d<=hi;tr.classList.toggle('hl',m);tr.classList.toggle('dim',!m);});
-    ['recA','recB','recC'].forEach((id,i)=>$(id).classList.toggle('active',['curto','medio','longo'][i]===h));
-    setv('recWhy',{curto:'Duration curta (até ~3 anos): menos oscilação de marcação e dinheiro de volta mais rápido. Maior taxa do grupo: EGIE27 (IPCA + 5,90%).',medio:'Duration intermediária (~4 a 5 anos): bom equilíbrio entre taxa e prazo. Maior taxa do grupo: CTGE15 (IPCA + 6,34%).',longo:'Duration longa (5+ anos): trava a maior taxa real da lista, com mais volatilidade e prazo. Topo: VALEC0 (IPCA + 6,42%), mas são 9 anos.'}[h]);
-  }
-
-  /* B passo a passo (EGIE27) */
-  function initB(){CH.eg=new Chart($('cEg'),{type:'bar',data:{labels:['jul/2026','jul/2027','jul/2028'],datasets:[
-    {label:'Juros',data:[89.07,58.90,19.80],backgroundColor:ACC.mint,borderRadius:3,stack:'s'},
-    {label:'Amortização / principal',data:[502.87,670.53,335.36],backgroundColor:ACC.coral,borderRadius:3,stack:'s'}]},
-    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:true,labels:{color:TXT,boxWidth:12,font:{family:"'IBM Plex Sans'",size:11}}}},
-      scales:{x:{stacked:true,grid:{color:GRID},ticks:{color:TXT,font:{family:"'IBM Plex Mono'",size:10}}},y:{stacked:true,grid:{color:GRID},ticks:{color:TXT,font:{family:"'IBM Plex Mono'",size:10}},title:{display:true,text:'R$ por título (face 1.000)',color:TXT,font:{size:11}}}}}});}
-
-  initA();
 </script>
 </body>
 </html>
