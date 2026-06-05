@@ -168,6 +168,12 @@
   <button class="tabbtn" onclick="show('p7',this)"><span class="pip" style="background:var(--teal)"></span>Replicação</button>
   <button class="tabbtn" onclick="show('p8',this)"><span class="pip" style="background:var(--green)"></span>YTM × default</button>
   <button class="tabbtn" onclick="show('p9',this)"><span class="pip" style="background:var(--plum)"></span>Spread por rating</button>
+  <button class="tabbtn" onclick="show('pC',this)"><span class="pip" style="background:var(--amber)"></span>Convenções BR</button>
+  <button class="tabbtn" onclick="show('pI',this)"><span class="pip" style="background:var(--green)"></span>Nominal × real</button>
+  <button class="tabbtn" onclick="show('pF',this)"><span class="pip" style="background:var(--sky)"></span>Taxas a termo</button>
+  <button class="tabbtn" onclick="show('pV',this)"><span class="pip" style="background:var(--lilac)"></span>Convexidade</button>
+  <button class="tabbtn" onclick="show('pM',this)"><span class="pip" style="background:var(--teal)"></span>Política monetária</button>
+  <button class="tabbtn" onclick="show('pU',this)"><span class="pip" style="background:var(--coral)"></span>Universo da RF</button>
 </div></div>
 
 <main class="wrap">
@@ -678,6 +684,139 @@
   <div class="note"><span class="t">Mexa e observe</span><p>Mude o prazo e leia o spread de cada rating sobre o Treasury. Ele aumenta para prazos longos e para notas piores — o desenho clássico das curvas por rating.</p></div>
 </section>
 
+<!-- C CONVENCOES BR -->
+<section id="pC" class="panel t-amber">
+  <div class="ptag">Fundamentos · convenções brasileiras</div>
+  <h2>Como o Brasil conta os juros</h2>
+  <div class="prose">
+    <p>Um detalhe que muda tudo: no Brasil, a renda fixa usa <strong>juros compostos</strong> e contagem em <strong>dias úteis</strong>, na base <strong>252</strong>. A taxa anual é convertida para "ao dia útil" por <span class="num">(1+i)^(1/252) − 1</span>, e o preço de um prefixado é o valor de face descontado por esse fator:</p>
+    <div class="formula">PU = 1.000 ÷ (1 + i)^(dias úteis / 252)</div>
+    <p>Isso difere do padrão "30/360" de muitos livros estrangeiros — por isso o mesmo título pode ter preços ligeiramente diferentes conforme a convenção. E há a armadilha da <strong>equivalência</strong>: como tudo é composto, 1% ao mês <em>não</em> é 12% ao ano, e sim <span class="num">(1,01)¹² − 1 = 12,68%</span>. Sempre componha para comparar prazos.</p>
+  </div>
+  <div class="lab">
+    <div class="pad">
+      <div class="ctrl"><label>Taxa (% a.a.) <b id="lCt">12,00%</b></label><input type="range" id="iCt" min="2" max="20" step="0.1" value="12" oninput="rC()"></div>
+      <div class="ctrl"><label>Dias úteis até o vencimento <b id="lCdu">504 du</b></label><input type="range" id="iCdu" min="21" max="1260" step="21" value="504" oninput="rC()"></div>
+      <div class="stat"><span>Taxa ao dia útil</span><b id="oCdr">—</b></div>
+      <div class="stat"><span>Fator de desconto</span><b id="oCf">—</b></div>
+      <div class="stat"><span>Preço (face 1.000)</span><b class="big" id="oCpu">—</b></div>
+    </div>
+    <div class="chart-box"><canvas id="cBR"></canvas></div>
+  </div>
+  <div class="note"><span class="t">Mexa e observe</span><p>504 dias úteis ≈ 2 anos. Note como o preço cai à medida que o prazo (em dias úteis) aumenta — é o desconto composto trabalhando, na base 252.</p></div>
+</section>
+
+<!-- I NOMINAL x REAL -->
+<section id="pI" class="panel t-green">
+  <div class="ptag">Indexadores · Fisher e break-even</div>
+  <h2>Nominal, real e a inflação implícita</h2>
+  <div class="prose">
+    <p>A <strong>equação de Fisher</strong> liga as três taxas: <span class="num">(1 + nominal) = (1 + real) × (1 + inflação)</span>. Uma taxa nominal (prefixada) embute uma taxa real mais a inflação esperada para o período.</p>
+    <p>Comparando um <strong>prefixado</strong> com um <strong>IPCA+</strong> de mesmo prazo, a inflação que iguala os dois é a <strong>inflação implícita</strong> (break-even) — a inflação que o mercado está precificando:</p>
+    <div class="formula">inflação implícita = (1 + taxa prefixada) ÷ (1 + taxa real) − 1</div>
+    <p>É a régua da decisão: se você acredita que a inflação virá <strong>acima</strong> da implícita, o IPCA+ rende mais; se vier <strong>abaixo</strong>, o prefixado ganha; bem na implícita, empatam. Mova a inflação realizada e veja as duas curvas se cruzarem exatamente no break-even.</p>
+  </div>
+  <div class="lab">
+    <div class="pad">
+      <div class="ctrl"><label>Taxa prefixada (% a.a.) <b id="lIn">12,0%</b></label><input type="range" id="iIn" min="5" max="18" step="0.1" value="12" oninput="rI()"></div>
+      <div class="ctrl"><label>Taxa real IPCA+ (% a.a.) <b id="lIr">6,0%</b></label><input type="range" id="iIr" min="2" max="10" step="0.1" value="6" oninput="rI()"></div>
+      <div class="ctrl"><label>Inflação realizada (% a.a.) <b id="lIinf">5,5%</b></label><input type="range" id="iIinf" min="0" max="12" step="0.1" value="5.5" oninput="rI()"></div>
+      <div class="stat"><span>Inflação implícita</span><b class="big" id="oIimp">—</b></div>
+      <div class="stat"><span>IPCA+ rende (nominal)</span><b id="oIipca">—</b></div>
+      <div class="stat"><span>Quem ganha</span><b id="oIwin" style="font-family:var(--sans);font-size:.92rem">—</b></div>
+    </div>
+    <div class="chart-box"><canvas id="cFi"></canvas></div>
+  </div>
+  <div class="note"><span class="t">Aplicação direta</span><p>É exatamente essa conta que decide entre um prefixado e um IPCA+ — e entre uma LCA prefixada e uma debênture IPCA+. A inflação implícita é o "preço" embutido; sua visão sobre a inflação futura define o lado.</p></div>
+</section>
+
+<!-- F TAXAS A TERMO -->
+<section id="pF" class="panel t-sky">
+  <div class="ptag">Curva · taxas a termo</div>
+  <h2>O que a curva diz sobre o futuro</h2>
+  <div class="prose">
+    <p>A curva à vista (spot) não é só uma foto do presente: ela embute as <strong>taxas futuras</strong> implícitas — as taxas a termo (forward). Por <strong>não-arbitragem</strong>, aplicar 2 anos à taxa de 2 anos tem de render o mesmo que aplicar 1 ano e reinvestir o segundo ano à taxa forward de hoje. Daí:</p>
+    <div class="formula">(1 + forward) = (1 + r₍ₜ₊₁₎)^(t+1) ÷ (1 + rₜ)^t</div>
+    <p>O forward é a taxa que o mercado consegue "travar" hoje para um período no futuro. Ele reflete a expectativa de juros à frente (mais um prêmio de prazo). Ajuste as taxas à vista e veja a curva forward que elas implicam.</p>
+  </div>
+  <div class="lab">
+    <div class="pad">
+      <div class="ctrl"><label>Spot 1 ano <b id="lF1">3,50%</b></label><input type="range" id="iF1" min="2" max="14" step="0.05" value="3.5" oninput="rF()"></div>
+      <div class="ctrl"><label>Spot 2 anos <b id="lF2">4,00%</b></label><input type="range" id="iF2" min="2" max="14" step="0.05" value="4" oninput="rF()"></div>
+      <div class="ctrl"><label>Spot 3 anos <b id="lF3">4,50%</b></label><input type="range" id="iF3" min="2" max="14" step="0.05" value="4.5" oninput="rF()"></div>
+      <div class="ctrl"><label>Spot 4 anos <b id="lF4">4,75%</b></label><input type="range" id="iF4" min="2" max="14" step="0.05" value="4.75" oninput="rF()"></div>
+      <div class="stat"><span>Forward ano 1→2</span><b id="oF12">—</b></div>
+      <div class="stat"><span>Forward ano 2→3</span><b id="oF23">—</b></div>
+      <div class="stat"><span>Forward ano 3→4</span><b id="oF34">—</b></div>
+    </div>
+    <div class="chart-box"><canvas id="cFw"></canvas></div>
+  </div>
+  <div class="note"><span class="t">Mexa e observe</span><p>Curva à vista subindo gera forwards ainda mais altos — o mercado embute juros futuros maiores. Se a curva inverte (cai), os forwards ficam abaixo das spots: sinal de queda de juros à frente.</p></div>
+</section>
+
+<!-- V CONVEXIDADE -->
+<section id="pV" class="panel t-lilac">
+  <div class="ptag">Risco · convexidade</div>
+  <h2>Convexidade: o que a duration não vê</h2>
+  <div class="prose">
+    <p>A relação entre preço e yield <strong>não é uma reta</strong> — é uma curva. A duration é a reta <strong>tangente</strong> a essa curva: aproxima muito bem para choques pequenos, mas em choques grandes ela erra. A <strong>convexidade</strong> mede essa curvatura, e a estimativa completa do preço é:</p>
+    <div class="formula">ΔP/P ≈ − ModD × Δy + ½ × Convexidade × Δy²</div>
+    <p>A boa notícia é que a curvatura joga <strong>a favor</strong> do investidor: o preço real cai <em>menos</em> e sobe <em>mais</em> do que a reta da duration prevê. Por isso, entre dois títulos de mesma duration, o de <strong>maior convexidade</strong> é preferível — protege mais nas altas de juros e ganha mais nas quedas. Veja a curva real se descolar da reta nos extremos.</p>
+  </div>
+  <div class="lab">
+    <div class="pad">
+      <div class="ctrl"><label>Cupom (% a.a.) <b id="lVc">6,0%</b></label><input type="range" id="iVc" min="0" max="15" step="0.5" value="6" oninput="rV()"></div>
+      <div class="ctrl"><label>YTM base (% a.a.) <b id="lVy">6,0%</b></label><input type="range" id="iVy" min="2" max="12" step="0.5" value="6" oninput="rV()"></div>
+      <div class="ctrl"><label>Prazo (anos) <b id="lVn">15</b></label><input type="range" id="iVn" min="2" max="30" step="1" value="15" oninput="rV()"></div>
+      <div class="stat"><span>Preço no YTM base</span><b id="oVp">—</b></div>
+      <div class="stat"><span>Duration modificada</span><b id="oVd">—</b></div>
+    </div>
+    <div class="chart-box"><canvas id="cCx"></canvas></div>
+  </div>
+  <div class="note"><span class="t">Mexa e observe</span><p>Aumente o prazo: a curva real fica mais "barriguda" e se afasta mais da reta — mais convexidade. Nos extremos do gráfico, a reta sempre fica abaixo da curva: esse "extra" é o benefício da convexidade.</p></div>
+</section>
+
+<!-- M POLITICA MONETARIA -->
+<section id="pM" class="panel t-teal">
+  <div class="ptag">Macro · política monetária</div>
+  <h2>Como a Selic é definida e transmitida</h2>
+  <div class="prose">
+    <p>Tudo na renda fixa começa na <strong>Selic</strong>. A cada ~45 dias, o <strong>Copom</strong> (comitê do Banco Central) define a <strong>meta</strong> da Selic, mirando a meta de inflação. Essa decisão é a âncora de toda a curva de juros.</p>
+    <p>Para levar a Selic <strong>efetiva</strong> (a "over", do mercado interbancário overnight) até a meta, o Banco Central atua no <strong>open market</strong>: compra e vende títulos públicos e faz <strong>operações compromissadas</strong> (vende um título hoje com compromisso de recomprá-lo amanhã), enxugando ou injetando liquidez no sistema. É assim que a taxa efetiva fica colada na meta.</p>
+    <p>A <strong>transmissão</strong>: a Selic baliza o <strong>CDI</strong> e, por ele, toda a renda fixa pós-fixada. Quando a Selic sobe, o crédito encarece, a economia desacelera, a inflação tende a ceder — e a curva inteira se reprecifica, mexendo no valor de marcação dos prefixados e dos IPCA+.</p>
+    <p>Para o investidor, o que move a marcação a mercado é a <strong>expectativa</strong> de Selic embutida na curva (as taxas a termo do módulo anterior). Por isso ler o comunicado do Copom e o desenho da curva é parte central da gestão.</p>
+  </div>
+  <div class="note"><span class="t">A ligação</span><p>As taxas a termo (forward) são, em boa medida, a leitura que o mercado faz das próximas decisões do Copom. Curva subindo = expectativa de Selic maior à frente; curva invertida = expectativa de cortes.</p></div>
+</section>
+
+<!-- U UNIVERSO DA RF -->
+<section id="pU" class="panel t-coral">
+  <div class="ptag">Mapa · o universo da renda fixa</div>
+  <h2>Além dos títulos públicos</h2>
+  <div class="prose">
+    <p>Os títulos públicos são a base, mas o investidor convive com um amplo universo <strong>privado</strong>. O que diferencia cada um: o <strong>emissor</strong> (e seu risco de crédito), a <strong>garantia</strong> (FGC ou nenhuma), a <strong>tributação</strong> (tributado ou isento para PF) e o <strong>indexador</strong>.</p>
+  </div>
+  <table>
+    <thead><tr><th>Ativo</th><th>Emissor</th><th>Indexador típico</th><th>Garantia</th><th>Tributação PF</th></tr></thead>
+    <tbody>
+      <tr><td>Tesouro (LTN/LFT/NTN-B)</td><td>Governo federal</td><td>Pré / Selic / IPCA</td><td>Risco soberano</td><td>Tributado</td></tr>
+      <tr><td>CDB</td><td>Banco</td><td>% do CDI / pré / IPCA</td><td>FGC até R$ 250 mil</td><td>Tributado</td></tr>
+      <tr><td>LCI / LCA</td><td>Banco (lastro imob./agro)</td><td>% do CDI / IPCA</td><td>FGC até R$ 250 mil</td><td><span class="hi-mint">Isento</span></td></tr>
+      <tr><td>CRI / CRA</td><td>Securitizadora</td><td>IPCA / pré</td><td>Sem FGC</td><td><span class="hi-mint">Isento</span></td></tr>
+      <tr><td>Debênture comum</td><td>Empresa</td><td>CDI / IPCA</td><td>Sem FGC</td><td>Tributado</td></tr>
+      <tr><td>Debênture incentivada</td><td>Empresa (infra)</td><td>IPCA+</td><td>Sem FGC</td><td><span class="hi-mint">Isento</span></td></tr>
+      <tr><td>Letra Financeira (LF)</td><td>Banco</td><td>CDI / pré / IPCA</td><td>Sem FGC</td><td>Tributado</td></tr>
+      <tr><td>Nota promissória</td><td>Empresa</td><td>CDI</td><td>Sem FGC</td><td>Tributado</td></tr>
+      <tr><td>Cota de FIDC</td><td>Fundo de recebíveis</td><td>CDI +</td><td>Sem FGC</td><td>Tributado</td></tr>
+    </tbody>
+  </table>
+  <div class="prose">
+    <p><strong>Garantias e isenções.</strong> O <strong>FGC</strong> cobre até R$ 250 mil por CPF por instituição (com teto global), e existe para os emissores bancários — não para debêntures, CRI/CRA ou FIDC, que dependem só do crédito do emissor/estrutura. Já a <strong>isenção de IR</strong> para PF (LCI/LCA, CRI/CRA e debêntures incentivadas) eleva o retorno líquido — é por isso que uma incentivada IPCA+ isenta costuma bater um título tributado de taxa parecida.</p>
+    <p>A régua para comparar tudo isso é o <strong>spread</strong> (módulo de crédito): quanto maior o risco do emissor e menor a garantia, maior o prêmio que o ativo precisa pagar sobre o Tesouro. E, para comparar isento com tributado, traga ambos para a mesma base (líquida de IR).</p>
+  </div>
+  <div class="note"><span class="t">Fechando o mapa</span><p>Do Tesouro Selic (mais seguro) ao FIDC (mais arriscado), é tudo a mesma engenharia: fluxo de caixa, valor presente, indexador e um spread que paga pelo risco. Os módulos do curso se aplicam a cada um deles.</p></div>
+</section>
+
 </main>
 
 <footer class="wrap">
@@ -700,7 +839,7 @@
       y:{title:{display:!!yT,text:yT,color:TXT,font:{size:11}},grid:{color:GRID},ticks:{color:TXT,font:{family:"'IBM Plex Mono'",size:10}}}}};}
 
   const CH={};
-  const INIT={pA:initA,pB:initB,p1:init1,p2:init2,p3:init3,p4:init4,p5:init5,p6:init6,p7:init7,p8:init8,p9:init9};
+  const INIT={pA:initA,pB:initB,p1:init1,p2:init2,p3:init3,p4:init4,p5:init5,p6:init6,p7:init7,p8:init8,p9:init9,pC:initC,pI:initI,pF:initF,pV:initV};
   function show(id,btn){document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));document.querySelectorAll('.tabbtn').forEach(b=>b.classList.remove('active'));$(id).classList.add('active');btn.classList.add('active');if(INIT[id]){INIT[id]();INIT[id]=null;}}
 
   /* 1 */
@@ -830,6 +969,42 @@
   function toggleSol(id){const e=$(id);e.style.display=(e.style.display==='block')?'none':'block';}
   const OBJ={liquidez:'Tesouro Selic (LFT) — rende a Selic, marcação quase nula, liquidez diária. É a reserva de emergência por excelência.',travar:'Tesouro Prefixado (LTN/NTN-F) — trava uma taxa nominal. Ganha se os juros caírem (ganho de capital na marcação); risco se precisar vender numa alta de juros.',inflacao:'Tesouro IPCA+ (NTN-B) — paga IPCA + taxa real, protegendo o poder de compra. Ideal para objetivos de longo prazo, como aposentadoria.',renda:'Com juros semestrais: NTN-F (prefixado) ou NTN-B (IPCA+). Pagam cupom a cada seis meses, gerando renda no caminho.'};
   function objPick(k,btn){document.querySelectorAll('#objSeg button').forEach(b=>b.classList.remove('active'));btn.classList.add('active');setv('objOut',OBJ[k]);}
+
+  /* C convenções BR */
+  function initC(){CH.cBR=new Chart($('cBR'),{type:'line',data:{labels:[],datasets:[{label:'PU',data:[],borderColor:ACC.amber,backgroundColor:'rgba(206,147,34,.10)',fill:true,pointRadius:0,tension:.2}]},options:gopts('PU (face 1.000)','dias úteis')});rC();}
+  function rC(){const i=v('iCt')/100,du=v('iCdu');setv('lCt',pct(v('iCt'),2));setv('lCdu',du+' du');
+    const dr=(Math.pow(1+i,1/252)-1)*100,fator=Math.pow(1+i,du/252),pu=1000/fator;
+    setv('oCdr',dr.toFixed(4).replace('.',',')+'%');setv('oCf',fator.toFixed(4).replace('.',','));setv('oCpu','R$ '+n2(pu));
+    const labs=[],d=[];for(let x=0;x<=1260;x+=42){labs.push(x);d.push(+(1000/Math.pow(1+i,x/252)).toFixed(2));}CH.cBR.data.labels=labs;CH.cBR.data.datasets[0].data=d;CH.cBR.update();}
+
+  /* I nominal x real */
+  function initI(){CH.cFi=new Chart($('cFi'),{type:'line',data:{labels:[],datasets:[
+    {label:'Prefixado (nominal fixo)',data:[],borderColor:ACC.coral,pointRadius:0,tension:0},
+    {label:'IPCA+ (real + inflação)',data:[],borderColor:ACC.green,pointRadius:0,tension:0}]},options:gopts('retorno nominal (% a.a.)','inflação realizada (% a.a.)',true)});rI();}
+  function rI(){const nom=v('iIn'),real=v('iIr'),inf=v('iIinf');setv('lIn',pct(nom,1));setv('lIr',pct(real,1));setv('lIinf',pct(inf,1));
+    const imp=((1+nom/100)/(1+real/100)-1)*100;setv('oIimp',pct(imp,2));
+    const ipcaNom=((1+real/100)*(1+inf/100)-1)*100;setv('oIipca',pct(ipcaNom,2));
+    setv('oIwin', inf>imp+0.05?'IPCA+ ganha':inf<imp-0.05?'Prefixado ganha':'Empate (na implícita)');
+    const labs=[],pre=[],ipc=[];for(let x=0;x<=12;x+=0.5){labs.push(x);pre.push(+nom.toFixed(2));ipc.push(+(((1+real/100)*(1+x/100)-1)*100).toFixed(2));}
+    CH.cFi.data.labels=labs;CH.cFi.data.datasets[0].data=pre;CH.cFi.data.datasets[1].data=ipc;CH.cFi.update();}
+
+  /* F forward */
+  function initF(){CH.cFw=new Chart($('cFw'),{type:'line',data:{labels:[1,2,3,4],datasets:[
+    {label:'Spot (à vista)',data:[],borderColor:ACC.sky,pointRadius:4,tension:.2},
+    {label:'Forward (1 ano à frente)',data:[],borderColor:ACC.plum,pointRadius:4,borderDash:[5,4],tension:.2}]},options:gopts('% a.a.','ano',true)});rF();}
+  function rF(){const r=[v('iF1'),v('iF2'),v('iF3'),v('iF4')];['lF1','lF2','lF3','lF4'].forEach((id,k)=>setv(id,pct(r[k],2)));
+    const fwd=[null];for(let t=1;t<4;t++){const f=(Math.pow(1+r[t]/100,t+1)/Math.pow(1+r[t-1]/100,t)-1)*100;fwd.push(+f.toFixed(2));}
+    setv('oF12',pct(fwd[1]));setv('oF23',pct(fwd[2]));setv('oF34',pct(fwd[3]));
+    CH.cFw.data.datasets[0].data=r.map(x=>+x.toFixed(2));CH.cFw.data.datasets[1].data=fwd;CH.cFw.update();}
+
+  /* V convexidade */
+  function initV(){CH.cCx=new Chart($('cCx'),{type:'line',data:{labels:[],datasets:[
+    {label:'Preço real (curva)',data:[],borderColor:ACC.lilac,pointRadius:0,tension:.3},
+    {label:'Aproximação pela duration (reta)',data:[],borderColor:ACC.slate,borderDash:[5,4],pointRadius:0}]},options:gopts('preço por 100','YTM (%)',true)});rV();}
+  function rV(){const c=v('iVc'),y0=v('iVy'),N=v('iVn');setv('lVc',pct(c,1));setv('lVy',pct(y0,1));setv('lVn',N);
+    const p0=priceP(c,y0,N,1),mod=macD(c,y0,N,1)/(1+y0/100);setv('oVp',n2(p0));setv('oVd',mod.toFixed(2).replace('.',',')+' anos');
+    const labs=[],real=[],lin=[];for(let y=Math.max(0.5,y0-4);y<=y0+4.0001;y+=0.25){labs.push(y.toFixed(1));real.push(+priceP(c,y,N,1).toFixed(2));lin.push(+(p0*(1-mod*(y-y0)/100)).toFixed(2));}
+    CH.cCx.data.labels=labs;CH.cCx.data.datasets[0].data=real;CH.cCx.data.datasets[1].data=lin;CH.cCx.update();}
 
   initA();
 </script>
