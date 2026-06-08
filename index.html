@@ -8,6 +8,8 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.js"></script>
 <style>
   :root{
     --bg:#FFFFFF;--soft:#F7F8FB;--card:#FFFFFF;
@@ -117,6 +119,19 @@
   .revbtn{font-family:var(--sans);font-size:.82rem;font-weight:500;background:var(--acc);color:#fff;border:none;padding:.45rem .85rem;border-radius:9px;cursor:pointer}
   .revbtn:hover{opacity:.9}
   .sol{display:none;margin-top:.9rem;font-size:.92rem;color:var(--ink2)}
+  .formula{overflow-x:auto}
+  .formula .katex-display{margin:0!important;text-align:left!important}
+  .formula .katex{font-size:1.05em}
+  .sol .katex-display{margin:.3em 0!important;text-align:left!important}
+  .matrix{display:grid;grid-template-columns:1.3fr 1fr 1fr 1fr;gap:6px}
+  @media(max-width:600px){.matrix{grid-template-columns:1fr 1fr 1fr 1fr;font-size:.82rem}}
+  .matrix .mh{font-size:.76rem;font-weight:600;color:var(--ink2);padding:.5rem .3rem;text-align:center;align-self:end}
+  .matrix .mr{font-weight:600;font-size:.86rem;color:var(--ink);padding:.6rem .4rem;display:flex;align-items:center}
+  .matrix .mc{border-radius:10px;padding:.6rem .4rem;text-align:center;font-size:.84rem;font-weight:600;line-height:1.25}
+  .matrix .mc small{display:block;font-weight:400;font-size:.7rem;opacity:.85;margin-top:.15rem}
+  .matrix .up{background:var(--mint-bg);color:#1d6b57}
+  .matrix .dn{background:#FBEBE4;color:#a8472a}
+  .matrix .fl{background:var(--soft);color:var(--ink2)}
 
   .cards3{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin:1.4rem 0}
   @media(max-width:760px){.cards3{grid-template-columns:1fr}}
@@ -177,6 +192,7 @@
   <button class="tabbtn" onclick="show('pP',this)"><span class="pip" style="background:var(--teal)"></span>Cálculo dos públicos</button>
   <button class="tabbtn" onclick="show('pY',this)"><span class="pip" style="background:var(--sky)"></span>Achar a taxa (TIR)</button>
   <button class="tabbtn" onclick="show('pH',this)"><span class="pip" style="background:var(--lilac)"></span>DV01 & hedge</button>
+  <button class="tabbtn" onclick="show('pZ',this)"><span class="pip" style="background:var(--coral)"></span>Cenários comparados</button>
 </div></div>
 
 <main class="wrap">
@@ -245,7 +261,7 @@
   <div class="prose"><p>Vamos abrir um título de verdade — a <strong>EGIE27</strong> (Engie), debênture incentivada IPCA+, AAA — e seguir cada etapa da vida dela, com as contas na mão. É o mesmo raciocínio que vale para qualquer um dos seus papéis.</p></div>
 
   <div class="step"><span class="sn">1</span><div><h4>Nascimento</h4><p>A debênture foi emitida valendo <strong>R$ 1.000</strong> (valor de face), prometendo pagar <span class="em">IPCA + 5,9033% ao ano</span>. Vence em <strong>15/07/2028</strong>, paga cupom uma vez por ano (julho) e devolve o principal em parcelas anuais a partir de 2026.</p></div></div>
-  <div class="step"><span class="sn">2</span><div><h4>Correção pelo IPCA → o VNA</h4><p>O principal é corrigido pela inflação continuamente. Desde a emissão, o IPCA acumulou ≈ +50,9%, então hoje o principal atualizado — o <strong>VNA</strong> (Valor Nominal Atualizado) — vale:</p><div class="formula">VNA = 1.000 × 1,50876 = R$ 1.508,76</div></div></div>
+  <div class="step"><span class="sn">2</span><div><h4>Correção pelo IPCA → o VNA</h4><p>O principal é corrigido pela inflação continuamente. Desde a emissão, o IPCA acumulou ≈ +50,9%, então hoje o principal atualizado — o <strong>VNA</strong> (Valor Nominal Atualizado) — vale:</p><div class="formula">\text{VNA} = 1.000 \times 1{,}50876 = R\$\,1.508{,}76</div></div></div>
   <div class="step"><span class="sn">3</span><div><h4>O cupom</h4><p>A cada ano você recebe juros de ≈ 5,90% <strong>sobre o VNA</strong> (o principal já corrigido). Como o principal vai sendo amortizado, os juros em reais <strong>caem</strong> ao longo do tempo: ≈ R$ 89 em 2026, R$ 59 em 2027 e R$ 20 em 2028.</p></div></div>
   <div class="step"><span class="sn">4</span><div><h4>A amortização</h4><p>O principal não volta tudo no fim: retorna <strong>33,33%</strong> em jul/2026, <strong>44,44%</strong> em jul/2027 e o restante em jul/2028. Como o dinheiro volta cedo, o prazo médio (a <strong>duration</strong>) é de só <span class="num">~0,94 ano</span>, mesmo o vencimento sendo em 2028.</p></div></div>
   <div class="step"><span class="sn">5</span><div><h4>O preço de hoje (PU)</h4><p>O PU é a <strong>soma dos valores presentes</strong> de tudo que ainda falta receber, descontado pela taxa de negociação de hoje (5,9033%). Um exemplo de desconto: o último fluxo, R$ 297,12, é R$ 335,36 trazido a valor presente. Veja o fluxo completo:</p></div></div>
@@ -264,7 +280,7 @@
   </table>
   <div class="chart-box" style="height:320px;margin:1rem 0 1.6rem"><canvas id="cEg"></canvas></div>
 
-  <div class="step"><span class="sn">6</span><div><h4>VNA + juros corridos = PU</h4><p>O PU também pode ser lido como o VNA mais o cupom já corrido desde o último pagamento:</p><div class="formula">PU = 1.508,76 (VNA) + 78,19 (juros corridos) = R$ 1.586,95</div><p>Por isso o PU alto (R$ 1.586) <strong>não é "caro"</strong>: é só o principal já inflado por anos de IPCA. Compare a taxa, nunca o PU.</p></div></div>
+  <div class="step"><span class="sn">6</span><div><h4>VNA + juros corridos = PU</h4><p>O PU também pode ser lido como o VNA mais o cupom já corrido desde o último pagamento:</p><div class="formula">\text{PU} = \underbrace{1.508{,}76}_{\text{VNA}} + \underbrace{78{,}19}_{\text{juros corridos}} = R\$\,1.586{,}95</div><p>Por isso o PU alto (R$ 1.586) <strong>não é "caro"</strong>: é só o principal já inflado por anos de IPCA. Compare a taxa, nunca o PU.</p></div></div>
   <div class="step"><span class="sn">7</span><div><h4>Está no par</h4><p>A taxa de negociação de hoje (5,9033%) é igual à taxa de emissão (5,9033%) → o título está <strong>no par</strong> (% do PU Par = 100). Não há ágio nem deságio embutido. Se a taxa de hoje fosse menor, teria ágio; se maior, deságio.</p></div></div>
   <div class="step"><span class="sn">8</span><div><h4>Até o vencimento</h4><p>Você recebe os cupons e as amortizações nas datas; o VNA segue corrigido pelo IPCA; no último pagamento (jul/2028) recebe o principal final corrigido mais o último cupom. Ao longo do caminho, o PU converge para o par.</p></div></div>
   <div class="step"><span class="sn">9</span><div><h4>Nos diferentes cenários</h4><p><strong>Juros reais sobem</strong> → o PU cai hoje (marcação negativa), mas como a duration é ~1 ano o tombo é pequeno; segurando, você ainda reinveste os cupons a taxas melhores. <strong>Juros reais caem</strong> → o PU sobe (ganho de marcação). <strong>IPCA sobe</strong> → VNA, cupons e principal nominais sobem: você fica protegido, e o retorno real continua IPCA + 5,90%.</p></div></div>
@@ -378,15 +394,15 @@
   <h3 style="margin-top:2.6rem">Numéricos</h3>
   <div class="exn"><div class="eq">A. Uma LTN (Tesouro Prefixado) vence em 2 anos e é negociada a 12% a.a. Qual o preço unitário (face R$ 1.000)?</div>
     <button class="revbtn" onclick="toggleSol('sA')">Mostrar solução</button>
-    <div class="sol" id="sA"><div class="formula">PU = 1.000 ÷ (1,12)² = 1.000 ÷ 1,2544 = R$ 797,19</div>O preço é o valor presente do único pagamento (R$ 1.000 no vencimento), descontado pela taxa de mercado. Quanto maior a taxa, menor o preço.</div></div>
+    <div class="sol" id="sA"><div class="formula">\text{PU} = \dfrac{1.000}{(1{,}12)^2} = \dfrac{1.000}{1{,}2544} = R\$\,797{,}19</div>O preço é o valor presente do único pagamento (R$ 1.000 no vencimento), descontado pela taxa de mercado. Quanto maior a taxa, menor o preço.</div></div>
 
   <div class="exn"><div class="eq">B. No dia seguinte, a taxa dessa LTN sobe para 14% a.a. O que acontece com o preço?</div>
     <button class="revbtn" onclick="toggleSol('sB')">Mostrar solução</button>
-    <div class="sol" id="sB"><div class="formula">PU = 1.000 ÷ (1,14)² = R$ 769,47   →   variação ≈ −3,48%</div>Os juros subiram, o preço caiu (marcação negativa). Pela duration (~2 anos): ΔP/P ≈ −2 × (+2%) = −4% — a aproximação linear; o valor exato (−3,48%) é um pouco melhor por causa da convexidade. Lição: prefixado sofre quando os juros sobem.</div></div>
+    <div class="sol" id="sB"><div class="formula">\text{PU} = \dfrac{1.000}{(1{,}14)^2} = R\$\,769{,}47 \quad\Rightarrow\quad \Delta \approx -3{,}48\%</div>Os juros subiram, o preço caiu (marcação negativa). Pela duration (~2 anos): ΔP/P ≈ −2 × (+2%) = −4% — a aproximação linear; o valor exato (−3,48%) é um pouco melhor por causa da convexidade. Lição: prefixado sofre quando os juros sobem.</div></div>
 
   <div class="exn"><div class="eq">C. Uma NTN-B (Tesouro IPCA+ com juros semestrais) tem cupom de 6% a.a. Se o valor corrigido (VNA) hoje é R$ 4.200, qual o cupom semestral em reais?</div>
     <button class="revbtn" onclick="toggleSol('sC')">Mostrar solução</button>
-    <div class="sol" id="sC"><div class="formula">cupom semestral = (1,06)^0,5 − 1 = 2,9563%   →   4.200 × 0,029563 = R$ 124,16</div>O cupom de 6% a.a. é convertido para o equivalente semestral e incide sobre o principal já corrigido pelo IPCA.</div></div>
+    <div class="sol" id="sC"><div class="formula">\text{cupom}_{\text{sem}} = (1{,}06)^{0{,}5}-1 = 2{,}9563\% \;\Rightarrow\; 4.200 \times 0{,}029563 = R\$\,124{,}16</div>O cupom de 6% a.a. é convertido para o equivalente semestral e incide sobre o principal já corrigido pelo IPCA.</div></div>
 
   <div class="exn"><div class="eq">D. Por que o preço do Tesouro Selic (LFT) quase não cai quando a Selic sobe, ao contrário do prefixado?</div>
     <button class="revbtn" onclick="toggleSol('sD')">Mostrar solução</button>
@@ -394,7 +410,7 @@
 
   <div class="exn"><div class="eq">E. Um Tesouro IPCA+ (NTN-B Principal) tem taxa real de 6% a.a., valor corrigido (VNA) de R$ 4.200 e vence em 5 anos. Qual o preço?</div>
     <button class="revbtn" onclick="toggleSol('sE')">Mostrar solução</button>
-    <div class="sol" id="sE"><div class="formula">PU = 4.200 ÷ (1,06)^5 = 4.200 ÷ 1,33823 = R$ 3.138,46</div>Como não paga cupom, o preço é o valor corrigido trazido a valor presente pela taxa real. A inflação futura seguirá corrigindo o VNA até o vencimento — o resultado real continua IPCA + 6%.</div></div>
+    <div class="sol" id="sE"><div class="formula">\text{PU} = \dfrac{4.200}{(1{,}06)^{5}} = \dfrac{4.200}{1{,}33823} = R\$\,3.138{,}46</div>Como não paga cupom, o preço é o valor corrigido trazido a valor presente pela taxa real. A inflação futura seguirá corrigindo o VNA até o vencimento — o resultado real continua IPCA + 6%.</div></div>
 </section>
 
 <!-- 1 -->
@@ -404,7 +420,7 @@
   <div class="prose">
     <p>Um <strong>título sem cupom</strong> (zero-coupon) é o tijolo mais simples da renda fixa: ele não paga nada no meio do caminho, só devolve um valor fixo — a <strong>face</strong> — na data de vencimento. Você compra por um preço abaixo da face, e todo o seu ganho é a diferença entre o que pagou e o que recebe lá na frente.</p>
     <p>Esse desconto embute uma taxa de juros. Como o preço cresce até a face em <span class="em">n</span> anos, a taxa anual implícita — chamada de <strong>taxa à vista</strong> ou <em>spot</em> — é:</p>
-    <div class="formula">rₙ = (100 / Preço)^(1/n) − 1</div>
+    <div class="formula">r_n = \left(\dfrac{100}{P}\right)^{1/n} - 1</div>
     <div class="ex"><span class="t">Exemplo</span>Um zero de 2 anos cotado a 92,45 embute rₙ = (100/92,45)^(1/2) − 1 = <strong>4,00% a.a.</strong> É a taxa que faz 92,45 virar 100 em dois anos.</div>
     <p>Quando você calcula a taxa spot para vários prazos e as coloca lado a lado, surge a <strong>estrutura a termo</strong> — a curva de juros. O formato dela conta uma história: <span class="hi-sky">subindo</span> (normal) costuma indicar economia/juros estáveis ou crescentes; <strong>invertida</strong> (caindo) sinaliza expectativa de queda de juros e, às vezes, recessão; plana indica transição.</p>
     <p>Por que isso é o ponto de partida de tudo? Porque a curva é a <strong>régua de desconto</strong>: qualquer fluxo futuro — de um título com cupom, de uma debênture, de um financiamento — é trazido a valor presente usando a taxa do seu respectivo prazo. Sem a curva, não há preço justo.</p>
@@ -433,7 +449,7 @@
   <h2>O preço é o valor presente dos fluxos</h2>
   <div class="prose">
     <p>Um título com cupom paga juros periódicos e devolve o principal no fim. Seu <strong>preço justo</strong> é a soma do valor presente de todos esses pagamentos. A taxa que usamos para descontar é o <strong>YTM</strong> (<em>yield to maturity</em>): a taxa única que, aplicada a todo o fluxo, devolve exatamente o preço de mercado. É a taxa interna de retorno do título se você carregá-lo até o fim, reinvestindo os cupons à mesma taxa.</p>
-    <div class="formula">P = C · [1 − (1+y)^−N] / y  +  F · (1+y)^−N</div>
+    <div class="formula">P = C\cdot\dfrac{1-(1+y)^{-N}}{y} + F\,(1+y)^{-N}</div>
     <p>Onde <strong>C</strong> é o cupom por período, <strong>y</strong> é o YTM por período, <strong>N</strong> o número de períodos e <strong>F</strong> a face. O primeiro termo é o valor presente da "anuidade" de cupons; o segundo é o valor presente do principal.</p>
     <div class="ex"><span class="t">Exemplo do material</span>Título de 5 anos, cupom de 5% com pagamento semestral (2,5 por período), YTM de 6,30% a.a. = 3,15% ao semestre, 10 períodos. O preço sai em <strong>94,50 por 100</strong> de face (ou 944,98 por 1.000). Como o YTM (6,30%) está acima do cupom (5%), o título vale menos que a face — está em deságio.</div>
     <p>A consequência mais importante é a <strong>relação inversa</strong>: quando o YTM sobe, o preço cai; quando o YTM cai, o preço sobe. Descontar por uma taxa maior encolhe todos os valores presentes. É essa gangorra que move a marcação a mercado dos seus títulos todos os dias.</p>
@@ -459,7 +475,7 @@
   <h2>Par, ágio e deságio</h2>
   <div class="prose">
     <p>Tudo se resume a comparar o <strong>cupom</strong> do título com o <strong>YTM</strong> de mercado. Se o título promete um cupom maior do que o mercado paga hoje, ele vale mais que a face e você paga um <span class="hi-coral">prêmio (ágio)</span>. Se o cupom é igual ao YTM, ele vale exatamente a face (<span class="hi-mint">no par</span>). Se o cupom é menor, ele vale menos que a face e você compra com <span class="hi-sky">desconto (deságio)</span>.</p>
-    <div class="formula">Cupom &gt; YTM → ágio (preço &gt; 100)   ·   Cupom = YTM → par (100)   ·   Cupom &lt; YTM → deságio (preço &lt; 100)</div>
+    <div class="formula">\text{Cupom} \gt \text{YTM} \Rightarrow \text{ágio} \quad\mid\quad \text{Cupom}=\text{YTM} \Rightarrow \text{par} \quad\mid\quad \text{Cupom} \lt \text{YTM} \Rightarrow \text{deságio}</div>
     <div class="ex"><span class="t">Exemplo do material</span>Três títulos de 30 anos, todos com YTM de 5%. O de cupom 10% vale <strong>176,86</strong> (ágio); o de cupom 5% vale <strong>100,00</strong> (par); o de cupom 3% vale <strong>69,26</strong> (deságio). Mesmo YTM, preços bem diferentes — só por causa do cupom.</div>
     <p>O ponto que mais confunde, e o mais importante: <strong>com o mesmo YTM, os três rendem o mesmo até o vencimento</strong>. O ágio/deságio apenas compensa a diferença de cupom. Um PU alto não é "caro", nem um PU baixo é "barato" em termos de retorno — quem manda no retorno é a taxa.</p>
   </div>
@@ -569,9 +585,9 @@
   <h2>Preço sujo × preço limpo</h2>
   <div class="prose">
     <p>Entre dois pagamentos de cupom, o título vai "rendendo" um juro que ainda não foi pago — o <strong>juro acruado</strong>. Quem compra no meio do período precisa pagar ao vendedor esse juro já corrido, porque vai embolsar o cupom inteiro na próxima data.</p>
-    <div class="formula">Juro acruado = Cupom × (dias desde o último cupom ÷ dias do período)</div>
+    <div class="formula">\text{Juro acruado} = \text{Cupom} \times \dfrac{\text{dias desde o último cupom}}{\text{dias do período}}</div>
     <p>O <strong>preço sujo</strong> (dirty) é o que efetivamente troca de mãos na liquidação: inclui o juro acruado. O <strong>preço limpo</strong> (clean) tira esse juro:</p>
-    <div class="formula">Preço limpo = Preço sujo − Juro acruado</div>
+    <div class="formula">\text{Preço limpo} = \text{Preço sujo} - \text{Juro acruado}</div>
     <p>Por isso o preço sujo desenha um <strong>dente de serra</strong>: sobe ao longo do período acumulando juro e, na data do cupom, despenca pelo valor do cupom pago. O preço limpo segue contínuo. Cotações e marcação a mercado usam o preço limpo justamente para comparar títulos sem o "inchaço" do cupom a vencer.</p>
   </div>
   <div class="lab">
@@ -593,9 +609,9 @@
   <h2>Duration: o quanto o preço balança</h2>
   <div class="prose">
     <p>A pergunta central da gestão de renda fixa é: se o juro mexer, quanto o preço muda? A <strong>duration</strong> responde. A <strong>duration de Macaulay</strong> é o prazo médio dos fluxos, ponderado pelo valor presente de cada um — em outras palavras, "quando, em média, você recebe o seu dinheiro de volta", medido em anos.</p>
-    <div class="formula">MacD = Σ [ t × VP(fluxoₜ) ] ÷ Preço</div>
+    <div class="formula">\text{MacD} = \dfrac{\sum_{t} t \cdot \text{VP}(\text{fluxo}_t)}{\text{Preço}}</div>
     <p>A <strong>duration modificada</strong> transforma isso numa medida direta de sensibilidade. A relação é quase mágica:</p>
-    <div class="formula">ModD = MacD ÷ (1 + y)        ΔP/P ≈ − ModD × Δy</div>
+    <div class="formula">\text{ModD} = \dfrac{\text{MacD}}{1+y} \qquad \dfrac{\Delta P}{P} \approx -\,\text{ModD}\cdot\Delta y</div>
     <div class="ex"><span class="t">Leitura rápida</span>Se a duration modificada é 7 e o juro sobe 1 ponto percentual, o preço cai cerca de <strong>7%</strong>. Se cai 1 ponto, sobe ~7%.</div>
     <p>O que aumenta a duration: <strong>cupom menor</strong> (mais peso do principal lá no fim) e <strong>prazo maior</strong>. YTM mais alto reduz um pouco. Por isso um título de deságio (cupom baixo) é mais sensível a juros que um de ágio de mesmo prazo.</p>
     <p>Há um detalhe a favor do investidor: a relação preço×juro não é uma reta, é uma curva (<strong>convexidade</strong>). A duration é a aproximação linear; em choques grandes ela erra, e o erro é do lado bom — o preço cai menos e sobe mais do que a duration prevê. Veja isso comparando as duas barras no app.</p>
@@ -645,7 +661,7 @@
   <div class="prose">
     <p>Até aqui assumimos que o emissor paga tudo. Num título com risco de <strong>default</strong>, isso deixa de ser garantido — e abre um abismo entre dois números que muita gente confunde.</p>
     <p>O <strong>YTM prometido</strong> é calculado como se todos os pagamentos ocorressem integralmente. Por isso, quanto mais arriscado o título (mais barato ele é negociado), maior o YTM prometido — pode chegar a dois dígitos. Mas o <strong>retorno esperado</strong> leva em conta a probabilidade de calote e a <strong>recuperação</strong> (quanto se recebe se houver default):</p>
-    <div class="formula">Fluxo esperado = (1 − prob. default) × face + prob. default × recuperação</div>
+    <div class="formula">\mathbb{E}[\text{fluxo}] = (1-p_d)\cdot\text{face} + p_d\cdot\text{recuperação}</div>
     <p>O mercado precifica o título para que o retorno <em>esperado</em> remunere o investidor — não o prometido. Resultado: conforme o risco cresce, o YTM prometido dispara, mas o retorno esperado sobe muito pouco. A diferença entre eles é, essencialmente, a <strong>perda esperada</strong> por inadimplência (mais um prêmio de risco).</p>
     <div class="ex"><span class="t">No material (Avant Bond, 1 ano)</span>Sem risco: preço 961,54, YTM 4%, esperado 4%. Com 50% de chance de default: o YTM prometido salta para ~10,6%, mas o retorno esperado é só ~5%. O YTM gordo é uma promessa, não uma expectativa.</div>
     <p>A lição para o investidor: não confunda o YTM atraente de um <em>high yield</em> com o que você realmente espera ganhar. Spread alto demais pode estar sinalizando risco real, não "oportunidade".</p>
@@ -670,7 +686,7 @@
   <h2>Quanto pior o rating, maior o juro exigido</h2>
   <div class="prose">
     <p>O <strong>rating</strong> é a nota de qualidade de crédito atribuída por agências (Moody's, S&amp;P): <strong>AAA</strong> é o topo; tudo abaixo de BBB−/Baa3 entra no território <em>high yield</em> ("junk"). Quanto pior a nota, maior a probabilidade de default percebida e, portanto, maior o YTM que o mercado exige para emprestar.</p>
-    <div class="formula">Spread de crédito = YTM do título − YTM do Treasury de mesmo prazo</div>
+    <div class="formula">\text{Spread} = \text{YTM}_{\text{título}} - \text{YTM}_{\text{Treasury}}</div>
     <p>O spread é o <strong>prêmio por risco de crédito</strong>: o pagamento extra por assumir a chance de calote. Como mostra o app, ele tem dois comportamentos típicos: cresce com <strong>prazos mais longos</strong> (mais tempo para algo dar errado) e com <strong>ratings piores</strong> (a curva BBB fica bem acima da AAA, que fica acima do Treasury).</p>
     <p>Em crises, os spreads <strong>explodem</strong> — em 2008 os prêmios de crédito chegaram a níveis recordes, à medida que o mercado passou a precificar default em massa. São justamente esses momentos de abertura de spread que os gestores buscam para comprar crédito barato.</p>
     <p>A lição: comprar crédito é ser pago para correr risco. O spread precisa cobrir a perda esperada por default <strong>e</strong> deixar um prêmio. Um spread generoso demais raramente é almoço grátis — costuma ser o mercado avisando que o risco é real.</p>
@@ -693,7 +709,7 @@
   <h2>Como o Brasil conta os juros</h2>
   <div class="prose">
     <p>Um detalhe que muda tudo: no Brasil, a renda fixa usa <strong>juros compostos</strong> e contagem em <strong>dias úteis</strong>, na base <strong>252</strong>. A taxa anual é convertida para "ao dia útil" por <span class="num">(1+i)^(1/252) − 1</span>, e o preço de um prefixado é o valor de face descontado por esse fator:</p>
-    <div class="formula">PU = 1.000 ÷ (1 + i)^(dias úteis / 252)</div>
+    <div class="formula">\text{PU} = \dfrac{1.000}{(1+i)^{\,du/252}}</div>
     <p>Isso difere do padrão "30/360" de muitos livros estrangeiros — por isso o mesmo título pode ter preços ligeiramente diferentes conforme a convenção. E há a armadilha da <strong>equivalência</strong>: como tudo é composto, 1% ao mês <em>não</em> é 12% ao ano, e sim <span class="num">(1,01)¹² − 1 = 12,68%</span>. Sempre componha para comparar prazos.</p>
   </div>
   <div class="lab">
@@ -716,7 +732,7 @@
   <div class="prose">
     <p>A <strong>equação de Fisher</strong> liga as três taxas: <span class="num">(1 + nominal) = (1 + real) × (1 + inflação)</span>. Uma taxa nominal (prefixada) embute uma taxa real mais a inflação esperada para o período.</p>
     <p>Comparando um <strong>prefixado</strong> com um <strong>IPCA+</strong> de mesmo prazo, a inflação que iguala os dois é a <strong>inflação implícita</strong> (break-even) — a inflação que o mercado está precificando:</p>
-    <div class="formula">inflação implícita = (1 + taxa prefixada) ÷ (1 + taxa real) − 1</div>
+    <div class="formula">\pi_{\text{impl}} = \dfrac{1+i_{\text{pré}}}{1+i_{\text{real}}} - 1</div>
     <p>É a régua da decisão: se você acredita que a inflação virá <strong>acima</strong> da implícita, o IPCA+ rende mais; se vier <strong>abaixo</strong>, o prefixado ganha; bem na implícita, empatam. Mova a inflação realizada e veja as duas curvas se cruzarem exatamente no break-even.</p>
   </div>
   <div class="lab">
@@ -739,7 +755,7 @@
   <h2>O que a curva diz sobre o futuro</h2>
   <div class="prose">
     <p>A curva à vista (spot) não é só uma foto do presente: ela embute as <strong>taxas futuras</strong> implícitas — as taxas a termo (forward). Por <strong>não-arbitragem</strong>, aplicar 2 anos à taxa de 2 anos tem de render o mesmo que aplicar 1 ano e reinvestir o segundo ano à taxa forward de hoje. Daí:</p>
-    <div class="formula">(1 + forward) = (1 + r₍ₜ₊₁₎)^(t+1) ÷ (1 + rₜ)^t</div>
+    <div class="formula">1+f_{t,\,t+1} = \dfrac{(1+r_{t+1})^{\,t+1}}{(1+r_t)^{\,t}}</div>
     <p>O forward é a taxa que o mercado consegue "travar" hoje para um período no futuro. Ele reflete a expectativa de juros à frente (mais um prêmio de prazo). Ajuste as taxas à vista e veja a curva forward que elas implicam.</p>
   </div>
   <div class="lab">
@@ -763,7 +779,7 @@
   <h2>Convexidade: o que a duration não vê</h2>
   <div class="prose">
     <p>A relação entre preço e yield <strong>não é uma reta</strong> — é uma curva. A duration é a reta <strong>tangente</strong> a essa curva: aproxima muito bem para choques pequenos, mas em choques grandes ela erra. A <strong>convexidade</strong> mede essa curvatura, e a estimativa completa do preço é:</p>
-    <div class="formula">ΔP/P ≈ − ModD × Δy + ½ × Convexidade × Δy²</div>
+    <div class="formula">\dfrac{\Delta P}{P} \approx -\,\text{ModD}\cdot\Delta y + \tfrac{1}{2}\,\text{Conv}\,(\Delta y)^2</div>
     <p>A boa notícia é que a curvatura joga <strong>a favor</strong> do investidor: o preço real cai <em>menos</em> e sobe <em>mais</em> do que a reta da duration prevê. Por isso, entre dois títulos de mesma duration, o de <strong>maior convexidade</strong> é preferível — protege mais nas altas de juros e ganha mais nas quedas. Veja a curva real se descolar da reta nos extremos.</p>
   </div>
   <div class="lab">
@@ -827,14 +843,14 @@
   <div class="prose">
     <p>Aqui está o coração técnico: como sai o PU de cada título do Tesouro, usando a base de <strong>252 dias úteis</strong> e juros compostos. São quatro fórmulas — uma por família.</p>
     <p><strong>LTN (prefixado, sem cupom).</strong> Só o desconto da face:</p>
-    <div class="formula">PU = 1.000 ÷ (1 + i)^(du/252)</div>
+    <div class="formula">\text{PU} = \dfrac{1.000}{(1+i)^{\,du/252}}</div>
     <div class="ex"><span class="t">Exemplo</span>i = 12% a.a., 504 du (≈ 2 anos): PU = 1.000 ÷ (1,12)² = <strong>R$ 797,19</strong>.</div>
     <p><strong>NTN-F (prefixado com cupom).</strong> Cupom semestral de 10% a.a. = 1.000 × [(1,10)^½ − 1] = <strong>R$ 48,81</strong>. O PU soma o valor presente de cada cupom mais o principal:</p>
-    <div class="formula">PU = Σ 48,81 ÷ (1+i)^(du_k/252) + 1.000 ÷ (1+i)^(du_n/252)</div>
+    <div class="formula">\text{PU} = \sum_{k} \dfrac{48{,}81}{(1+i)^{\,du_k/252}} + \dfrac{1.000}{(1+i)^{\,du_n/252}}</div>
     <p><strong>LFT (Selic).</strong> Negocia como uma <strong>cotação</strong> sobre o VNA (principal corrigido pela Selic). Um pequeno ágio/deságio (a "taxa over") faz o preço fugir levemente do VNA:</p>
-    <div class="formula">PU = VNA × cotação,  cotação = 1 ÷ (1 + ágio)^(du/252)</div>
+    <div class="formula">\text{PU} = \text{VNA}\times\text{cotação}, \qquad \text{cotação} = \dfrac{1}{(1+\text{ágio})^{\,du/252}}</div>
     <p><strong>NTN-B (IPCA+).</strong> O VNA é os R$ 1.000 corrigidos pelo IPCA (base 15/07/2000). O cupom semestral de 6% a.a. = VNA × [(1,06)^½ − 1] = VNA × <strong>2,9563%</strong>. A cotação (base 100) desconta cupons e principal pela taxa <em>real</em>; o PU é a cotação aplicada ao VNA:</p>
-    <div class="formula">cotação = Σ 2,9563 ÷ (1+i)^(du_k/252) + 100 ÷ (1+i)^(du_n/252)   ·   PU = VNA × cotação ÷ 100</div>
+    <div class="formula">\text{cotação} = \sum_{k} \dfrac{2{,}9563}{(1+i)^{\,du_k/252}} + \dfrac{100}{(1+i)^{\,du_n/252}} \;\Rightarrow\; \text{PU} = \dfrac{\text{VNA}\times\text{cotação}}{100}</div>
   </div>
 
   <div class="subsec">
@@ -867,7 +883,7 @@
   <h2>Como achar a taxa a partir do preço</h2>
   <div class="prose">
     <p>Calcular o preço dado o YTM é direto. O caminho inverso — <strong>achar o YTM a partir do preço</strong> — não tem fórmula fechada para títulos com cupom: é preciso resolver de forma <strong>iterativa</strong>. O YTM é a taxa que faz a soma dos valores presentes igualar o preço de mercado (a TIR do fluxo).</p>
-    <div class="formula">Ache y tal que:  Preço = Σ Cupom ÷ (1+y)^t + Face ÷ (1+y)^N</div>
+    <div class="formula">\text{Ache } y:\quad \text{Preço} = \sum_{t} \dfrac{\text{Cupom}}{(1+y)^{t}} + \dfrac{\text{Face}}{(1+y)^{N}}</div>
     <p>O método mais simples é a <strong>bisseção</strong>: como o preço cai monotonicamente quando o YTM sobe, testa-se uma taxa no meio do intervalo, vê-se se o preço calculado ficou acima ou abaixo do alvo e estreita-se o intervalo, repetindo até convergir. Mova o preço e veja a taxa que o explica — e a verificação de que, naquele YTM, o VP volta a bater no preço.</p>
   </div>
   <div class="lab">
@@ -889,11 +905,11 @@
   <h2>DV01, imunização e hedge com DI futuro</h2>
   <div class="prose">
     <p>A duration diz a sensibilidade em %; o <strong>DV01</strong> (também PV01) diz em <strong>reais</strong>: quanto a posição perde ou ganha se a taxa mexer <strong>1 ponto-base</strong> (0,01%).</p>
-    <div class="formula">DV01 = PU × ModD × 0,0001</div>
+    <div class="formula">\text{DV01} = \text{PU}\times\text{ModD}\times 0{,}0001</div>
     <div class="ex"><span class="t">Exemplo</span>Posição de R$ 1.000.000 com duration modificada 7: DV01 = 1.000.000 × 7 × 0,0001 = <strong>R$ 700</strong> por ponto-base.</div>
     <p><strong>Imunização.</strong> Se você casa a <strong>duration</strong> da carteira com o horizonte do seu objetivo, o risco de preço (juro sobe → preço cai) e o de reinvestimento (juro sobe → reaplica melhor) se compensam naquele prazo — você "trava" o retorno mesmo que a taxa oscile.</p>
     <p><strong>Hedge com DI futuro.</strong> O contrato de DI da B3 vale R$ 100.000 no vencimento; seu PU é 100.000 ÷ (1+i)^(du/252). Para neutralizar o risco de juros de uma posição, casa-se o DV01:</p>
-    <div class="formula">nº de contratos = DV01 da posição ÷ DV01 do contrato de DI</div>
+    <div class="formula">N_{\text{contratos}} = \dfrac{\text{DV01}_{\text{posição}}}{\text{DV01}_{\text{DI}}}</div>
   </div>
   <div class="lab">
     <div class="pad">
@@ -908,6 +924,60 @@
     <div class="pad"><h3 style="font-size:1rem;margin-bottom:.6rem">Como ler</h3><p style="font-size:.9rem;color:var(--ink2);margin:0">O DV01 da posição é o prejuízo (ou ganho) em reais para cada ponto-base de alta (ou queda) na taxa. Vendendo a quantidade de contratos de DI que iguala esse DV01, um movimento de juros que machuca a carteira é compensado pelo resultado no DI — o risco de juros fica neutralizado.</p></div>
   </div>
   <div class="note"><span class="t">Fechando o técnico</span><p>Com isto você tem o ciclo completo: precificar (PU), achar a taxa (TIR), medir o risco (duration, DV01, convexidade) e protegê-lo (imunização, hedge com DI). É o ferramental que um gestor usa todo dia.</p></div>
+</section>
+
+<!-- Z CENARIOS COMPARADOS -->
+<section id="pZ" class="panel t-coral">
+  <div class="ptag">Comparativo · cenários macro</div>
+  <h2>Como cada título do Tesouro reage</h2>
+  <div class="prose">
+    <p>Os três tipos de título do Tesouro respondem de formas <strong>opostas</strong> ao mesmo cenário. O desenho abaixo resume o comportamento; em seguida, escolha um choque e veja os preços recalculados, com a tabela e o gráfico.</p>
+  </div>
+
+  <div class="pad" style="margin-bottom:1.6rem">
+    <div class="matrix">
+      <div class="mh"></div><div class="mh">Juros sobem</div><div class="mh">Juros caem</div><div class="mh">Inflação dispara</div>
+      <div class="mr">Tesouro Selic (LFT)</div>
+        <div class="mc up">↑<small>rende mais</small></div><div class="mc dn">↓<small>rende menos</small></div><div class="mc up">↑<small>acompanha</small></div>
+      <div class="mr">Prefixado (LTN/NTN-F)</div>
+        <div class="mc dn">↓<small>preço cai</small></div><div class="mc up">↑<small>preço sobe</small></div><div class="mc dn">↓<small>perde p/ inflação</small></div>
+      <div class="mr">IPCA+ (NTN-B)</div>
+        <div class="mc dn">↓<small>preço cai</small></div><div class="mc up">↑<small>preço sobe</small></div><div class="mc up">↑<small>protegido</small></div>
+    </div>
+    <p style="font-size:.78rem;color:var(--ink3);margin:.9rem 0 0">Verde = favorável · vermelho = desfavorável. O Tesouro Selic nunca sofre marcação; prefixado e IPCA+ ganham na queda de juros e perdem na alta (quanto maior a duration, maior o efeito).</p>
+  </div>
+
+  <div class="seg"><span class="sl">Tipo de choque:</span>
+    <button id="mJ" class="active" onclick="setMode('juros',this)">Juros (Selic / curva)</button>
+    <button id="mI" onclick="setMode('inflacao',this)">Inflação</button>
+  </div>
+
+  <div id="scJuros">
+    <div class="seg"><span class="sl">Variação dos juros:</span>
+      <button onclick="setShock(-2,this)">−2 p.p.</button>
+      <button onclick="setShock(-1,this)">−1 p.p.</button>
+      <button class="active" onclick="setShock(0,this)">estável</button>
+      <button onclick="setShock(1,this)">+1 p.p.</button>
+      <button onclick="setShock(2,this)">+2 p.p.</button>
+    </div>
+    <table><thead><tr><th>Título</th><th class="num">Preço base</th><th class="num">Preço no cenário</th><th class="num">Δ%</th></tr></thead><tbody id="scJrows"></tbody></table>
+    <p style="font-size:.78rem;color:var(--ink3);margin:.2rem 0 0">Preços por 100 de face. Prefixados a 12% a.a.; IPCA+ com taxa real de 6% a.a.; choque aplicado sobre a taxa.</p>
+  </div>
+
+  <div id="scInfl" style="display:none">
+    <div class="seg"><span class="sl">Inflação (IPCA a.a.):</span>
+      <button onclick="setInfl(3,this)">3%</button>
+      <button class="active" onclick="setInfl(6,this)">6%</button>
+      <button onclick="setInfl(9,this)">9%</button>
+      <button onclick="setInfl(12,this)">12%</button>
+      <button onclick="setInfl(15,this)">15%</button>
+    </div>
+    <table><thead><tr><th>Título</th><th class="num">Retorno nominal</th><th class="num">Retorno real</th></tr></thead><tbody id="scIrows"></tbody></table>
+    <p style="font-size:.78rem;color:var(--ink3);margin:.2rem 0 0">Comparando um prefixado de 12% a.a. com um IPCA+ de taxa real 6% a.a. A inflação implícita entre eles é ≈ 5,66%.</p>
+  </div>
+
+  <div class="chart-box" style="margin-top:1.2rem"><canvas id="cScen"></canvas></div>
+  <div class="note"><span class="t" id="scTag">O que está acontecendo</span><p id="scWhy"></p></div>
 </section>
 
 </main>
@@ -932,7 +1002,7 @@
       y:{title:{display:!!yT,text:yT,color:TXT,font:{size:11}},grid:{color:GRID},ticks:{color:TXT,font:{family:"'IBM Plex Mono'",size:10}}}}};}
 
   const CH={};
-  const INIT={pA:initA,pB:initB,p1:init1,p2:init2,p3:init3,p4:init4,p5:init5,p6:init6,p7:init7,p8:init8,p9:init9,pC:initC,pI:initI,pF:initF,pV:initV};
+  const INIT={pA:initA,pB:initB,p1:init1,p2:init2,p3:init3,p4:init4,p5:init5,p6:init6,p7:init7,p8:init8,p9:init9,pC:initC,pI:initI,pF:initF,pV:initV,pP:renderP,pY:initY,pH:renderH,pZ:initSC};
   function show(id,btn){document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));document.querySelectorAll('.tabbtn').forEach(b=>b.classList.remove('active'));$(id).classList.add('active');btn.classList.add('active');if(INIT[id]){INIT[id]();INIT[id]=null;}}
 
   /* 1 */
@@ -1099,7 +1169,78 @@
     const labs=[],real=[],lin=[];for(let y=Math.max(0.5,y0-4);y<=y0+4.0001;y+=0.25){labs.push(y.toFixed(1));real.push(+priceP(c,y,N,1).toFixed(2));lin.push(+(p0*(1-mod*(y-y0)/100)).toFixed(2));}
     CH.cCx.data.labels=labs;CH.cCx.data.datasets[0].data=real;CH.cCx.data.datasets[1].data=lin;CH.cCx.update();}
 
-  initA();
+  /* P cálculo dos títulos públicos */
+  let cur1='LTN';
+  function setTit(t,btn){cur1=t;document.querySelectorAll('#titSeg button').forEach(b=>b.classList.remove('active'));btn.classList.add('active');
+    $('rowTax').style.display=(t==='LFT')?'none':'block';$('rowVNA').style.display=(t==='LFT'||t==='NTNB')?'block':'none';$('rowSpr').style.display=(t==='LFT')?'block':'none';renderP();}
+  function renderP(){const i=v('i1tax'),n=v('i1ano'),vna=v('i1vna'),spr=v('i1spr');
+    setv('l1tax',pct(i,2));setv('l1ano',n+(n==1?' ano':' anos'));setv('l1vna','R$ '+n2(vna));setv('l1spr',pct(spr,2));
+    const f=Math.pow(1+i/100,n);let pu,desc,extra='';
+    if(cur1==='LTN'){pu=1000/f;desc='PU = 1.000 / (1+'+n2(i)+'%)^'+n+' = R$ '+n2(pu);}
+    else if(cur1==='NTNF'){const cup=1000*(Math.sqrt(1.10)-1);let sm=0;for(let k=1;k<=2*n;k++)sm+=cup/Math.pow(1+i/100,k/2);pu=sm+1000/f;desc='PU = Σ '+n2(cup)+'/(1+i)^t + 1.000/(1+i)^'+n+' = R$ '+n2(pu);extra='Cupom semestral: R$ '+n2(cup);}
+    else if(cur1==='LFT'){pu=vna/Math.pow(1+spr/100,n);desc='PU = '+n2(vna)+' / (1+'+n2(spr)+'%)^'+n+' = R$ '+n2(pu);extra='Cotação: '+(100/Math.pow(1+spr/100,n)).toFixed(4).replace('.',',')+'%';}
+    else{const cupR=(Math.sqrt(1.06)-1)*100;let sm=0;for(let k=1;k<=2*n;k++)sm+=cupR/Math.pow(1+i/100,k/2);const cot=sm+100/f;pu=vna*cot/100;desc='cotação = '+n2(cot)+'%  →  PU = '+n2(vna)+' × '+n2(cot)+'% = R$ '+n2(pu);extra='Cupom semestral: '+cupR.toFixed(4).replace('.',',')+'% do VNA';}
+    setv('o1pu','R$ '+n2(pu));$('o1desc').textContent=desc;$('o1extra').textContent=extra;}
+
+  /* Y achar a taxa (TIR) */
+  function ytmSolve(price,coupon,years,m){let lo=0.001,hi=60,y;for(let k=0;k<80;k++){y=(lo+hi)/2;const p=priceP(coupon,y,years,m);if(p>price)lo=y;else hi=y;}return y;}
+  function initY(){CH.cTIR=new Chart($('cTIR'),{type:'line',data:{labels:[],datasets:[
+    {label:'Preço (curva)',data:[],borderColor:ACC.sky,pointRadius:0,tension:.3},
+    {label:'Preço-alvo',data:[],borderColor:ACC.coral,borderDash:[5,4],pointRadius:0}]},options:gopts('preço por 100','YTM (%)',true)});rY();}
+  function rY(){const price=v('iYp'),c=v('iYc'),n=v('iYn');setv('lYp',n2(price));setv('lYc',pct(c,1));setv('lYn',n);
+    const y=ytmSolve(price,c,n,1);setv('oYy',pct(y,3));setv('oYchk',n2(priceP(c,y,n,1)));
+    const labs=[],pr=[],tg=[];for(let yy=0.5;yy<=20.0001;yy+=0.5){labs.push(yy.toFixed(1));pr.push(+priceP(c,yy,n,1).toFixed(2));tg.push(+price.toFixed(2));}
+    CH.cTIR.data.labels=labs;CH.cTIR.data.datasets[0].data=pr;CH.cTIR.data.datasets[1].data=tg;CH.cTIR.update();}
+
+  /* H DV01 & hedge */
+  function initH(){renderH();}
+  function renderH(){const pu=v('iHpu'),mod=v('iHmod'),idi=v('iHdi'),dudi=v('iHdu');
+    setv('lHpu','R$ '+Math.round(pu).toLocaleString('pt-BR'));setv('lHmod',mod.toFixed(2).replace('.',',')+' anos');setv('lHdi',pct(idi,2));setv('lHdu',dudi+' du');
+    const dv01=pu*mod*0.0001;setv('oHdv','R$ '+n2(dv01));
+    const puDI=100000/Math.pow(1+idi/100,dudi/252),modDI=(dudi/252)/(1+idi/100),dv01DI=puDI*modDI*0.0001;
+    setv('oHdvDI','R$ '+n2(dv01DI));setv('oHn',(dv01/dv01DI).toFixed(1).replace('.',',')+' contratos');}
+
+  /* Z cenários comparados */
+  let scMode='juros',scShock=0,scInfl=6;
+  function setMode(m,btn){scMode=m;$('mJ').classList.toggle('active',m==='juros');$('mI').classList.toggle('active',m==='inflacao');
+    $('scJuros').style.display=m==='juros'?'block':'none';$('scInfl').style.display=m==='inflacao'?'block':'none';renderSC();}
+  function setShock(s,btn){scShock=s;btn.parentNode.querySelectorAll('button').forEach(b=>b.classList.remove('active'));btn.classList.add('active');renderSC();}
+  function setInfl(p,btn){scInfl=p;btn.parentNode.querySelectorAll('button').forEach(b=>b.classList.remove('active'));btn.classList.add('active');renderSC();}
+  function initSC(){renderSC();}
+  function drawSc(kind,labels,data,colors,yt,xt){if(CH.cScen)CH.cScen.destroy();
+    if(kind==='bar'){CH.cScen=new Chart($('cScen'),{type:'bar',data:{labels,datasets:[{data,backgroundColor:colors,borderRadius:5}]},options:gopts(yt,'')});}
+    else{CH.cScen=new Chart($('cScen'),{type:'line',data:{labels,datasets:[
+      {label:'Prefixado (real)',data:data[0],borderColor:colors[0],pointRadius:0,tension:.2},
+      {label:'IPCA+ (real)',data:data[1],borderColor:colors[1],borderDash:[5,4],pointRadius:0}]},options:gopts(yt,xt,true)});}}
+  function renderSC(){
+    if(scMode==='juros'){
+      const ts=[{n:'Prefixado 2 anos',y:12,t:2},{n:'Prefixado 5 anos',y:12,t:5},{n:'IPCA+ ~10 anos',y:6,t:10}];
+      let rows='<tr><td>Tesouro Selic (LFT)</td><td class="num">100,00</td><td class="num">≈ 100,00</td><td class="num pos">≈ 0%</td></tr>';
+      const labels=['Tesouro Selic'],data=[0],colors=[ACC.amber];
+      ts.forEach(o=>{const p0=100/Math.pow(1+o.y/100,o.t),p1=100/Math.pow(1+(o.y+scShock)/100,o.t),d=(p1/p0-1)*100;
+        rows+='<tr><td>'+o.n+'</td><td class="num">'+n2(p0)+'</td><td class="num">'+n2(p1)+'</td><td class="num '+(d>=0?'pos':'neg')+'">'+(d>=0?'+':'')+n2(d)+'%</td></tr>';
+        labels.push(o.n);data.push(+d.toFixed(2));colors.push(o.n.indexOf('IPCA')>=0?ACC.green:ACC.sky);});
+      $('scJrows').innerHTML=rows;drawSc('bar',labels,data,colors,'Δ% no preço (marcação)');
+      setv('scTag',scShock>0?'Juros sobem '+scShock+' p.p.':scShock<0?'Juros caem '+(-scShock)+' p.p.':'Juros estáveis');
+      setv('scWhy',scShock>0?'Juros para cima derrubam o preço de prefixados e IPCA+ — quanto maior a duration, maior o tombo (a Vale-da-vida do gráfico é o prazo longo). O Tesouro Selic não cai: passa a render mais. Segurando até o vencimento, ninguém "perde"; muda só o preço de marcação no caminho.':scShock<0?'Juros para baixo valorizam prefixados e IPCA+ (ganho de marcação, maior nos mais longos); o Tesouro Selic passa a render menos. É o cenário clássico de ganho de capital — o gestor compra duration na expectativa de corte.':'Sem choque, cada título entrega o combinado: o Selic rende a Selic, o prefixado a taxa travada e o IPCA+ a inflação mais a taxa real.');
+    } else {
+      const preReal=((1.12)/(1+scInfl/100)-1)*100, ipcaNom=((1.06)*(1+scInfl/100)-1)*100;
+      let rows='';
+      rows+='<tr><td>Prefixado (12% nominal)</td><td class="num">12,00%</td><td class="num '+(preReal>=0?'pos':'neg')+'">'+n2(preReal)+'%</td></tr>';
+      rows+='<tr><td>IPCA+ (6% real)</td><td class="num">'+n2(ipcaNom)+'%</td><td class="num pos">6,00%</td></tr>';
+      rows+='<tr><td>Tesouro Selic</td><td class="num">≈ acompanha</td><td class="num">≈ Selic − IPCA</td></tr>';
+      $('scIrows').innerHTML=rows;
+      const labs=[],pre=[],ip=[];for(let x=0;x<=18;x++){labs.push(x);pre.push(+(((1.12)/(1+x/100)-1)*100).toFixed(2));ip.push(6);}
+      drawSc('line',labs,[pre,ip],[ACC.coral,ACC.green],'retorno real (% a.a.)','inflação (% a.a.)');
+      setv('scTag','Inflação a '+scInfl+'%');
+      setv('scWhy',scInfl>5.7?'Inflação acima da implícita (≈5,66%): o prefixado perde em termos reais (seu retorno real cai para '+n2(preReal)+'%), enquanto o IPCA+ mantém 6% reais. É a proteção do indexador funcionando — e o Tesouro Selic tende a render mais, pois o BC sobe a Selic.':scInfl<5.6?'Inflação abaixo da implícita (≈5,66%): o prefixado entrega um retorno real maior ('+n2(preReal)+'%) que o IPCA+ — você "ganhou a aposta" de inflação baixa.':'Na inflação implícita (≈5,66%), prefixado e IPCA+ empatam em retorno real. É o ponto de break-even entre travar a taxa e indexar à inflação.');
+    }
+  }
+
+  /* render math */
+  function renderMath(){if(!window.katex)return;document.querySelectorAll('.formula').forEach(el=>{if(el.dataset.k)return;el.dataset.k='1';try{katex.render(el.textContent,el,{displayMode:true,throwOnError:false});}catch(e){}});}
+
+  initA();renderMath();
 </script>
 </body>
 </html>
