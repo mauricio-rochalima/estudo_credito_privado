@@ -193,6 +193,7 @@
   <button class="tabbtn" onclick="show('pY',this)"><span class="pip" style="background:var(--sky)"></span>Achar a taxa (TIR)</button>
   <button class="tabbtn" onclick="show('pH',this)"><span class="pip" style="background:var(--lilac)"></span>DV01 & hedge</button>
   <button class="tabbtn" onclick="show('pZ',this)"><span class="pip" style="background:var(--coral)"></span>Cenários comparados</button>
+  <button class="tabbtn" onclick="show('pD',this)"><span class="pip" style="background:var(--rose)"></span>Comparador de mercado</button>
 </div></div>
 
 <main class="wrap">
@@ -980,267 +981,27 @@
   <div class="note"><span class="t" id="scTag">O que está acontecendo</span><p id="scWhy"></p></div>
 </section>
 
-</main>
+<!-- D COMPARADOR DE MERCADO -->
+<section id="pD" class="panel t-rose">
+  <div class="ptag">Mercado · comparador por cenário</div>
+  <h2>Quais títulos valem a pena no seu cenário?</h2>
+  <div class="prose">
+    <p>O comparador junta os <strong>títulos do Tesouro</strong> (busca automática) com as <strong>debêntures da sua carteira</strong>, aplica o cenário que você projetar (IPCA, Selic, choque de juros, horizonte) e ranqueia tudo pelo <strong>retorno real líquido de IR</strong>. Clique numa linha para ver <em>por que</em> aquele título está naquela posição.</p>
+  </div>
 
-<footer class="wrap">
-  <p>Curso interativo construído a partir dos conceitos de <em>Apreçamento de Títulos de Renda Fixa</em> (EPGE/FGV, Tiago Carvalho Machado de Souza), combinado ao material aplicado de par, ágio e deságio. Cálculos com composição periódica e aproximações para fins didáticos; valores em % do valor de face. Não é recomendação de investimento — confirme PU, fluxo e taxa na fonte oficial e avalie suitability antes de decidir.</p>
-</footer>
+  <div class="pad" style="margin-bottom:1.6rem">
+    <div class="stat"><span>Fonte dos dados do Tesouro</span><b id="oDsrc" style="font-family:var(--sans);font-size:.88rem">carregando…</b></div>
+    <div class="seg" style="margin-top:.9rem"><button class="revbtn" onclick="dLoad(true)">Tentar buscar agora</button></div>
+    <details style="margin-top:.7rem"><summary style="cursor:pointer;font-size:.86rem;color:var(--ink2)">Colar dados manualmente (JSON do Tesouro ou CSV de debêntures)</summary>
+      <textarea id="tDpaste" rows="4" style="width:100%;margin-top:.6rem;font-family:var(--mono);font-size:.78rem;border:1px solid var(--line2);border-radius:9px;padding:.6rem;color:var(--ink)" placeholder="JSON do endpoint do Tesouro Direto — ou CSV de debêntures: codigo;taxa real;duration;isenta(s/n);vencimento(AAAA-MM-DD)"></textarea>
+      <div class="seg" style="margin-top:.5rem"><button onclick="dPaste('tes')">Aplicar como Tesouro</button><button onclick="dPaste('deb')">Aplicar como debêntures</button></div>
+    </details>
+  </div>
 
-<script>
-  const $=id=>document.getElementById(id), v=id=>parseFloat($(id).value), setv=(id,t)=>$(id).textContent=t;
-  const pct=(x,d=2)=>x.toFixed(d).replace('.',',')+'%', n2=x=>x.toFixed(2).replace('.',',');
-  const ACC={sky:'#4F95D6',mint:'#2FA98C',coral:'#E07C5E',amber:'#CE9322',rose:'#D26D8C',lilac:'#8B79C4',teal:'#2E9AA4',green:'#6AA04B',plum:'#A66BA6',gray:'#C9C7CF',slate:'#23232B'};
-  const GRID='#EFEEF4',TXT='#56565F';
-
-  function priceP(coupon,ytm,years,m){const c=coupon/m,y=ytm/100/m,N=Math.round(years*m);let p=0;for(let t=1;t<=N;t++)p+=c/Math.pow(1+y,t);p+=100/Math.pow(1+y,N);return p;}
-  function macD(coupon,ytm,years,m){const c=coupon/m,y=ytm/100/m,N=Math.round(years*m),pr=priceP(coupon,ytm,years,m);let s=0;for(let t=1;t<=N;t++){const cf=(t<N?c:c+100);s+=(t/m)*cf/Math.pow(1+y,t);}return s/pr;}
-  function spot(p,n){return Math.pow(100/p,1/n)-1;}
-
-  function gopts(yT,xT,legend){return{responsive:true,maintainAspectRatio:false,interaction:{intersect:false},
-    plugins:{legend:{display:!!legend,labels:{color:TXT,boxWidth:12,font:{family:"'IBM Plex Sans'",size:11}}}},
-    scales:{x:{title:{display:!!xT,text:xT,color:TXT,font:{size:11}},grid:{color:GRID},ticks:{color:TXT,font:{family:"'IBM Plex Mono'",size:10}}},
-      y:{title:{display:!!yT,text:yT,color:TXT,font:{size:11}},grid:{color:GRID},ticks:{color:TXT,font:{family:"'IBM Plex Mono'",size:10}}}}};}
-
-  const CH={};
-  const INIT={pA:initA,pB:initB,p1:init1,p2:init2,p3:init3,p4:init4,p5:init5,p6:init6,p7:init7,p8:init8,p9:init9,pC:initC,pI:initI,pF:initF,pV:initV,pP:renderP,pY:initY,pH:renderH,pZ:initSC};
-  function show(id,btn){document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));document.querySelectorAll('.tabbtn').forEach(b=>b.classList.remove('active'));$(id).classList.add('active');btn.classList.add('active');if(INIT[id]){INIT[id]();INIT[id]=null;}}
-
-  /* 1 */
-  function init1(){CH.c1=new Chart($('c1'),{type:'line',data:{labels:['1','2','3','4'],datasets:[{label:'Taxa spot',data:[],borderColor:ACC.sky,backgroundColor:'rgba(79,149,214,.12)',fill:true,tension:.25,pointRadius:4,pointBackgroundColor:ACC.sky}]},options:gopts('% a.a.','prazo (anos)')});r1();}
-  function r1(){const ps=[v('z1'),v('z2'),v('z3'),v('z4')],rs=ps.map((p,i)=>spot(p,i+1)*100);['r1a','r1b','r1c','r1d'].forEach((id,i)=>setv(id,pct(rs[i])));CH.c1.data.datasets[0].data=rs;CH.c1.update();}
-
-  /* 2 */
-  let f2=2;
-  function setF2(m){f2=m;$('f2a').classList.toggle('active',m===1);$('f2s').classList.toggle('active',m===2);r2();}
-  function init2(){CH.c2=new Chart($('c2'),{type:'bar',data:{labels:[],datasets:[{label:'Fluxo recebido',data:[],backgroundColor:ACC.mint,borderRadius:3}]},options:gopts('por 100','período')});r2();}
-  function r2(){const c=v('i2c'),y=v('i2y'),N=v('i2n');setv('l2c',pct(c,1));setv('l2y',pct(y,1));setv('l2n',N);const p=priceP(c,y,N,f2);setv('o2p',n2(p));
-    $('o2s').innerHTML=p>100.05?'<span class="badge" style="background:var(--coral-bg);color:var(--coral)">ágio</span>':p<99.95?'<span class="badge" style="background:var(--sky-bg);color:var(--sky)">deságio</span>':'<span class="badge">no par</span>';
-    const per=Math.round(N*f2),cc=c/f2,labs=[],data=[];for(let t=1;t<=per;t++){labs.push(t);data.push(+(cc+(t===per?100:0)).toFixed(2));}CH.c2.data.labels=labs;CH.c2.data.datasets[0].data=data;CH.c2.update();}
-
-  /* 3 mecânica */
-  function init3(){
-    CH.c3=new Chart($('c3'),{type:'bar',data:{labels:['Cupom 10%','Cupom 5%','Cupom 3%'],datasets:[{data:[],backgroundColor:[ACC.coral,ACC.mint,ACC.sky],borderRadius:5}]},options:gopts('preço por 100','')});
-    CH.c3sim=new Chart($('c3sim'),{type:'bar',data:{labels:['Par','Ágio','Deságio'],datasets:[{data:[],backgroundColor:[ACC.mint,ACC.coral,ACC.sky],borderRadius:5}]},options:gopts('retorno real','')});
-    r3();render3();
-  }
-  function r3(){const y=v('i3y'),N=v('i3n');setv('l3y',pct(y,1));setv('l3n',N);const a=priceP(10,y,N,1),b=priceP(5,y,N,1),c=priceP(3,y,N,1);setv('o3a',n2(a));setv('o3b',n2(b));setv('o3c',n2(c));CH.c3.data.datasets[0].data=[+a.toFixed(2),+b.toFixed(2),+c.toFixed(2)];CH.c3.options.scales.y.suggestedMin=Math.min(c,60);CH.c3.update();}
-
-  /* 3 simulador reinvestimento */
-  const B3=[{k:'par',c:6,p:100},{k:'agio',c:9,p:110.40},{k:'des',c:3,p:89.60}];
-  let cen='mantem',estr='hold';const RATE={mantem:0.06,sobem:0.09,caem:0.03};
-  const NAR={
-    mantem_hold:'Sem mudança nos juros, os três entregam o mesmo IPCA + 6,00% a.a. — a taxa travada na compra. O ágio/deságio só mudou o caminho, não o destino.',
-    mantem_sell:'Vendendo em 1 ano sem mexida nos juros, os três rendem ~6% no ano (o próprio carrego). Você recebeu a taxa pelo tempo parado.',
-    sobem_hold:'Juros sobem e você segura: todos acima de 6%, pois os cupons são reinvestidos a 9%. O ágio ganha mais (≈ IPCA+6,34%) — tem mais cupom para reaplicar na taxa nova; o deságio aproveita menos (≈ IPCA+6,14%).',
-    sobem_sell:'Juros sobem e você vende em 1 ano: prejuízo de marcação em todos. O deságio perde mais (≈ −2,0%) por ter maior duration; o ágio se defende melhor (≈ −1,3%). Segurar e reinvestir teria sido melhor.',
-    caem_hold:'Juros caem e você segura: todos abaixo de 6%, pois os cupons rendem só 3% reaplicados. O deságio sofre menos (≈ IPCA+5,87%); o ágio é o mais penalizado (≈ IPCA+5,67%).',
-    caem_sell:'Juros caem e você vende em 1 ano: ganho de capital gordo (≈ +14% a +15% no ano). O deságio ganha mais (≈ +15,0%) — maior duration, preço sobe mais. Esta é a oportunidade de realizar a marcação.'
-  };
-  function setCen(c){cen=c;['cMan','cUp','cDn'].forEach((id,i)=>$(id).classList.toggle('active',['mantem','sobem','caem'][i]===c));render3();}
-  function setEstr(e){estr=e;$('eHold').classList.toggle('active',e==='hold');$('eSell').classList.toggle('active',e==='sell');render3();}
-  function holdRet(b,r){let fv=0;for(let t=1;t<=4;t++)fv+=b.c*Math.pow(1+r,4-t);fv+=100;return Math.pow(fv/b.p,1/4)-1;}
-  function sell1(b,y){let p1=0;for(let t=1;t<=3;t++)p1+=b.c/Math.pow(1+y,t);p1+=100/Math.pow(1+y,3);return (b.c+p1)/b.p-1;}
-  function render3(){const r=RATE[cen],vals=B3.map(b=>estr==='hold'?holdRet(b,r):sell1(b,r));
-    const ids={par:['valPar','subPar'],agio:['valAgio','subAgio'],des:['valDes','subDes']};
-    B3.forEach((b,i)=>{const x=vals[i]*100,[vi,si]=ids[b.k];if(estr==='hold'){setv(vi,'IPCA + '+n2(x)+'%');setv(si,'real a.a. · 4 anos');}else{setv(vi,(x>=0?'+':'')+x.toFixed(1).replace('.',',')+'%');setv(si,'retorno real no 1º ano');}});
-    setv('simTag',estr==='hold'?'Retorno real anualizado (4 anos)':'Retorno real no 1º ano');setv('simWhy',NAR[cen+'_'+estr]);
-    if(CH.c3sim){CH.c3sim.data.datasets[0].data=vals.map(x=>+(x*100).toFixed(3));CH.c3sim.options.scales.y.title.text=estr==='hold'?'retorno real a.a.':'retorno no 1º ano';CH.c3sim.update();}}
-
-  /* 4 */
-  function init4(){CH.c4=new Chart($('c4'),{type:'line',data:{labels:[],datasets:[
-    {label:'Cupom 10%',data:[],borderColor:ACC.coral,pointRadius:0,tension:.2},
-    {label:'Cupom 5%',data:[],borderColor:ACC.mint,pointRadius:0,tension:.2},
-    {label:'Cupom 3%',data:[],borderColor:ACC.sky,pointRadius:0,tension:.2},
-    {label:'Zero-coupon',data:[],borderColor:ACC.lilac,borderDash:[5,4],pointRadius:0,tension:.2}]},options:gopts('preço (% face)','anos até o vencimento',true)});r4();}
-  function r4(){const y=v('i4y');setv('l4y',pct(y,1));const labs=[],a=[],b=[],c=[],z=[];for(let tau=30;tau>=0;tau--){labs.push(tau);a.push(+priceP(10,y,tau,1).toFixed(2));b.push(+priceP(5,y,tau,1).toFixed(2));c.push(+priceP(3,y,tau,1).toFixed(2));z.push(+(100/Math.pow(1+y/100,tau)).toFixed(2));}CH.c4.data.labels=labs;[a,b,c,z].forEach((d,i)=>CH.c4.data.datasets[i].data=d);CH.c4.update();setv('o4a',n2(priceP(10,y,30,1)));setv('o4b',n2(priceP(5,y,30,1)));setv('o4c',n2(priceP(3,y,30,1)));setv('o4z',n2(100/Math.pow(1+y/100,30)));}
-
-  /* 5 */
-  function init5(){CH.c5=new Chart($('c5'),{type:'line',data:{labels:[],datasets:[
-    {label:'Preço sujo',data:[],borderColor:ACC.rose,pointRadius:0,tension:0},
-    {label:'Preço limpo',data:[],borderColor:ACC.mint,borderDash:[5,4],pointRadius:0}]},options:gopts('preço por 100','tempo (períodos)',true)});r5();}
-  function r5(){const c=v('i5c'),d=v('i5d');setv('l5c',n2(c));setv('l5d',d);const acc=c*(d/360);setv('o5acc',n2(acc));setv('o5cl',n2(100));setv('o5dt',n2(100+acc));
-    const labs=[],sujo=[],limpo=[];for(let t=0;t<=108;t++){const frac=(t%36)/36;labs.push((t/36).toFixed(1));sujo.push(+(100+c*frac).toFixed(2));limpo.push(100);}CH.c5.data.labels=labs;CH.c5.data.datasets[0].data=sujo;CH.c5.data.datasets[1].data=limpo;CH.c5.update();}
-
-  /* 6 */
-  function init6(){CH.c6=new Chart($('c6'),{type:'bar',data:{labels:['Aproximação (duration)','Reapreçamento exato'],datasets:[{data:[],backgroundColor:[ACC.lilac,ACC.slate],borderRadius:5}]},options:gopts('Δ preço (%)','')});r6();}
-  function r6(){const c=v('i6c'),y=v('i6y'),N=v('i6n'),dy=v('i6d');setv('l6c',pct(c,1));setv('l6y',pct(y,1));setv('l6n',N);setv('l6d',(dy>=0?'+':'')+pct(dy,1));
-    const mac=macD(c,y,N,1),mod=mac/(1+y/100);setv('o6m',mac.toFixed(2).replace('.',',')+' anos');setv('o6mod',mod.toFixed(2).replace('.',',')+' anos');
-    const approx=-mod*dy,p0=priceP(c,y,N,1),p1=priceP(c,y+dy,N,1),exact=(p1/p0-1)*100;CH.c6.data.datasets[0].data=[+approx.toFixed(2),+exact.toFixed(2)];CH.c6.update();}
-
-  /* 7 */
-  const Z=[96.62,92.45,87.63];
-  function init7(){CH.c7=new Chart($('c7'),{type:'bar',data:{labels:['Zero 1a','Zero 2a','Zero 3a'],datasets:[{label:'Custo de cada zero',data:[],backgroundColor:ACC.teal,borderRadius:4}]},options:gopts('custo por 100','')});r7();}
-  function r7(){const c=v('i7c');setv('l7c',n2(c));const faces=[c,c,c+100],costs=faces.map((f,i)=>f*Z[i]/100);let tot=0,rows='';['1 ano','2 anos','3 anos'].forEach((lab,i)=>{tot+=costs[i];rows+=`<tr><td>${lab}</td><td class="num">${n2(faces[i])}</td><td class="num">${n2(costs[i])}</td></tr>`;});$('o7rows').innerHTML=rows;setv('o7tot',n2(tot));CH.c7.data.datasets[0].data=costs.map(x=>+x.toFixed(2));CH.c7.update();}
-
-  /* 8 */
-  function init8(){CH.c8=new Chart($('c8'),{type:'line',data:{labels:[],datasets:[
-    {label:'YTM prometido',data:[],borderColor:ACC.green,pointRadius:0,tension:.2},
-    {label:'Retorno esperado',data:[],borderColor:ACC.coral,borderDash:[5,4],pointRadius:0,tension:.2}]},options:gopts('% a.a.','probabilidade de default (%)',true)});r8();}
-  function r8(){const rf=v('i8r'),pd=v('i8p')/100,rec=v('i8rec')/100;setv('l8r',pct(rf,1));setv('l8p',Math.round(pd*100)+'%');setv('l8rec',Math.round(rec*100)+'%');
-    const expCF=(1-pd)*100+pd*rec*100,price=expCF/(1+rf/100);setv('o8price',n2(price));setv('o8ytm',pct((100/price-1)*100));setv('o8exp',pct((expCF/price-1)*100));
-    const labs=[],yp=[],ep=[];for(let q=0;q<=100;q+=5){const p=q/100,e=(1-p)*100+p*rec*100,pr=e/(1+rf/100);labs.push(q);yp.push(+((100/pr-1)*100).toFixed(2));ep.push(+((e/pr-1)*100).toFixed(2));}CH.c8.data.labels=labs;CH.c8.data.datasets[0].data=yp;CH.c8.data.datasets[1].data=ep;CH.c8.update();}
-
-  /* 9 */
-  const MAT=[1,2,3,5,7,10,15,20,30],TRE=[0.15,0.35,0.6,1.1,1.5,1.85,2.3,2.6,2.75],AAAc=[0.45,0.7,1.0,1.7,2.2,2.65,3.3,3.9,4.0],BBBc=[0.95,1.3,1.7,2.6,3.2,3.7,4.2,4.35,4.4];
-  function near(arr,n){let bi=0,bd=1e9;MAT.forEach((m,i)=>{const d=Math.abs(m-n);if(d<bd){bd=d;bi=i;}});return arr[bi];}
-  function init9(){CH.c9=new Chart($('c9'),{type:'line',data:{labels:MAT,datasets:[
-    {label:'Treasury',data:TRE,borderColor:ACC.amber,pointRadius:2,tension:.3},
-    {label:'AAA',data:AAAc,borderColor:ACC.sky,pointRadius:2,tension:.3},
-    {label:'BBB',data:BBBc,borderColor:ACC.plum,pointRadius:2,tension:.3}]},options:gopts('YTM (%)','prazo (anos)',true)});r9();}
-  function r9(){const n=v('i9n');setv('l9n',n);const t=near(TRE,n),a=near(AAAc,n),b=near(BBBc,n);setv('o9t',pct(t));setv('o9a',pct(a)+'  ·  +'+pct(a-t));setv('o9b',pct(b)+'  ·  +'+pct(b-t));}
-
-  /* A carteira real */
-  const TIT=[
-    {cod:'EGIE27',tx:5.9033,dur:0.94,pu:1558.95},
-    {cod:'PETR26',tx:4.2186,dur:2.5,pu:1393.44},
-    {cod:'ENEV15',tx:5.50,dur:2.8,pu:1365.73},
-    {cod:'ELET14',tx:6.317,dur:3.8,pu:1086.10},
-    {cod:'CTGE15',tx:6.3423,dur:4.2,pu:1037.60},
-    {cod:'TRPLA4',tx:6.2607,dur:5.6,pu:1036.93},
-    {cod:'VALEC0',tx:6.4203,dur:9.0,pu:1067.10}
-  ];
-  function initA(){
-    const s=[...TIT].sort((a,b)=>b.tx-a.tx);
-    CH.cmp=new Chart($('cCmp'),{type:'bar',data:{labels:s.map(t=>t.cod),datasets:[{data:s.map(t=>+t.tx.toFixed(2)),backgroundColor:ACC.coral,borderRadius:5}]},options:Object.assign(gopts('IPCA + (% a.a.)',''),{indexAxis:'y'})});
-    CH.sc=new Chart($('cSc'),{type:'bar',data:{labels:[],datasets:[{data:[],backgroundColor:[],borderRadius:5}]},options:gopts('Δ no PU (%)','')});
-    renderSc();
-  }
-  function renderSc(){
-    const dy=v('iAdy');setv('lAdy',(dy>=0?'+':'')+dy.toFixed(1).replace('.',',')+' p.p.');
-    const ord=[...TIT].sort((a,b)=>a.dur-b.dur),chg=ord.map(t=>-t.dur*dy);
-    CH.sc.data.labels=ord.map(t=>t.cod);CH.sc.data.datasets[0].data=chg.map(x=>+x.toFixed(2));
-    CH.sc.data.datasets[0].backgroundColor=chg.map(x=>x>=0?ACC.mint:ACC.coral);CH.sc.update();
-    let rows='';ord.forEach((t,i)=>{const np=t.pu*(1+chg[i]/100);rows+=`<tr><td><strong>${t.cod}</strong></td><td class="num">${t.dur.toFixed(2).replace('.',',')}</td><td class="num">${n2(t.pu)}</td><td class="num ${chg[i]>=0?'pos':'neg'}">${(chg[i]>=0?'+':'')+n2(chg[i])}%</td><td class="num">${n2(np)}</td></tr>`;});
-    $('scRows').innerHTML=rows;
-  }
-  function recommend(h){
-    const map={curto:[0,3],medio:[3,5],longo:[5,99]},lo=map[h][0],hi=map[h][1];
-    document.querySelectorAll('#titTable tbody tr').forEach(tr=>{const d=parseFloat(tr.dataset.d),m=d>lo&&d<=hi;tr.classList.toggle('hl',m);tr.classList.toggle('dim',!m);});
-    ['recA','recB','recC'].forEach((id,i)=>$(id).classList.toggle('active',['curto','medio','longo'][i]===h));
-    setv('recWhy',{curto:'Duration curta (até ~3 anos): menos oscilação de marcação e dinheiro de volta mais rápido. Maior taxa do grupo: EGIE27 (IPCA + 5,90%).',medio:'Duration intermediária (~4 a 5 anos): bom equilíbrio entre taxa e prazo. Maior taxa do grupo: CTGE15 (IPCA + 6,34%).',longo:'Duration longa (5+ anos): trava a maior taxa real da lista, com mais volatilidade e prazo. Topo: VALEC0 (IPCA + 6,42%), mas são 9 anos.'}[h]);
-  }
-
-  /* B passo a passo (EGIE27) */
-  function initB(){CH.eg=new Chart($('cEg'),{type:'bar',data:{labels:['jul/2026','jul/2027','jul/2028'],datasets:[
-    {label:'Juros',data:[89.07,58.90,19.80],backgroundColor:ACC.mint,borderRadius:3,stack:'s'},
-    {label:'Amortização / principal',data:[502.87,670.53,335.36],backgroundColor:ACC.coral,borderRadius:3,stack:'s'}]},
-    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:true,labels:{color:TXT,boxWidth:12,font:{family:"'IBM Plex Sans'",size:11}}}},
-      scales:{x:{stacked:true,grid:{color:GRID},ticks:{color:TXT,font:{family:"'IBM Plex Mono'",size:10}}},y:{stacked:true,grid:{color:GRID},ticks:{color:TXT,font:{family:"'IBM Plex Mono'",size:10}},title:{display:true,text:'R$ por título (face 1.000)',color:TXT,font:{size:11}}}}}});}
-
-  /* exercícios + objetivo */
-  function quizPick(btn){const q=btn.closest('.q');if(q.dataset.done)return;q.dataset.done='1';q.querySelectorAll('.qopt').forEach(o=>{if(o.dataset.c==='1')o.classList.add('ok');});if(btn.dataset.c!=='1')btn.classList.add('no');q.querySelector('.qexp').style.display='block';}
-  function toggleSol(id){const e=$(id);e.style.display=(e.style.display==='block')?'none':'block';}
-  const OBJ={liquidez:'Tesouro Selic (LFT) — rende a Selic, marcação quase nula, liquidez diária. É a reserva de emergência por excelência.',travar:'Tesouro Prefixado (LTN/NTN-F) — trava uma taxa nominal. Ganha se os juros caírem (ganho de capital na marcação); risco se precisar vender numa alta de juros.',inflacao:'Tesouro IPCA+ (NTN-B) — paga IPCA + taxa real, protegendo o poder de compra. Ideal para objetivos de longo prazo, como aposentadoria.',renda:'Com juros semestrais: NTN-F (prefixado) ou NTN-B (IPCA+). Pagam cupom a cada seis meses, gerando renda no caminho.'};
-  function objPick(k,btn){document.querySelectorAll('#objSeg button').forEach(b=>b.classList.remove('active'));btn.classList.add('active');setv('objOut',OBJ[k]);}
-
-  /* C convenções BR */
-  function initC(){CH.cBR=new Chart($('cBR'),{type:'line',data:{labels:[],datasets:[{label:'PU',data:[],borderColor:ACC.amber,backgroundColor:'rgba(206,147,34,.10)',fill:true,pointRadius:0,tension:.2}]},options:gopts('PU (face 1.000)','dias úteis')});rC();}
-  function rC(){const i=v('iCt')/100,du=v('iCdu');setv('lCt',pct(v('iCt'),2));setv('lCdu',du+' du');
-    const dr=(Math.pow(1+i,1/252)-1)*100,fator=Math.pow(1+i,du/252),pu=1000/fator;
-    setv('oCdr',dr.toFixed(4).replace('.',',')+'%');setv('oCf',fator.toFixed(4).replace('.',','));setv('oCpu','R$ '+n2(pu));
-    const labs=[],d=[];for(let x=0;x<=1260;x+=42){labs.push(x);d.push(+(1000/Math.pow(1+i,x/252)).toFixed(2));}CH.cBR.data.labels=labs;CH.cBR.data.datasets[0].data=d;CH.cBR.update();}
-
-  /* I nominal x real */
-  function initI(){CH.cFi=new Chart($('cFi'),{type:'line',data:{labels:[],datasets:[
-    {label:'Prefixado (nominal fixo)',data:[],borderColor:ACC.coral,pointRadius:0,tension:0},
-    {label:'IPCA+ (real + inflação)',data:[],borderColor:ACC.green,pointRadius:0,tension:0}]},options:gopts('retorno nominal (% a.a.)','inflação realizada (% a.a.)',true)});rI();}
-  function rI(){const nom=v('iIn'),real=v('iIr'),inf=v('iIinf');setv('lIn',pct(nom,1));setv('lIr',pct(real,1));setv('lIinf',pct(inf,1));
-    const imp=((1+nom/100)/(1+real/100)-1)*100;setv('oIimp',pct(imp,2));
-    const ipcaNom=((1+real/100)*(1+inf/100)-1)*100;setv('oIipca',pct(ipcaNom,2));
-    setv('oIwin', inf>imp+0.05?'IPCA+ ganha':inf<imp-0.05?'Prefixado ganha':'Empate (na implícita)');
-    const labs=[],pre=[],ipc=[];for(let x=0;x<=12;x+=0.5){labs.push(x);pre.push(+nom.toFixed(2));ipc.push(+(((1+real/100)*(1+x/100)-1)*100).toFixed(2));}
-    CH.cFi.data.labels=labs;CH.cFi.data.datasets[0].data=pre;CH.cFi.data.datasets[1].data=ipc;CH.cFi.update();}
-
-  /* F forward */
-  function initF(){CH.cFw=new Chart($('cFw'),{type:'line',data:{labels:[1,2,3,4],datasets:[
-    {label:'Spot (à vista)',data:[],borderColor:ACC.sky,pointRadius:4,tension:.2},
-    {label:'Forward (1 ano à frente)',data:[],borderColor:ACC.plum,pointRadius:4,borderDash:[5,4],tension:.2}]},options:gopts('% a.a.','ano',true)});rF();}
-  function rF(){const r=[v('iF1'),v('iF2'),v('iF3'),v('iF4')];['lF1','lF2','lF3','lF4'].forEach((id,k)=>setv(id,pct(r[k],2)));
-    const fwd=[null];for(let t=1;t<4;t++){const f=(Math.pow(1+r[t]/100,t+1)/Math.pow(1+r[t-1]/100,t)-1)*100;fwd.push(+f.toFixed(2));}
-    setv('oF12',pct(fwd[1]));setv('oF23',pct(fwd[2]));setv('oF34',pct(fwd[3]));
-    CH.cFw.data.datasets[0].data=r.map(x=>+x.toFixed(2));CH.cFw.data.datasets[1].data=fwd;CH.cFw.update();}
-
-  /* V convexidade */
-  function initV(){CH.cCx=new Chart($('cCx'),{type:'line',data:{labels:[],datasets:[
-    {label:'Preço real (curva)',data:[],borderColor:ACC.lilac,pointRadius:0,tension:.3},
-    {label:'Aproximação pela duration (reta)',data:[],borderColor:ACC.slate,borderDash:[5,4],pointRadius:0}]},options:gopts('preço por 100','YTM (%)',true)});rV();}
-  function rV(){const c=v('iVc'),y0=v('iVy'),N=v('iVn');setv('lVc',pct(c,1));setv('lVy',pct(y0,1));setv('lVn',N);
-    const p0=priceP(c,y0,N,1),mod=macD(c,y0,N,1)/(1+y0/100);setv('oVp',n2(p0));setv('oVd',mod.toFixed(2).replace('.',',')+' anos');
-    const labs=[],real=[],lin=[];for(let y=Math.max(0.5,y0-4);y<=y0+4.0001;y+=0.25){labs.push(y.toFixed(1));real.push(+priceP(c,y,N,1).toFixed(2));lin.push(+(p0*(1-mod*(y-y0)/100)).toFixed(2));}
-    CH.cCx.data.labels=labs;CH.cCx.data.datasets[0].data=real;CH.cCx.data.datasets[1].data=lin;CH.cCx.update();}
-
-  /* P cálculo dos títulos públicos */
-  let cur1='LTN';
-  function setTit(t,btn){cur1=t;document.querySelectorAll('#titSeg button').forEach(b=>b.classList.remove('active'));btn.classList.add('active');
-    $('rowTax').style.display=(t==='LFT')?'none':'block';$('rowVNA').style.display=(t==='LFT'||t==='NTNB')?'block':'none';$('rowSpr').style.display=(t==='LFT')?'block':'none';renderP();}
-  function renderP(){const i=v('i1tax'),n=v('i1ano'),vna=v('i1vna'),spr=v('i1spr');
-    setv('l1tax',pct(i,2));setv('l1ano',n+(n==1?' ano':' anos'));setv('l1vna','R$ '+n2(vna));setv('l1spr',pct(spr,2));
-    const f=Math.pow(1+i/100,n);let pu,desc,extra='';
-    if(cur1==='LTN'){pu=1000/f;desc='PU = 1.000 / (1+'+n2(i)+'%)^'+n+' = R$ '+n2(pu);}
-    else if(cur1==='NTNF'){const cup=1000*(Math.sqrt(1.10)-1);let sm=0;for(let k=1;k<=2*n;k++)sm+=cup/Math.pow(1+i/100,k/2);pu=sm+1000/f;desc='PU = Σ '+n2(cup)+'/(1+i)^t + 1.000/(1+i)^'+n+' = R$ '+n2(pu);extra='Cupom semestral: R$ '+n2(cup);}
-    else if(cur1==='LFT'){pu=vna/Math.pow(1+spr/100,n);desc='PU = '+n2(vna)+' / (1+'+n2(spr)+'%)^'+n+' = R$ '+n2(pu);extra='Cotação: '+(100/Math.pow(1+spr/100,n)).toFixed(4).replace('.',',')+'%';}
-    else{const cupR=(Math.sqrt(1.06)-1)*100;let sm=0;for(let k=1;k<=2*n;k++)sm+=cupR/Math.pow(1+i/100,k/2);const cot=sm+100/f;pu=vna*cot/100;desc='cotação = '+n2(cot)+'%  →  PU = '+n2(vna)+' × '+n2(cot)+'% = R$ '+n2(pu);extra='Cupom semestral: '+cupR.toFixed(4).replace('.',',')+'% do VNA';}
-    setv('o1pu','R$ '+n2(pu));$('o1desc').textContent=desc;$('o1extra').textContent=extra;}
-
-  /* Y achar a taxa (TIR) */
-  function ytmSolve(price,coupon,years,m){let lo=0.001,hi=60,y;for(let k=0;k<80;k++){y=(lo+hi)/2;const p=priceP(coupon,y,years,m);if(p>price)lo=y;else hi=y;}return y;}
-  function initY(){CH.cTIR=new Chart($('cTIR'),{type:'line',data:{labels:[],datasets:[
-    {label:'Preço (curva)',data:[],borderColor:ACC.sky,pointRadius:0,tension:.3},
-    {label:'Preço-alvo',data:[],borderColor:ACC.coral,borderDash:[5,4],pointRadius:0}]},options:gopts('preço por 100','YTM (%)',true)});rY();}
-  function rY(){const price=v('iYp'),c=v('iYc'),n=v('iYn');setv('lYp',n2(price));setv('lYc',pct(c,1));setv('lYn',n);
-    const y=ytmSolve(price,c,n,1);setv('oYy',pct(y,3));setv('oYchk',n2(priceP(c,y,n,1)));
-    const labs=[],pr=[],tg=[];for(let yy=0.5;yy<=20.0001;yy+=0.5){labs.push(yy.toFixed(1));pr.push(+priceP(c,yy,n,1).toFixed(2));tg.push(+price.toFixed(2));}
-    CH.cTIR.data.labels=labs;CH.cTIR.data.datasets[0].data=pr;CH.cTIR.data.datasets[1].data=tg;CH.cTIR.update();}
-
-  /* H DV01 & hedge */
-  function initH(){renderH();}
-  function renderH(){const pu=v('iHpu'),mod=v('iHmod'),idi=v('iHdi'),dudi=v('iHdu');
-    setv('lHpu','R$ '+Math.round(pu).toLocaleString('pt-BR'));setv('lHmod',mod.toFixed(2).replace('.',',')+' anos');setv('lHdi',pct(idi,2));setv('lHdu',dudi+' du');
-    const dv01=pu*mod*0.0001;setv('oHdv','R$ '+n2(dv01));
-    const puDI=100000/Math.pow(1+idi/100,dudi/252),modDI=(dudi/252)/(1+idi/100),dv01DI=puDI*modDI*0.0001;
-    setv('oHdvDI','R$ '+n2(dv01DI));setv('oHn',(dv01/dv01DI).toFixed(1).replace('.',',')+' contratos');}
-
-  /* Z cenários comparados */
-  let scMode='juros',scShock=0,scInfl=6;
-  function setMode(m,btn){scMode=m;$('mJ').classList.toggle('active',m==='juros');$('mI').classList.toggle('active',m==='inflacao');
-    $('scJuros').style.display=m==='juros'?'block':'none';$('scInfl').style.display=m==='inflacao'?'block':'none';renderSC();}
-  function setShock(s,btn){scShock=s;btn.parentNode.querySelectorAll('button').forEach(b=>b.classList.remove('active'));btn.classList.add('active');renderSC();}
-  function setInfl(p,btn){scInfl=p;btn.parentNode.querySelectorAll('button').forEach(b=>b.classList.remove('active'));btn.classList.add('active');renderSC();}
-  function initSC(){renderSC();}
-  function drawSc(kind,labels,data,colors,yt,xt){if(CH.cScen)CH.cScen.destroy();
-    if(kind==='bar'){CH.cScen=new Chart($('cScen'),{type:'bar',data:{labels,datasets:[{data,backgroundColor:colors,borderRadius:5}]},options:gopts(yt,'')});}
-    else{CH.cScen=new Chart($('cScen'),{type:'line',data:{labels,datasets:[
-      {label:'Prefixado (real)',data:data[0],borderColor:colors[0],pointRadius:0,tension:.2},
-      {label:'IPCA+ (real)',data:data[1],borderColor:colors[1],borderDash:[5,4],pointRadius:0}]},options:gopts(yt,xt,true)});}}
-  function renderSC(){
-    if(scMode==='juros'){
-      const ts=[{n:'Prefixado 2 anos',y:12,t:2},{n:'Prefixado 5 anos',y:12,t:5},{n:'IPCA+ ~10 anos',y:6,t:10}];
-      let rows='<tr><td>Tesouro Selic (LFT)</td><td class="num">100,00</td><td class="num">≈ 100,00</td><td class="num pos">≈ 0%</td></tr>';
-      const labels=['Tesouro Selic'],data=[0],colors=[ACC.amber];
-      ts.forEach(o=>{const p0=100/Math.pow(1+o.y/100,o.t),p1=100/Math.pow(1+(o.y+scShock)/100,o.t),d=(p1/p0-1)*100;
-        rows+='<tr><td>'+o.n+'</td><td class="num">'+n2(p0)+'</td><td class="num">'+n2(p1)+'</td><td class="num '+(d>=0?'pos':'neg')+'">'+(d>=0?'+':'')+n2(d)+'%</td></tr>';
-        labels.push(o.n);data.push(+d.toFixed(2));colors.push(o.n.indexOf('IPCA')>=0?ACC.green:ACC.sky);});
-      $('scJrows').innerHTML=rows;drawSc('bar',labels,data,colors,'Δ% no preço (marcação)');
-      setv('scTag',scShock>0?'Juros sobem '+scShock+' p.p.':scShock<0?'Juros caem '+(-scShock)+' p.p.':'Juros estáveis');
-      setv('scWhy',scShock>0?'Juros para cima derrubam o preço de prefixados e IPCA+ — quanto maior a duration, maior o tombo (a Vale-da-vida do gráfico é o prazo longo). O Tesouro Selic não cai: passa a render mais. Segurando até o vencimento, ninguém "perde"; muda só o preço de marcação no caminho.':scShock<0?'Juros para baixo valorizam prefixados e IPCA+ (ganho de marcação, maior nos mais longos); o Tesouro Selic passa a render menos. É o cenário clássico de ganho de capital — o gestor compra duration na expectativa de corte.':'Sem choque, cada título entrega o combinado: o Selic rende a Selic, o prefixado a taxa travada e o IPCA+ a inflação mais a taxa real.');
-    } else {
-      const preReal=((1.12)/(1+scInfl/100)-1)*100, ipcaNom=((1.06)*(1+scInfl/100)-1)*100;
-      let rows='';
-      rows+='<tr><td>Prefixado (12% nominal)</td><td class="num">12,00%</td><td class="num '+(preReal>=0?'pos':'neg')+'">'+n2(preReal)+'%</td></tr>';
-      rows+='<tr><td>IPCA+ (6% real)</td><td class="num">'+n2(ipcaNom)+'%</td><td class="num pos">6,00%</td></tr>';
-      rows+='<tr><td>Tesouro Selic</td><td class="num">≈ acompanha</td><td class="num">≈ Selic − IPCA</td></tr>';
-      $('scIrows').innerHTML=rows;
-      const labs=[],pre=[],ip=[];for(let x=0;x<=18;x++){labs.push(x);pre.push(+(((1.12)/(1+x/100)-1)*100).toFixed(2));ip.push(6);}
-      drawSc('line',labs,[pre,ip],[ACC.coral,ACC.green],'retorno real (% a.a.)','inflação (% a.a.)');
-      setv('scTag','Inflação a '+scInfl+'%');
-      setv('scWhy',scInfl>5.7?'Inflação acima da implícita (≈5,66%): o prefixado perde em termos reais (seu retorno real cai para '+n2(preReal)+'%), enquanto o IPCA+ mantém 6% reais. É a proteção do indexador funcionando — e o Tesouro Selic tende a render mais, pois o BC sobe a Selic.':scInfl<5.6?'Inflação abaixo da implícita (≈5,66%): o prefixado entrega um retorno real maior ('+n2(preReal)+'%) que o IPCA+ — você "ganhou a aposta" de inflação baixa.':'Na inflação implícita (≈5,66%), prefixado e IPCA+ empatam em retorno real. É o ponto de break-even entre travar a taxa e indexar à inflação.');
-    }
-  }
-
-  /* render math */
-  function renderMath(){if(!window.katex)return;document.querySelectorAll('.formula').forEach(el=>{if(el.dataset.k)return;el.dataset.k='1';try{katex.render(el.textContent,el,{displayMode:true,throwOnError:false});}catch(e){}});}
-
-  initA();renderMath();
-</script>
-</body>
-</html>
+  <h3>Seu cenário</h3>
+  <div class="lab" style="margin-top:1rem">
+    <div class="pad">
+      <div class="ctrl"><label>IPCA projetado (a.a.) <b id="lDipca">4,5%</b></label><input type="range" id="iDipca" min="2" max="12" step="0.1" value="4.5" oninput="renderD()"></div>
+      <div class="ctrl"><label>Selic média no horizonte (a.a.) <b id="lDselic">12,0%</b></label><input type="range" id="iDselic" min="5" max="18" step="0.25" value="12" oninput="renderD()"></div>
+      <div class="ctrl"><label>Choque nos juros ao fim do horizonte <b id="lDshock">0,0 p.p.</b></label><input type="range" id="iDshock" min="-3" max="3" step="0.25" value="0" oninput="renderD()"></div>
+      <div class="ctrl"><label>Horizonte (anos) <b id="lDh">3</b></la
