@@ -1,18 +1,12 @@
 # ============================================================
-# Robô de atualização dos dados do Tesouro Direto
+# Robô de atualização dos dados do Tesouro — versão 2
 # ------------------------------------------------------------
-# COMO INSTALAR (3 passos):
-#   1. No seu repositório do GitHub Pages, salve este arquivo em:
-#        .github/workflows/atualizar-dados-tesouro.yml
-#   2. Faça um commit. Na aba "Actions" do repositório, rode o
-#      workflow uma vez manualmente ("Run workflow") para criar
-#      o primeiro dados/tesouro.json.
-#   3. Pronto: o site lê dados/tesouro.json automaticamente.
-#      O robô roda em dias úteis às 9h40 e 13h40 (horário de Brasília).
-#
-# Observação: o endpoint é o mesmo que o site oficial do Tesouro
-# Direto usa. Se o Tesouro mudar o formato, a validação abaixo
-# falha e o arquivo antigo é preservado (o site continua no ar).
+# Tentativa 1: endpoint do site do Tesouro Direto (pode ser
+#              bloqueado para robôs — tudo bem).
+# Tentativa 2: dados abertos do Tesouro Transparente (CKAN,
+#              portal oficial para download automatizado).
+#              O CSV é convertido para o mesmo formato JSON
+#              que o site já lê. Nada muda no site.
 # ============================================================
 name: Atualizar dados do Tesouro
 
@@ -20,7 +14,7 @@ on:
   schedule:
     - cron: '40 12 * * 1-5'   # 09:40 BRT, dias úteis
     - cron: '40 16 * * 1-5'   # 13:40 BRT, dias úteis
-  workflow_dispatch:           # permite rodar manualmente
+  workflow_dispatch:
 
 permissions:
   contents: write
@@ -32,32 +26,73 @@ jobs:
       - name: Baixar o repositório
         uses: actions/checkout@v4
 
-      - name: Buscar JSON do Tesouro Direto
+      - name: Tentativa 1 — site do Tesouro Direto
+        id: site
+        continue-on-error: true
         run: |
           mkdir -p dados
-          curl -sS --fail --max-time 60 \
-            -H "User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7)" \
-            -H "Accept: application/json" \
+          curl -sS --fail --max-time 60 --retry 2 \
+            -H "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0 Safari/537.36" \
+            -H "Accept: application/json, text/plain, */*" \
+            -H "Accept-Language: pt-BR,pt;q=0.9" \
+            -H "Referer: https://www.tesourodireto.com.br/titulos/precos-e-taxas.htm" \
             "https://www.tesourodireto.com.br/json/br/com/b3/tesourodireto/service/api/treasurybondsinfo.json" \
             -o dados/tesouro.novo.json
+          python3 -c "import json; j=json.load(open('dados/tesouro.novo.json')); assert j['response']['TrsrBdTradgList']"
 
-      - name: Validar o JSON (estrutura esperada)
+      - name: Tentativa 2 — Tesouro Transparente (dados abertos)
+        if: steps.site.outcome == 'failure'
         run: |
+          mkdir -p dados
+          curl -sS --fail -L --max-time 300 --retry 2 \
+            "https://www.tesourotransparente.gov.br/ckan/dataset/df56aa42-484a-4a59-8184-7676580c81e3/resource/796d2059-14e9-44e3-80c9-2d9e30b405c1/download/PrecoTaxaTesouroDireto.csv" \
+            -o dados/td.csv
           python3 - <<'EOF'
-          import json,sys
-          j=json.load(open('dados/tesouro.novo.json'))
-          lst=j.get('response',{}).get('TrsrBdTradgList',[])
-          assert isinstance(lst,list) and len(lst)>0, "lista de títulos vazia"
-          print(f"OK: {len(lst)} títulos no arquivo")
-          EOF
-          mv dados/tesouro.novo.json dados/tesouro.json
+          import csv, json
+          from datetime import datetime
 
-      - name: Commitar se houve mudança
+          def num(s):
+              s = (s or '').strip().replace('.', '').replace(',', '.')
+              try: return float(s)
+              except ValueError: return 0.0
+
+          def data(s):
+              return datetime.strptime(s.strip(), '%d/%m/%Y')
+
+          with open('dados/td.csv', encoding='latin-1') as f:
+              linhas = list(csv.DictReader(f, delimiter=';'))
+          assert linhas, 'CSV vazio'
+
+          ultima = max(data(l['Data Base']) for l in linhas)
+          titulos = []
+          for l in linhas:
+              if data(l['Data Base']) != ultima:
+                  continue
+              venc = data(l['Data Vencimento'])
+              titulos.append({'TrsrBd': {
+                  'nm': f"{l['Tipo Titulo'].strip()} {venc.year}",
+                  'anulInvstmtRate': num(l.get('Taxa Compra Manha')),
+                  'untrInvstmtVal': num(l.get('PU Compra Manha')),
+                  'mtrtyDt': venc.strftime('%Y-%m-%d')}})
+          assert titulos, 'nenhum título na última data-base'
+
+          json.dump({'response': {'TrsrBdTradgList': titulos},
+                     'fonte': 'Tesouro Transparente (dados abertos)',
+                     'data_base': ultima.strftime('%Y-%m-%d')},
+                    open('dados/tesouro.novo.json', 'w', encoding='utf-8'),
+                    ensure_ascii=False)
+          print(f'OK: {len(titulos)} títulos · data-base {ultima.date()}')
+          EOF
+          rm -f dados/td.csv
+
+      - name: Validar e publicar
         run: |
+          python3 -c "import json; j=json.load(open('dados/tesouro.novo.json')); assert j['response']['TrsrBdTradgList']"
+          mv dados/tesouro.novo.json dados/tesouro.json
           git config user.name "robo-dados"
           git config user.email "robo-dados@users.noreply.github.com"
           git add dados/tesouro.json
-          git diff --cached --quiet && echo "Sem mudanças hoje." || {
-            git commit -m "dados: Tesouro Direto $(date -u +%Y-%m-%d_%H:%M)"
+          git diff --cached --quiet && echo "Sem mudancas." || {
+            git commit -m "dados: Tesouro $(date -u +%Y-%m-%d_%H:%M)"
             git push
           }
