@@ -1,0 +1,63 @@
+# ============================================================
+# Robô de atualização dos dados do Tesouro Direto
+# ------------------------------------------------------------
+# COMO INSTALAR (3 passos):
+#   1. No seu repositório do GitHub Pages, salve este arquivo em:
+#        .github/workflows/atualizar-dados-tesouro.yml
+#   2. Faça um commit. Na aba "Actions" do repositório, rode o
+#      workflow uma vez manualmente ("Run workflow") para criar
+#      o primeiro dados/tesouro.json.
+#   3. Pronto: o site lê dados/tesouro.json automaticamente.
+#      O robô roda em dias úteis às 9h40 e 13h40 (horário de Brasília).
+#
+# Observação: o endpoint é o mesmo que o site oficial do Tesouro
+# Direto usa. Se o Tesouro mudar o formato, a validação abaixo
+# falha e o arquivo antigo é preservado (o site continua no ar).
+# ============================================================
+name: Atualizar dados do Tesouro
+
+on:
+  schedule:
+    - cron: '40 12 * * 1-5'   # 09:40 BRT, dias úteis
+    - cron: '40 16 * * 1-5'   # 13:40 BRT, dias úteis
+  workflow_dispatch:           # permite rodar manualmente
+
+permissions:
+  contents: write
+
+jobs:
+  atualizar:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Baixar o repositório
+        uses: actions/checkout@v4
+
+      - name: Buscar JSON do Tesouro Direto
+        run: |
+          mkdir -p dados
+          curl -sS --fail --max-time 60 \
+            -H "User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7)" \
+            -H "Accept: application/json" \
+            "https://www.tesourodireto.com.br/json/br/com/b3/tesourodireto/service/api/treasurybondsinfo.json" \
+            -o dados/tesouro.novo.json
+
+      - name: Validar o JSON (estrutura esperada)
+        run: |
+          python3 - <<'EOF'
+          import json,sys
+          j=json.load(open('dados/tesouro.novo.json'))
+          lst=j.get('response',{}).get('TrsrBdTradgList',[])
+          assert isinstance(lst,list) and len(lst)>0, "lista de títulos vazia"
+          print(f"OK: {len(lst)} títulos no arquivo")
+          EOF
+          mv dados/tesouro.novo.json dados/tesouro.json
+
+      - name: Commitar se houve mudança
+        run: |
+          git config user.name "robo-dados"
+          git config user.email "robo-dados@users.noreply.github.com"
+          git add dados/tesouro.json
+          git diff --cached --quiet && echo "Sem mudanças hoje." || {
+            git commit -m "dados: Tesouro Direto $(date -u +%Y-%m-%d_%H:%M)"
+            git push
+          }
