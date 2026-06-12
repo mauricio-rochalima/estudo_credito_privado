@@ -1021,6 +1021,39 @@
   <p style="font-size:.78rem;color:var(--ink3);margin:.3rem 0 0">Clique numa linha para ver a explicação. Modelo didático: aproximações de duration e reinvestimento à Selic após o vencimento; confirme taxas e PU na fonte antes de qualquer decisão.</p>
 
   <div class="note" style="margin-top:1.4rem"><span class="t" id="dWhyTag">Resumo do cenário</span><p id="dWhy"></p></div>
+
+  <div id="dDossie" style="display:none">
+    <div class="subsec">
+      <h3 id="xTit">Raio-X do título</h3>
+      <div class="prose"><p id="xIntro"></p></div>
+      <div class="pad" style="margin-bottom:1.4rem"><div class="grid2">
+        <div class="stat"><span>Taxa de hoje</span><b id="xTx">—</b></div>
+        <div class="stat"><span>Vencimento · prazo</span><b id="xVc">—</b></div>
+        <div class="stat"><span>Duration</span><b id="xDur">—</b></div>
+        <div class="stat"><span>Duration modificada</span><b id="xMod">—</b></div>
+        <div class="stat"><span>DV01 por R$ 10.000</span><b id="xDv">—</b></div>
+        <div class="stat"><span>IR no seu horizonte</span><b id="xIr">—</b></div>
+      </div></div>
+      <div class="pad" style="margin-bottom:1.8rem">
+        <div class="matrix">
+          <div class="mh"></div><div class="mh">Juros sobem</div><div class="mh">Juros caem</div><div class="mh">Inflação dispara</div>
+          <div class="mr">Este título</div><div class="mc" id="xJup"></div><div class="mc" id="xJdn"></div><div class="mc" id="xInf"></div>
+        </div>
+      </div>
+      <h3>Cálculo passo a passo, com os seus números</h3>
+      <div id="xSteps" style="margin-top:1.2rem"></div>
+      <h3 style="margin-top:2.2rem" id="xT1">Sensibilidade preço × taxa</h3>
+      <div class="chart-box" style="height:300px;margin-top:.8rem"><canvas id="cX1"></canvas></div>
+      <h3 style="margin-top:2.2rem">Retorno real × inflação realizada</h3>
+      <div class="chart-box" style="height:300px;margin-top:.8rem"><canvas id="cX2"></canvas></div>
+      <h3 style="margin-top:2.2rem">Choque de juros — efeito imediato no preço</h3>
+      <div class="chart-box" style="height:300px;margin-top:.8rem"><canvas id="cX3"></canvas></div>
+      <div class="cards3" style="grid-template-columns:1fr 1fr;margin-top:2.2rem">
+        <div class="vcard par"><h4 style="color:var(--mint)">Vantagens deste título</h4><div class="blk adv"><ul id="xAdv"></ul></div></div>
+        <div class="vcard agio"><h4 style="color:var(--coral)">Cuidados</h4><div class="blk dis"><ul id="xDis"></ul></div></div>
+      </div>
+    </div>
+  </div>
 </section>
 
 </main>
@@ -1336,7 +1369,7 @@
     return{g,netA,netReal,aliq,durRem,markTot,prazo};}
   function dScen(){return{pi:v('iDipca'),selic:v('iDselic'),shock:v('iDshock'),H:v('iDh'),sell:dSell};}
   function initD(){CH.dbar=new Chart($('cDbar'),{type:'bar',data:{labels:[],datasets:[{data:[],backgroundColor:[],borderRadius:4}]},options:Object.assign(gopts('real líquido (% a.a.)',''),{indexAxis:'y'})});dLoad(false);}
-  let dLim='30',dHideStress=true;
+  let dLim='30',dHideStress=true,DMED={};
   function dSetLim(l,btn){dLim=l;['bL30','bL100','bLall'].forEach(id=>$(id).classList.remove('active'));btn.classList.add('active');renderD();}
   function dSetStress(h,btn){dHideStress=h;$('bSane').classList.toggle('active',h);$('bStress').classList.toggle('active',!h);renderD();}
   function dMediana(arr){if(!arr.length)return null;const s=[...arr].sort((a,b)=>a-b);return s[Math.floor(s.length/2)];}
@@ -1350,6 +1383,7 @@
     setv('lDipca',pct(sc.pi,1));setv('lDselic',pct(sc.selic,1));setv('lDshock',(sc.shock>=0?'+':'')+sc.shock.toFixed(2).replace('.',',')+' p.p.');setv('lDh',sc.H);
     const base=dFlagStress((DTES||DEMO_TES).concat(DDEB));
     const univ=base.map(t=>Object.assign({},t,{r:dCalc(t,sc)}));
+    DMED={IPCA:dMediana(univ.filter(t=>t.tipo==='IPCA').map(t=>t.tx)),PRE:dMediana(univ.filter(t=>t.tipo==='PRE').map(t=>t.tx))};
     const nStress=univ.filter(t=>t.stress).length;
     DAll=(dHideStress?univ.filter(t=>!t.stress):univ).sort((a,b)=>b.r.netReal-a.r.netReal);
     const lim=dLim==='all'?DAll.length:Math.min(+dLim,DAll.length);
@@ -1415,7 +1449,88 @@
     if(r.markTot){s+='Vendendo no horizonte com choque de '+(sc.shock>0?'+':'')+sc.shock+' p.p., a marcação '+(r.markTot<0?'tira':'adiciona')+' ≈ '+pct(Math.abs(r.markTot)*100,1)+' (duration restante ≈ '+r.durRem.toFixed(1).replace('.',',')+'). ';}
     if(r.prazo<sc.H)s+='Vence antes do horizonte ('+r.prazo.toFixed(1).replace('.',',')+' anos): o modelo reinveste o restante à Selic projetada. ';
     s+='Resultado: '+pct(r.netA*100,2)+' nominal líquido ≈ '+pct(r.netReal*100,2)+' real líquido a.a.';
-    setv('dWhyTag','Por que o #'+(i+1)+'?');setv('dWhy',s);}
+    setv('dWhyTag','Por que o #'+(i+1)+'?');setv('dWhy',s);dXray(t,sc);}
+
+  /* Raio-X do título selecionado */
+  function dDurEst(t,prazo){if(t.dur!=null)return t.dur;if(t.tipo==='IPCA')return prazo*(t.juros?0.75:1);if(t.tipo==='PRE')return prazo*(t.juros?0.8:1);return 0.05;}
+  function dChart(key,cv,cfg){if(CH[key])CH[key].destroy();CH[key]=new Chart($(cv),cfg);}
+  function dXray(t,sc){const r=t.r,nome=t.nm.replace(' — demo','');
+    const prazo=yearsTo(t.venc)||sc.H,dur=dDurEst(t,prazo);
+    const isPos=(t.tipo==='SELIC'||t.tipo==='CDI+'||t.tipo==='%CDI');
+    const y0=t.tipo==='IPCA'||t.tipo==='PRE'?t.tx:null;
+    const mod=isPos?0:dur/(1+(y0||0)/100),dv=10000*mod*0.0001;
+    $('xTit').textContent='Raio-X — '+nome;
+    const intro={IPCA:'Indexado ao IPCA: o principal (VNA) é corrigido pela inflação e a taxa real de '+pct(t.tx,2)+' incide por cima. Você está protegido da inflação; o que mexe no preço de hoje é o juro REAL de mercado.',
+      PRE:'Prefixado: a taxa nominal de '+pct(t.tx,2)+' está travada até o vencimento. Você sabe o número final em reais; o risco é a inflação corroer o ganho real e a marcação se os juros subirem.',
+      'CDI+':'Pós-fixado: rende o CDI mais um spread de crédito de '+pct(t.tx,2)+'. Acompanha a Selic dia a dia — quase não há marcação de juros; o que se compra aqui é o spread do emissor.',
+      '%CDI':'Pós-fixado: rende '+n2(t.tx)+'% do CDI. Acompanha a Selic dia a dia — quase não há marcação de juros.',
+      SELIC:'Pós-fixado soberano: rende a Selic mais '+pct(t.tx,2)+'. É a referência de menor risco do mercado.'}[t.tipo];
+    $('xIntro').textContent=intro+(t.stress?' ⚠️ Este papel está com taxa muito acima da mediana: o mercado precifica risco de calote — tudo abaixo é o retorno PROMETIDO, não o esperado.':'');
+    setv('xTx',dTaxaLbl(t));setv('xVc',(t.venc||'—')+' · '+prazo.toFixed(1).replace('.',',')+' anos');
+    setv('xDur',dur.toFixed(2).replace('.',',')+' anos'+(t.dur!=null?'':' (estimada)'));
+    setv('xMod',isPos?'≈ 0 (pós-fixado)':mod.toFixed(2).replace('.',',')+' anos');
+    setv('xDv',isPos?'≈ R$ 0':'R$ '+n2(dv));
+    setv('xIr',t.isenta?'isento (Lei 12.431)':(aliqIR(sc.H)*100).toFixed(1).replace('.',',')+'% sobre o rendimento');
+    const M=isPos?[['up','↑ rende mais','carrego acompanha o juro'],['dn','↓ rende menos','carrego cai junto'],['up','↑ tende a acompanhar','BC reage subindo a Selic']]
+      :t.tipo==='IPCA'?[['dn','↓ preço cai','≈ −'+n2(mod)+'% por +1 p.p. real'],['up','↑ preço sobe','≈ +'+n2(mod)+'% por −1 p.p.'],['up','↑ protegido','VNA acompanha o IPCA']]
+      :[['dn','↓ preço cai','≈ −'+n2(mod)+'% por +1 p.p.'],['up','↑ preço sobe','≈ +'+n2(mod)+'% por −1 p.p.'],['dn','↓ perde em termos reais','a taxa é fixa, a inflação não']];
+    [['xJup',0],['xJdn',1],['xInf',2]].forEach(([id,k])=>{const el=$(id);el.className='mc '+M[k][0];el.innerHTML=M[k][1]+'<small>'+M[k][2]+'</small>';});
+    /* passos */
+    let st='',n=1;const F=Math.pow(1+r.g,sc.H);
+    const stepf=(h,p,f)=>{st+='<div class="step"><span class="sn">'+(n++)+'</span><div><h4>'+h+'</h4><p>'+p+'</p>'+(f?'<div class="formula" style="font-family:var(--mono);font-size:.88rem;padding:.7rem 1rem">'+f+'</div>':'')+'</div></div>';};
+    if(t.tipo==='IPCA')stepf('Do indexador ao bruto nominal','Equação de Fisher com a sua projeção de IPCA ('+pct(sc.pi,1)+'):','(1 + '+n2(t.tx)+'%) × (1 + '+n2(sc.pi)+'%) − 1 = '+pct(((1+t.tx/100)*(1+sc.pi/100)-1)*100,2)+' a.a. bruto');
+    if(t.tipo==='PRE')stepf('Taxa travada → termos reais','O nominal é o contratado; o real depende da inflação que vier:','real = (1 + '+n2(t.tx)+'%) ÷ (1 + '+n2(sc.pi)+'%) − 1 = '+pct(((1+t.tx/100)/(1+sc.pi/100)-1)*100,2)+' a.a.');
+    if(t.tipo==='CDI+')stepf('Do CDI ao bruto nominal','Com a sua Selic média de '+pct(sc.selic,1)+':','(1 + '+n2(sc.selic)+'%) × (1 + '+n2(t.tx)+'%) − 1 = '+pct(((1+sc.selic/100)*(1+t.tx/100)-1)*100,2)+' a.a. bruto');
+    if(t.tipo==='%CDI')stepf('Do CDI ao bruto nominal','Com a sua Selic média de '+pct(sc.selic,1)+':',n2(sc.selic)+'% × '+n2(t.tx)+'% = '+pct(sc.selic*t.tx/100,2)+' a.a. bruto');
+    if(t.tipo==='SELIC')stepf('Carrego','Selic média projetada mais o spread:',n2(sc.selic)+'% + '+n2(t.tx)+'% = '+pct(sc.selic+t.tx,2)+' a.a. bruto');
+    if(prazo<sc.H)stepf('Vencimento antes do horizonte','O papel vence em '+prazo.toFixed(1).replace('.',',')+' anos; o modelo reinveste o restante do horizonte à Selic projetada ('+pct(sc.selic,1)+').');
+    if(!isPos&&sc.sell&&sc.H<prazo&&sc.shock!==0)stepf('Marcação na venda','Vendendo no horizonte com choque de '+(sc.shock>0?'+':'')+sc.shock+' p.p., a duration restante ('+(r.durRem||0).toFixed(1).replace('.',',')+') gera:','ΔP ≈ −'+(r.durRem||0).toFixed(1).replace('.',',')+' × ('+(sc.shock>0?'+':'')+sc.shock+') = '+pct((r.markTot||0)*100,1)+' no preço');
+    stepf('Imposto de renda','Acumula '+sc.H+' anos de bruto e aplica '+(t.isenta?'alíquota ZERO (Lei 12.431)':'a alíquota de '+(r.aliq*100).toFixed(1).replace('.',',')+'%')+' sobre o rendimento:','F = (1 + '+pct(r.g*100,2)+')^'+sc.H+' = '+F.toFixed(4).replace('.',',')+'  →  líquido = 1 + (F − 1) × (1 − '+(r.aliq*100).toFixed(1).replace('.',',')+'%)  →  '+pct(r.netA*100,2)+' a.a.');
+    stepf('De nominal para real','Deflaciona pelo seu IPCA projetado:','(1 + '+pct(r.netA*100,2)+') ÷ (1 + '+n2(sc.pi)+'%) − 1 = '+pct(r.netReal*100,2)+' a.a. REAL LÍQUIDO');
+    if(!isPos)stepf('Régua de risco: ModD e DV01','Sensibilidade do preço a 1 ponto-base, por R$ 10.000 investidos:','ModD = '+n2(dur)+' ÷ (1 + '+n2(y0)+'%) = '+n2(mod)+'  ·  DV01 = 10.000 × '+n2(mod)+' × 0,0001 = R$ '+n2(dv));
+    if(t.tipo==='PRE'&&DMED.IPCA!=null){const impl=((1+t.tx/100)/(1+DMED.IPCA/100)-1)*100;
+      stepf('Breakeven contra o IPCA+ mediano','Inflação implícita entre este pré e o IPCA+ mediano ('+pct(DMED.IPCA,2)+' real):','π_impl = (1 + '+n2(t.tx)+'%) ÷ (1 + '+n2(DMED.IPCA)+'%) − 1 = '+pct(impl,2)+' — sua projeção ('+pct(sc.pi,1)+') está '+(sc.pi>impl?'ACIMA: o IPCA+ tende a ganhar deste pré':'ABAIXO: este pré tende a ganhar do IPCA+'));}
+    if(t.tipo==='IPCA'&&DMED.PRE!=null){const impl=((1+DMED.PRE/100)/(1+t.tx/100)-1)*100;
+      stepf('Breakeven contra o pré mediano','Inflação implícita entre o pré mediano ('+pct(DMED.PRE,2)+') e este papel:','π_impl = (1 + '+n2(DMED.PRE)+'%) ÷ (1 + '+n2(t.tx)+'%) − 1 = '+pct(impl,2)+' — se o IPCA vier acima disso, este papel ganha do pré; sua projeção: '+pct(sc.pi,1)+' ('+(sc.pi>impl?'a favor deste papel':'a favor do pré')+')');}
+    $('xSteps').innerHTML=st;
+    /* gráfico 1 */
+    if(!isPos){$('xT1').textContent='Sensibilidade preço × taxa (curva real e tangente da duration)';
+      const labs=[],pr=[],tg=[];const P0=100/Math.pow(1+y0/100,dur);
+      for(let y=Math.max(0.5,y0-4);y<=y0+4.0001;y+=0.25){labs.push(y.toFixed(1));pr.push(+(100/Math.pow(1+y/100,dur)).toFixed(2));tg.push(+(P0*(1-mod*(y-y0)/100)).toFixed(2));}
+      dChart('x1','cX1',{type:'line',data:{labels:labs,datasets:[{label:'Preço (zero-equivalente, dur '+n2(dur)+')',data:pr,borderColor:ACC.lilac,pointRadius:0,tension:.3},{label:'Tangente (duration)',data:tg,borderColor:ACC.slate,borderDash:[5,4],pointRadius:0}]},options:gopts('preço por 100','taxa (%)',true)});}
+    else{$('xT1').textContent='Carrego × Selic (pós-fixado acompanha o juro)';
+      const labs=[],tot=[],cdi=[];for(let sl=5;sl<=18.001;sl+=0.5){labs.push(sl.toFixed(1));cdi.push(+sl.toFixed(2));
+        tot.push(+(t.tipo==='CDI+'?(((1+sl/100)*(1+t.tx/100)-1)*100):t.tipo==='%CDI'?(sl*t.tx/100):(sl+t.tx)).toFixed(2));}
+      dChart('x1','cX1',{type:'line',data:{labels:labs,datasets:[{label:'Este título',data:tot,borderColor:ACC.sky,pointRadius:0,tension:.2},{label:'CDI puro',data:cdi,borderColor:ACC.gray,borderDash:[5,4],pointRadius:0}]},options:gopts('retorno nominal (% a.a.)','Selic (%)',true)});}
+    /* gráfico 2 */
+    {const labs=[],a=[],b=[];let lblA='Este título (real)',lblB=null,fb=null;
+      for(let pi=0;pi<=18.001;pi+=0.5){labs.push(pi.toFixed(1));
+        if(t.tipo==='IPCA')a.push(+t.tx.toFixed(2));
+        else if(t.tipo==='PRE')a.push(+(((1+t.tx/100)/(1+pi/100)-1)*100).toFixed(2));
+        else{const g0=t.tipo==='CDI+'?((1+sc.selic/100)*(1+t.tx/100)-1)*100:t.tipo==='%CDI'?sc.selic*t.tx/100:sc.selic+t.tx;a.push(+(((1+g0/100)/(1+pi/100)-1)*100).toFixed(2));}}
+      if(t.tipo!=='IPCA'&&DMED.IPCA!=null){lblB='IPCA+ mediano (real)';fb=()=>+DMED.IPCA.toFixed(2);}
+      else if(t.tipo==='IPCA'&&DMED.PRE!=null){lblB='Pré mediano (real)';fb=pi=>+(((1+DMED.PRE/100)/(1+pi/100)-1)*100).toFixed(2);}
+      if(fb)labs.forEach(l=>b.push(fb(parseFloat(l))));
+      const ds=[{label:lblA,data:a,borderColor:ACC.coral,pointRadius:0,tension:.2}];
+      if(fb)ds.push({label:lblB,data:b,borderColor:ACC.green,borderDash:[5,4],pointRadius:0,tension:.2});
+      dChart('x2','cX2',{type:'line',data:{labels:labs,datasets:ds},options:gopts('retorno real (% a.a.)','inflação realizada (% a.a.)',true)});}
+    /* gráfico 3 */
+    {const shocks=[-2,-1,1,2];const dd=shocks.map(s2=>isPos?0:+(((100/Math.pow(1+(y0+s2)/100,dur))/(100/Math.pow(1+y0/100,dur))-1)*100).toFixed(2));
+      dChart('x3','cX3',{type:'bar',data:{labels:shocks.map(s2=>(s2>0?'+':'')+s2+' p.p.'),datasets:[{data:dd,backgroundColor:dd.map(x=>x>=0?ACC.mint:ACC.coral),borderRadius:5}]},options:gopts('Δ% no preço','choque na taxa')});}
+    /* cartões */
+    const adv=[],dis=[];
+    if(t.tipo==='IPCA'){adv.push('Protege o poder de compra: o principal acompanha o IPCA');if(sc.pi>0)adv.push('No seu cenário rende '+pct(((1+t.tx/100)*(1+sc.pi/100)-1)*100,2)+' nominais brutos');dis.push('Sensível ao juro real: ≈ −'+n2(mod)+'% no PU por +1 p.p.');dis.push('Perde do pré se a inflação vier abaixo da implícita');}
+    if(t.tipo==='PRE'){adv.push('Número final travado: previsibilidade total em reais');adv.push('Máximo ganho de capital se os juros caírem ('+'+'+n2(mod)+'% por −1 p.p.)');dis.push('Inflação acima do esperado corrói o ganho real');dis.push('Marcação: −'+n2(mod)+'% no PU por +1 p.p. de juros');}
+    if(isPos){adv.push('Quase sem marcação a mercado: estabilidade de preço');adv.push('Ganha automaticamente quando a Selic sobe');dis.push('Carrego cai junto se a Selic for cortada');if(t.tipo!=='SELIC')dis.push('O spread remunera risco de crédito do emissor');}
+    if(t.isenta)adv.push('Isenta de IR (Lei 12.431): vantagem de ~'+(aliqIR(sc.H)*100).toFixed(0)+'% do rendimento');else dis.push('IR de '+(aliqIR(sc.H)*100).toFixed(1).replace('.',',')+'% no seu horizonte');
+    if(!isPos&&dur<2)adv.push('Duration curta ('+n2(dur)+'): pouco tranco de marcação');
+    if(!isPos&&dur>=6)dis.push('Duration longa ('+n2(dur)+'): volátil — bom para apostar em queda de juros, ruim se precisar vender numa alta');
+    if(t.deb){dis.push('Crédito privado sem FGC: depende do emissor');dis.push('Liquidez do secundário pode ser baixa');}
+    if(t.stress)dis.push('⚠️ Taxa muito acima da mediana: mercado precificando possível calote');
+    $('xAdv').innerHTML=adv.map(x=>'<li>'+x+'</li>').join('');
+    $('xDis').innerHTML=dis.map(x=>'<li>'+x+'</li>').join('');
+    $('dDossie').style.display='block';
+    $('dDossie').scrollIntoView({behavior:'smooth',block:'start'});}
 
   initA();renderMath();
 </script>
