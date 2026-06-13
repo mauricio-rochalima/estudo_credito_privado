@@ -195,6 +195,8 @@
   <button class="tabbtn" onclick="show('pH',this)"><span class="pip" style="background:var(--lilac)"></span>DV01 & hedge</button>
   <button class="tabbtn" onclick="show('pZ',this)"><span class="pip" style="background:var(--coral)"></span>Cenários comparados</button>
   <button class="tabbtn" onclick="show('pD',this)"><span class="pip" style="background:var(--rose)"></span>Comparador de mercado</button>
+  <button class="tabbtn" onclick="show('pW',this)"><span class="pip" style="background:var(--amber)"></span>COE &amp; proteção</button>
+  <button class="tabbtn" onclick="show('pO',this)"><span class="pip" style="background:var(--mint)"></span>Oferta combinada</button>
 </div></div>
 
 <main class="wrap">
@@ -999,6 +1001,11 @@
     <details style="margin-top:.7rem"><summary style="cursor:pointer;font-size:.86rem;color:var(--ink2)">Colar dados manualmente (JSON do Tesouro ou CSV de debêntures)</summary>
       <textarea id="tDpaste" rows="4" style="width:100%;margin-top:.6rem;font-family:var(--mono);font-size:.78rem;border:1px solid var(--line2);border-radius:9px;padding:.6rem;color:var(--ink)" placeholder="JSON do endpoint do Tesouro Direto — ou CSV de debêntures: codigo;taxa real;duration;isenta(s/n);vencimento(AAAA-MM-DD)"></textarea>
       <div class="seg" style="margin-top:.5rem"><button onclick="dPaste('tes')">Aplicar como Tesouro</button><button onclick="dPaste('deb')">Aplicar como debêntures</button></div>
+      <div style="margin-top:.9rem;border-top:1px solid var(--line2);padding-top:.8rem">
+        <label style="font-size:.84rem;color:var(--ink2)">Ratings (opcional) — CSV: <span class="num">codigo;rating</span> (ex.: EGIE27;AAA)</label>
+        <textarea id="tDrat" rows="3" style="width:100%;margin-top:.4rem;font-family:var(--mono);font-size:.78rem;border:1px solid var(--line2);border-radius:9px;padding:.6rem;color:var(--ink)" placeholder="EGIE27;AAA&#10;PETR26;AAA&#10;XPTO11;AA-"></textarea>
+        <div class="seg" style="margin-top:.5rem"><button onclick="dApplyRatings()">Aplicar ratings</button><span class="sl" id="oDrat"></span></div>
+      </div>
     </details>
   </div>
 
@@ -1031,6 +1038,8 @@
         <div class="stat"><span>Vencimento · prazo</span><b id="xVc">—</b></div>
         <div class="stat"><span>Cupom de emissão</span><b id="xEmis">—</b></div>
         <div class="stat"><span>Situação vs par</span><b id="xPar">—</b></div>
+        <div class="stat"><span>Rating</span><b id="xRat">—</b></div>
+        <div class="stat"><span>Z-Spread (prêmio s/ curva)</span><b id="xZs">—</b></div>
         <div class="stat"><span>Duration</span><b id="xDur">—</b></div>
         <div class="stat"><span>Duration modificada</span><b id="xMod">—</b></div>
         <div class="stat"><span>DV01 por R$ 10.000</span><b id="xDv">—</b></div>
@@ -1072,6 +1081,177 @@
       </div>
     </div>
   </div>
+  <div class="subsec">
+    <h3>Quando oferecer o COE — diversificador do risco de default</h3>
+    <div class="prose">
+      <p>O crédito privado acima não tem FGC: o risco é o emissor. Um COE de capital protegido troca essa exposição pelo risco do <strong>emissor bancário</strong> — para a fatia do cliente que não pode correr default corporativo, ele funciona como <span class="em">diversificador de risco de crédito</span>, com upside por cima. Honestidade técnica: ele <strong>dilui</strong> a exposição corporativa (a fatia no COE sai do risco das debêntures); não "imuniza" as debêntures que ficam — proteger um crédito que permanece na carteira exigiria um CDS, que não existe no varejo. E o COE carrega o risco do próprio banco emissor, também sem FGC.</p>
+      <p>Responda as seis perguntas e veja o veredito:</p>
+    </div>
+    <div class="pad" style="margin-top:1rem">
+      <div class="stat" style="align-items:center"><span>1. O objetivo tem data certa que casa com o vencimento do COE?</span><span class="seg" style="margin:0"><button onclick="ck(0,1,this)">Sim</button><button onclick="ck(0,0,this)">Não</button></span></div>
+      <div class="stat" style="align-items:center"><span>2. A liquidez do cliente está resolvida em outro lugar?</span><span class="seg" style="margin:0"><button onclick="ck(1,1,this)">Sim</button><button onclick="ck(1,0,this)">Não</button></span></div>
+      <div class="stat" style="align-items:center"><span>3. O cliente NÃO toparia comprar o ativo de risco diretamente?</span><span class="seg" style="margin:0"><button onclick="ck(2,1,this)">Sim</button><button onclick="ck(2,0,this)">Não</button></span></div>
+      <div class="stat" style="align-items:center"><span>4. O termo é decente (participação alta, sem barreira estranguladora)?</span><span class="seg" style="margin:0"><button onclick="ck(3,1,this)">Sim</button><button onclick="ck(3,0,this)">Não</button></span></div>
+      <div class="stat" style="align-items:center"><span>5. Sua visão dá chance razoável de superar o breakeven (aba COE)?</span><span class="seg" style="margin:0"><button onclick="ck(4,1,this)">Sim</button><button onclick="ck(4,0,this)">Não</button></span></div>
+      <div class="stat" style="align-items:center"><span>6. A carteira está concentrada em crédito privado sem FGC?</span><span class="seg" style="margin:0"><button onclick="ck(5,1,this)">Sim</button><button onclick="ck(5,0,this)">Não</button></span></div>
+    </div>
+    <div class="note" style="margin-top:1rem"><span class="t" id="ckTag">Veredito</span><p id="ckOut">Responda as perguntas acima.</p></div>
+  </div>
+</section>
+
+<!-- W COE E PROTECAO -->
+<section id="pW" class="panel t-amber">
+  <div class="ptag">Estruturados · COE e proteção de capital</div>
+  <h2>COE: o que a proteção custa e quando vale</h2>
+  <div class="prose">
+    <p>Um COE de capital <strong>100% protegido</strong> é, por dentro, duas peças: um <span class="em">zero-coupon</span> — a fração do dinheiro que, aplicada à taxa de juros, cresce até devolver os 100% no vencimento — e <strong>opções</strong>, compradas com a sobra, que dão o upside da aposta.</p>
+    <div class="formula">\text{PV}_{\text{proteção}} = \dfrac{100}{(1+i)^{T}} \qquad \text{orçamento da aposta} = 100 - \text{PV}_{\text{proteção}}</div>
+    <p><strong>O ponto honesto sobre imunização:</strong> a perna protegida é um zero com duration ≈ prazo do COE. Somar COE à carteira <strong>aumenta</strong> o DV01 total — não imuniza. Imunizar exige posição contrária (vender DI futuro, módulo "DV01 &amp; hedge"). O encaixe certo do COE é <strong>casamento de horizonte</strong>: certeza <em>nominal</em> do capital na data do objetivo. E atenção ao "nominal": se a aposta zerar, o cliente recebe os mesmos reais — corroídos pela inflação do período.</p>
+    <p>O custo real da proteção é o <strong>custo de oportunidade</strong>: a renda fixa que se deixou de ganhar. Daí sai a régua da aposta — o <em>breakeven</em> que ela precisa superar só para empatar com o pré.</p>
+  </div>
+
+  <div class="lab">
+    <div class="pad">
+      <div class="ctrl"><label>Valor investido <b id="lWv">R$ 100.000</b></label><input type="range" id="iWv" min="10000" max="1000000" step="10000" value="100000" oninput="renderW()"></div>
+      <div class="ctrl"><label>Prazo do COE (anos) <b id="lWt">3</b></label><input type="range" id="iWt" min="1" max="7" step="1" value="3" oninput="renderW()"></div>
+      <div class="ctrl"><label>Taxa pré do prazo (% a.a.) <b id="lWi">12,0%</b></label><input type="range" id="iWi" min="6" max="18" step="0.25" value="12" oninput="renderW()"></div>
+      <div class="ctrl"><label>IPCA projetado (% a.a.) <b id="lWpi">4,5%</b></label><input type="range" id="iWpi" min="2" max="12" step="0.1" value="4.5" oninput="renderW()"></div>
+      <div class="ctrl"><label>Participação no ativo <b id="lWp">100%</b></label><input type="range" id="iWp" min="20" max="200" step="5" value="100" oninput="renderW()"></div>
+      <div class="ctrl"><label>Retorno do ativo no período <b id="lWr">+30%</b></label><input type="range" id="iWr" min="-50" max="100" step="5" value="30" oninput="renderW()"></div>
+    </div>
+    <div class="pad">
+      <div class="stat"><span>Perna protegida (zero)</span><b id="oWpv">—</b></div>
+      <div class="stat"><span>Orçamento da aposta</span><b id="oWbud">—</b></div>
+      <div class="stat"><span>Renda fixa entregaria</span><b id="oWrf">—</b></div>
+      <div class="stat"><span>Breakeven da aposta</span><b class="big" id="oWbe">—</b></div>
+      <div class="stat"><span>COE no retorno escolhido</span><b id="oWcoe">—</b></div>
+      <div class="stat"><span>Se a aposta zerar (perda real)</span><b id="oWreal">—</b></div>
+      <div class="stat"><span>Duration · DV01 do COE</span><b id="oWdv">—</b></div>
+    </div>
+  </div>
+  <div class="chart-box" style="margin-top:1.4rem;height:360px"><canvas id="cW"></canvas></div>
+
+  <div class="subsec">
+    <h3>Garantir o capital da carteira: COE × "COE caseiro"</h3>
+    <div class="prose"><p>Para garantir <strong>R$ G</strong> nominais na data T há dois caminhos: comprar G em COE, ou montar o <em>barbell</em> você mesmo — aplicar <span class="num">G ÷ (1+i)^T</span> num pré/zero (que vira G sozinho) e apostar livremente a sobra. A planilha compara:</p></div>
+    <div class="lab">
+      <div class="pad">
+        <div class="ctrl"><label>Valor da carteira a proteger <b id="lWcart">R$ 500.000</b></label><input type="range" id="iWcart" min="50000" max="5000000" step="50000" value="500000" oninput="renderW()"></div>
+        <div class="ctrl"><label>% do capital a garantir <b id="lWg">100%</b></label><input type="range" id="iWg" min="50" max="100" step="5" value="100" oninput="renderW()"></div>
+      </div>
+      <div class="pad">
+        <div class="stat"><span>Via COE: valor necessário</span><b id="oWcoeNec">—</b></div>
+        <div class="stat"><span>Via Tesouro pré (zero): basta aplicar</span><b id="oWdiy">—</b></div>
+        <div class="stat"><span>Sobra livre para apostar</span><b id="oWlivre">—</b></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="note"><span class="t">Qual aposta deve ser feita?</span><p id="oWverd"></p></div>
+  <div class="subsec">
+    <h3>COE como hedge — o teste honesto</h3>
+    <div class="prose"><p>Cenário de estresse: os juros sobem e o dólar sobe junto (a correlação típica do Brasil — mas correlação, não garantia). Compare o que cada instrumento faz pela carteira <strong>no momento do choque</strong> e <strong>no vencimento do COE</strong>. O prazo e a taxa usados são os do simulador acima.</p></div>
+    <div class="lab">
+      <div class="pad">
+        <div class="ctrl"><label>Carteira de renda fixa <b id="lWhV">R$ 500.000</b></label><input type="range" id="iWhV" min="100000" max="5000000" step="50000" value="500000" oninput="renderWh()"></div>
+        <div class="ctrl"><label>Duration da carteira <b id="lWhD">4,0 anos</b></label><input type="range" id="iWhD" min="0.5" max="10" step="0.5" value="4" oninput="renderWh()"></div>
+        <div class="ctrl"><label>Choque de juros <b id="lWhS">+1,0 p.p.</b></label><input type="range" id="iWhS" min="0.25" max="3" step="0.25" value="1" oninput="renderWh()"></div>
+        <div class="ctrl"><label>Valor aplicado no COE (dólar) <b id="lWhC">R$ 100.000</b></label><input type="range" id="iWhC" min="0" max="1000000" step="25000" value="100000" oninput="renderWh()"></div>
+        <div class="ctrl"><label>Alta do dólar nesse cenário <b id="lWhU">+15%</b></label><input type="range" id="iWhU" min="-10" max="40" step="1" value="15" oninput="renderWh()"></div>
+        <div class="ctrl"><label>Participação do COE <b id="lWhP">100%</b></label><input type="range" id="iWhP" min="20" max="200" step="5" value="100" oninput="renderWh()"></div>
+      </div>
+      <div class="pad">
+        <div class="stat"><span>Marcação da carteira no choque</span><b id="oWhPerda" style="color:#C2553A">—</b></div>
+        <div class="stat"><span>DV01 da carteira</span><b id="oWhDv">—</b></div>
+        <div class="stat"><span>COE no momento do choque</span><b id="oWhHoje">—</b></div>
+        <div class="stat"><span>COE no vencimento (opção)</span><b id="oWhVenc">—</b></div>
+        <div class="stat"><span>Cobertura da perda (no venc.)</span><b class="big" id="oWhCob">—</b></div>
+        <div class="stat"><span>Equivalente em DI futuro</span><b id="oWhDI">—</b></div>
+      </div>
+    </div>
+    <div class="chart-box" style="margin-top:1.2rem;height:320px"><canvas id="cWh"></canvas></div>
+    <div class="note"><span class="t">Leitura</span><p id="oWhVerd"></p></div>
+  </div>
+
+  <div class="note" style="margin-top:1rem"><span class="t">Cuidados de venda</span><p>COE tem IR regressivo sobre o ganho (não é isento), garantia do <strong>emissor</strong> (não tem FGC) e, em regra, <strong>liquidez só no vencimento</strong> — saída antecipada, quando existe, é a mercado e com deságio. A participação, barreiras e cupons do termo de cada COE mudam a conta: use esta página como régua de custo de oportunidade, e o DV01 mostrado como medida de quanto o COE <em>adiciona</em> de sensibilidade a juros à carteira.</p></div>
+</section>
+
+<!-- O OFERTA COMBINADA -->
+<section id="pO" class="panel t-mint">
+  <div class="ptag">Aula · passo de bebê por passo de bebê</div>
+  <h2>A oferta combinada, do zero</h2>
+  <div class="prose"><p>A proposta inteira cabe numa imagem: <strong>duas caixas</strong>.</p></div>
+
+  <div class="cards3" style="grid-template-columns:1fr 1fr;max-width:780px">
+    <div class="vcard par"><h4 style="color:var(--mint)">Caixa 1 — o dinheiro grande</h4><p style="font-size:.92rem;color:var(--ink2);margin:0">Os R$ 100.000 do cliente. Vão para uma debênture IPCA+8% isenta e <strong>não saem de lá</strong>. Esta caixa nunca entra em aposta.</p></div>
+    <div class="vcard agio"><h4 style="color:var(--coral)">Caixa 2 — o salário que ela paga</h4><p style="font-size:.92rem;color:var(--ink2);margin:0">Todo ano a caixa 1 paga juros (o cupom): ~R$ 8.000. <strong>Só esse dinheiro</strong> é o assunto desta aula: para onde mandá-lo?</p></div>
+  </div>
+
+  <div style="margin-top:2.2rem">
+    <div class="step"><span class="sn">1</span><div><h4>O dinheiro grande compra a debênture</h4><p>R$ 100.000 numa debênture incentivada a <strong>IPCA + 8% a.a., isenta</strong>, vencendo em 7 anos. Ela devolve o dinheiro corrigido pela inflação no final e paga juros todo ano no caminho.</p><div class="ex"><span class="t">Só a caixa 1, no vencimento</span>R$ 100.000 corrigidos por 7 anos de IPCA (4,5% a.a.) = <strong>R$ 136.086</strong> — fora os cupons.</div></div></div>
+
+    <div class="step"><span class="sn">2</span><div><h4>Todo ano pinga um cupom de ~R$ 8.000</h4><p>É dinheiro novo na conta, 7 vezes. Existem <strong>três caminhos</strong> para ele — e a aula é comparar os três com o mesmo R$ 8.000, pelo mesmo 1 ano.</p></div></div>
+
+    <div class="step"><span class="sn">3</span><div><h4>Caminho A — CDI (o padrão)</h4><p>R$ 8.000 num CDB 100% do CDI a 12%, por 1 ano. Rende R$ 960, paga 17,5% de IR.</p><div class="ex"><span class="t">Resultado A</span>R$ 8.000 → <strong>R$ 8.792</strong> líquidos (+R$ 792).</div></div></div>
+
+    <div class="step"><span class="sn">4</span><div><h4>Caminho B — comprar MAIS debênture</h4><p>O cupom compra mais papel a IPCA+8% isento. Rendimento nominal: (1,045 × 1,08) − 1 = <strong>12,86% sem imposto</strong>.</p><div class="ex"><span class="t">Resultado B</span>R$ 8.000 → <strong>R$ 9.029</strong> isentos (+R$ 1.029). É o caminho seguro mais forte — vence o CDI por R$ 237 no ano.</div><p><strong>"Mesmo título ou títulos novos?"</strong> Financeiramente tanto faz: o que define o ganho é a <em>taxa do dia</em> do reinvestimento, não o nome do papel — comprar mais EQMAA2 a mercado é igual a comprar outro papel na mesma taxa. As diferenças são práticas: precisa ter oferta no balcão (um cupom de R$ 8 mil compra ~5 títulos de PU ~R$ 1.500) e o lote novo fica preso até o vencimento dele.</p></div></div>
+
+    <div class="step"><span class="sn">5</span><div><h4>Caminho C — o COE protegido, em uma frase</h4><p>Você entrega os R$ 8.000 e em 1 ano recebe <strong>no mínimo os mesmos R$ 8.000</strong> — mais um ganho que depende do ativo (digamos, o dólar): <span class="num">ganho = participação × alta do dólar − 17,5% de IR</span>. Se o dólar cair ou ficar parado, voltam os 8.000, sem ganho.</p></div></div>
+
+    <div class="step"><span class="sn">6</span><div><h4>QUANDO o COE ganha — e QUANTO</h4><p>A tabela que faltava. R$ 8.000, participação 100%, em 1 ano:</p>
+      <table style="max-width:640px"><thead><tr><th>Dólar no ano</th><th class="num">Você recebe</th><th>Contra os outros caminhos</th></tr></thead><tbody>
+        <tr><td>−20% (caiu)</td><td class="num">8.000</td><td>perde dos dois (era a proteção agindo)</td></tr>
+        <tr><td>0% (parado)</td><td class="num">8.000</td><td>perde dos dois</td></tr>
+        <tr><td>+5%</td><td class="num">8.330</td><td>ainda perde dos dois</td></tr>
+        <tr><td><strong>+12%</strong></td><td class="num">8.792</td><td><strong>empata com o CDI</strong></td></tr>
+        <tr><td><strong>+15,6%</strong></td><td class="num">9.029</td><td><strong>empata com a debênture</strong></td></tr>
+        <tr><td>+20%</td><td class="num">9.320</td><td>ganha de todos (+R$ 291 s/ a debênture)</td></tr>
+        <tr><td>+30%</td><td class="num">9.980</td><td>ganha de todos (+R$ 951)</td></tr>
+      </tbody></table>
+      <div class="ex" style="margin-top:.8rem"><span class="t">A regra de bolso</span>O COE só ganha quando o ativo sobe <strong>mais de +12%</strong> no ano (vence o CDI) e só vale mais que reinvestir na debênture acima de <strong>+15,6%</strong>. Abaixo disso, a proteção custou o ganho dos outros caminhos.</div></div></div>
+
+    <div class="step"><span class="sn">7</span><div><h4>O que está em risco, exatamente</h4><p>O pior caso do COE é receber R$ 8.000 — então o risco real é o <strong>ganho do melhor caminho seguro que você abriu mão</strong>: os R$ 1.029 da debênture.</p><div class="ex"><span class="t">A tradução</span>É um <strong>bilhete de R$ 1.029</strong> que só paga prêmio se o dólar subir mais de 15,6%. ~1% do patrimônio por ano. Nada além disso está em jogo.</div></div></div>
+
+    <div class="step"><span class="sn">8</span><div><h4>Repete todo ano — com direito a desistir</h4><p>São <strong>7 decisões independentes de 1 ano</strong>, não um compromisso. Termo do COE bom? Entra. Ruim? O cupom segue o caminho B (mais debênture) e fim. Para você: 7 conversas agendadas com o cliente.</p></div></div>
+
+    <div class="step"><span class="sn">9</span><div><h4>Os CINCO finais possíveis, em 7 anos</h4><div class="ex"><span class="t">R$ 100 mil, 7 anos, premissas da aula</span>Todas as apostas zeram: <strong>R$ 203.126</strong> (o piso absoluto).<br>Metade paga: <strong>R$ 215.672</strong>.<br>Todas pagam (+15%/ano): <strong>R$ 231.858</strong>.<br>Cupons no CDI: <strong>R$ 226.534</strong>.<br>Cupons reinvestidos na debênture: <strong>R$ 233.228</strong>.</div><p>A leitura honesta — e é ela que te protege na mesa: <strong>com dólar pagando +15% ao ano, reinvestir na debênture ainda vence o melhor caso do COE</strong>. O COE rolando só ganha se o ativo superar ~15,6% por ciclo, repetidamente. Por isso ele se vende como <em>bilhete com piso</em> para o cliente que quer participar do mercado sem risco — não como motor de retorno. O motor é a debênture.</p></div></div>
+
+    <div class="step"><span class="sn">10</span><div><h4>A frase pronta para o cliente</h4><div class="ex" style="font-style:italic">"Seu dinheiro grande fica rendendo IPCA + 8% sem imposto — nele ninguém mexe. Os juros que ele paga todo ano têm três destinos: CDI, comprar mais debênture (o que mais rende com segurança), ou um bilhete protegido no dólar — que se não der, devolve os mesmos reais, e se der, paga por cima. No pior dos mundos o senhor termina com R$ 203 mil; pelo caminho seguro, R$ 233 mil. A diferença é o preço do bilhete, e a cada ano decidimos juntos."</div></div></div>
+  </div>
+
+  <div class="subsec">
+    <h3>Agora mexa você</h3>
+    <div class="prose"><p>Três controles principais; o resto está em "premissas" com os padrões da aula.</p></div>
+    <div class="lab">
+      <div class="pad">
+        <div class="ctrl"><label>Principal na debênture <b id="lObP">R$ 100.000</b></label><input type="range" id="iObP" min="20000" max="2000000" step="10000" value="100000" oninput="renderO()"></div>
+        <div class="ctrl"><label>Cupom / taxa real (% a.a.) <b id="lObCup">8,0%</b></label><input type="range" id="iObCup" min="4" max="12" step="0.1" value="8" oninput="renderO()"></div>
+        <div class="ctrl"><label>Prazo da debênture (anos) <b id="lObT">7</b></label><input type="range" id="iObT" min="2" max="15" step="1" value="7" oninput="renderO()"></div>
+        <details style="margin-top:.4rem"><summary style="cursor:pointer;font-size:.86rem;color:var(--ink2)">Premissas (IPCA, CDI, COE)</summary>
+          <div class="ctrl" style="margin-top:.9rem"><label>IPCA projetado (% a.a.) <b id="lObPi">4,5%</b></label><input type="range" id="iObPi" min="2" max="10" step="0.1" value="4.5" oninput="renderO()"></div>
+          <div class="ctrl"><label>CDI médio (% a.a.) <b id="lObCdi">12,0%</b></label><input type="range" id="iObCdi" min="6" max="16" step="0.25" value="12" oninput="renderO()"></div>
+          <div class="ctrl"><label>Participação do COE <b id="lObPart">100%</b></label><input type="range" id="iObPart" min="20" max="200" step="5" value="100" oninput="renderO()"></div>
+          <div class="ctrl"><label>Retorno do ativo por ciclo (quando paga) <b id="lObR">+15%</b></label><input type="range" id="iObR" min="0" max="50" step="1" value="15" oninput="renderO()"></div>
+        </details>
+      </div>
+      <div class="pad">
+        <div class="stat"><span>Pior caso (piso garantido)</span><b id="oObZ">—</b></div>
+        <div class="stat"><span>Metade das apostas paga</span><b id="oObM">—</b></div>
+        <div class="stat"><span>Todas pagam</span><b id="oObT2">—</b></div>
+        <div class="stat"><span>Cupons no CDI</span><b id="oObC">—</b></div>
+        <div class="stat"><span>Cupons na debênture</span><b class="big" id="oObD">—</b></div>
+        <div class="stat"><span>Preço do bilhete (pior caso vs debênture)</span><b id="oObCost">—</b></div>
+        <div class="stat"><span>Para valer a pena, o ativo precisa de</span><b id="oObBe">—</b></div>
+        <div class="stat" style="display:none"><span></span><b id="oObFloor"></b></div>
+      </div>
+    </div>
+    <div class="chart-box" style="margin-top:1.4rem;height:340px"><canvas id="cOb"></canvas></div>
+    <details style="margin-top:1.2rem"><summary style="cursor:pointer;font-size:.9rem;color:var(--ink2)">Ver a planilha ano a ano (cada cupom até o vencimento)</summary>
+      <table style="margin-top:.8rem"><thead><tr><th>Ano</th><th class="num">Cupom (R$)</th><th class="num">Zeram</th><th class="num">Metade</th><th class="num">Tudo</th><th class="num">CDI</th><th class="num">Debênture</th></tr></thead><tbody id="xObRows"></tbody></table>
+      <p style="font-size:.78rem;color:var(--ink3);margin:.3rem 0 0">Valores no vencimento. IR de 17,5% por ciclo do COE e IR regressivo do CDI descontados; debênture isenta. Modelo bullet, compra perto do par.</p>
+    </details>
+    <div class="note" style="margin-top:1.4rem"><span class="t">Roteiro com os seus números</span><p id="oObVerd"></p></div>
+  </div>
 </section>
 
 </main>
@@ -1096,7 +1276,7 @@
       y:{title:{display:!!yT,text:yT,color:TXT,font:{size:11}},grid:{color:GRID},ticks:{color:TXT,font:{family:"'IBM Plex Mono'",size:10}}}}};}
 
   const CH={};
-  const INIT={pA:initA,pB:initB,p1:init1,p2:init2,p3:init3,p4:init4,p5:init5,p6:init6,p7:init7,p8:init8,p9:init9,pC:initC,pI:initI,pF:initF,pV:initV,pP:renderP,pY:initY,pH:renderH,pZ:initSC,pD:initD};
+  const INIT={pA:initA,pB:initB,p1:init1,p2:init2,p3:init3,p4:init4,p5:init5,p6:init6,p7:init7,p8:init8,p9:init9,pC:initC,pI:initI,pF:initF,pV:initV,pP:renderP,pY:initY,pH:renderH,pZ:initSC,pD:initD,pW:initW,pO:initO};
   function show(id,btn){document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));document.querySelectorAll('.tabbtn').forEach(b=>b.classList.remove('active'));$(id).classList.add('active');btn.classList.add('active');if(INIT[id]){INIT[id]();INIT[id]=null;}}
 
   /* 1 */
@@ -1407,7 +1587,7 @@
     const lim=dLim==='all'?DAll.length:Math.min(+dLim,DAll.length);
     setv('oDn','· exibindo '+lim+' de '+DAll.length+' títulos'+(dHideStress&&nStress?' ('+nStress+' estressados ocultos)':''));
     let rows='';DAll.slice(0,lim).forEach((t,i)=>{
-      rows+=`<tr onclick="dExplain(${i})" style="cursor:pointer"><td class="num">${i+1}</td><td>${t.stress?'⚠️ ':''}${t.nm}</td><td class="num">${dTaxaLbl(t)}</td><td class="num">${pct(t.r.netA*100)}</td><td class="num"><strong>${pct(t.r.netReal*100)}</strong></td><td>${t.isenta?'<span class="badge" style="background:var(--mint-bg);color:var(--mint)">isento</span>':'<span class="badge">'+Math.round(t.r.aliq*100*10)/10+'%</span>'}</td></tr>`;});
+      rows+=`<tr onclick="dExplain(${i})" style="cursor:pointer"><td class="num">${i+1}</td><td>${t.stress?'⚠️ ':''}${t.nm}${t.rating?' <span class="badge" style="background:var(--lilac-bg);color:var(--lilac)">'+t.rating+'</span>':''}</td><td class="num">${dTaxaLbl(t)}</td><td class="num">${pct(t.r.netA*100)}</td><td class="num"><strong>${pct(t.r.netReal*100)}</strong></td><td>${t.isenta?'<span class="badge" style="background:var(--mint-bg);color:var(--mint)">isento</span>':'<span class="badge">'+Math.round(t.r.aliq*100*10)/10+'%</span>'}</td></tr>`;});
     $('dRows').innerHTML=rows;
     const top=DAll.slice(0,10);CH.dbar.data.labels=top.map(t=>(t.stress?'⚠ ':'')+t.nm.replace(' — demo','').split(' · ')[0].slice(0,20));
     CH.dbar.data.datasets[0].data=top.map(t=>+(t.r.netReal*100).toFixed(2));
@@ -1425,7 +1605,7 @@
       const H=A[h].map(c=>String(c).toLowerCase());
       const col=re=>H.findIndex(c=>re.test(c));
       const iRef=col(/refer[êe]ncia/),iCod=col(/c[óo]digo/),iEm=col(/emissor/),iTp=col(/^tipo/),iTx=col(/taxa indicativa/),iVc=col(/vencimento/),iDu=col(/duration/),iLei=col(/12\.?431|^lei/);
-      const iPar=col(/pu par/),iPU=col(/pu indicativo/),iRem=H.findIndex(c=>c==='remuneração'||c==='remuneracao');
+      const iPar=col(/pu par/),iPU=col(/pu indicativo/),iRem=H.findIndex(c=>c==='remuneração'||c==='remuneracao'),iZs=col(/z-spread/);
       const safe=x=>{const q=dNum(x);return isFinite(q)?q:null;};
       if(iCod<0||iTx<0||iVc<0)throw new Error('colunas essenciais ausentes');
       const best={};let refMax=null;
@@ -1441,7 +1621,7 @@
         const isenta=iLei>=0?/SIM/i.test(String(L[iLei])):false;
         let emis=null;if(iRem>=0){const m=String(L[iRem]).match(/([\d.,]+)\s*%?\s*$/);if(m)emis=safe(m[1]);}
         const item={nm:cod+' · '+em,tipo,tx,dur,venc:venc.toISOString().slice(0,10),isenta,deb:true,ref,
-          par:iPar>=0?safe(L[iPar]):null,pu:iPU>=0?safe(L[iPU]):null,emis};
+          par:iPar>=0?safe(L[iPar]):null,pu:iPU>=0?safe(L[iPU]):null,emis,zs:iZs>=0?safe(L[iZs]):null};
         if(!best[cod]||(ref&&best[cod].ref&&ref>best[cod].ref))best[cod]=item;}
       const list=Object.values(best);if(!list.length)throw new Error('nenhuma debênture com taxa indicativa');
       DDEB=list;
@@ -1449,6 +1629,10 @@
       renderD();
     }catch(err){setv('oDdeb','erro ao ler: '+(err.message||err));}};
     rd.readAsArrayBuffer(f);}
+  function dApplyRatings(){const t=$('tDrat').value.trim();if(!t){setv('oDrat','cole o CSV primeiro');return;}
+    const map={};t.split(/\n+/).forEach(l=>{const p=l.split(/[;,\t]/).map(x=>x.trim());if(p.length>=2&&p[0]&&p[1])map[p[0].toUpperCase()]=p[1].toUpperCase();});
+    let n=0;DDEB.forEach(d=>{const cod=d.nm.split(' ·')[0].trim().toUpperCase();if(map[cod]){d.rating=map[cod];n++;}});
+    setv('oDrat','· '+n+' títulos com rating aplicado');renderD();}
   function dImpl(sc){const reais=DAll.filter(t=>t.tipo==='IPCA').map(t=>t.tx).sort((a,b)=>a-b);const pres=DAll.filter(t=>t.tipo==='PRE').map(t=>t.tx).sort((a,b)=>a-b);
     if(!reais.length||!pres.length)return null;const rm=reais[Math.floor(reais.length/2)],pm=pres[Math.floor(pres.length/2)];
     return{impl:((1+pm/100)/(1+rm/100)-1)*100,rm,pm};}
@@ -1510,6 +1694,8 @@
       parWhy+=' Lembrete: com a mesma taxa, ágio, par e deságio rendem o MESMO até o vencimento — o que muda é o caminho do caixa.';}
     else{stPar='sem dado de par';parWhy='A planilha não trouxe % do PU par nem cupom de emissão para este papel; compare pela taxa.';}
     setv('xPar',stPar);setv('xParWhy',parWhy);
+    setv('xRat',t.rating?t.rating:(t.deb?'— (importe o CSV de ratings)':'soberano (Tesouro Nacional)'));
+    setv('xZs',t.zs!=null?pct(t.zs,2)+' a.a. sobre a curva':'—');
     DXT={emis,y0,prazo,isPos,zero:zeroC};
     const M=isPos?[['up','↑ rende mais','carrego acompanha o juro'],['dn','↓ rende menos','carrego cai junto'],['up','↑ tende a acompanhar','BC reage subindo a Selic']]
       :t.tipo==='IPCA'?[['dn','↓ preço cai','≈ −'+n2(mod)+'% por +1 p.p. real'],['up','↑ preço sobe','≈ +'+n2(mod)+'% por −1 p.p.'],['up','↑ protegido','VNA acompanha o IPCA']]
@@ -1596,6 +1782,7 @@
     if(!isPos&&dur<2)adv.push('Duration curta ('+n2(dur)+'): pouco tranco de marcação');
     if(!isPos&&dur>=6)dis.push('Duration longa ('+n2(dur)+'): volátil — bom para apostar em queda de juros, ruim se precisar vender numa alta');
     if(t.deb){dis.push('Crédito privado sem FGC: depende do emissor');dis.push('Liquidez do secundário pode ser baixa');}
+    if(t.zs!=null&&t.zs>=2.5)dis.push('Z-Spread de '+pct(t.zs,2)+' sobre a curva: o mercado cobra prêmio relevante por este crédito — investigue antes');
     if(t.stress)dis.push('⚠️ Taxa muito acima da mediana: mercado precificando possível calote');
     $('xAdv').innerHTML=adv.map(x=>'<li>'+x+'</li>').join('');
     $('xDis').innerHTML=dis.map(x=>'<li>'+x+'</li>').join('');
@@ -1628,6 +1815,110 @@
       {label:'Sem choque — caminho ao par',data:a,borderColor:ACC.mint,pointRadius:0,tension:.25},
       {label:'Com choque hoje',data:b,borderColor:ACC.coral,borderDash:[5,4],pointRadius:0,tension:.25}]},
       options:gopts('% do PU par','anos a partir de hoje',true)});}
+
+  /* W COE e proteção */
+  function initW(){CH.cW=new Chart($('cW'),{type:'line',data:{labels:[],datasets:[
+    {label:'COE (proteção + participação)',data:[],borderColor:ACC.amber,pointRadius:0,tension:0},
+    {label:'Renda fixa pura (pré)',data:[],borderColor:ACC.slate,borderDash:[5,4],pointRadius:0},
+    {label:'"COE caseiro" (zero + aposta direta)',data:[],borderColor:ACC.teal,borderDash:[2,3],pointRadius:0,tension:0}]},
+    options:gopts('valor final (R$ mil)','retorno do ativo no período (%)',true)});
+    CH.cWh=new Chart($('cWh'),{type:'bar',data:{labels:['Carteira (marcação)','COE no choque (utilizável)','COE no vencimento (opção)','DI futuro no choque'],datasets:[{data:[],backgroundColor:[ACC.coral,ACC.gray,ACC.amber,ACC.teal],borderRadius:5}]},
+    options:gopts('R$ mil','')});
+    renderW();}
+  function renderW(){if(!CH.cW)return;
+    const N=v('iWv'),T=v('iWt'),i=v('iWi'),pi=v('iWpi'),p=v('iWp')/100,ret=v('iWr')/100;
+    setv('lWv','R$ '+Math.round(N).toLocaleString('pt-BR'));setv('lWt',T);setv('lWi',pct(i,1));setv('lWpi',pct(pi,1));setv('lWp',Math.round(p*100)+'%');setv('lWr',(ret>=0?'+':'')+Math.round(ret*100)+'%');
+    const F=Math.pow(1+i/100,T),pvFrac=1/F,PV=N*pvFrac,bud=N-PV;
+    const RF=N*F,be=(F-1)/p;
+    const coeFin=N*(1+p*Math.max(0,ret));
+    const realLoss=(1-1/Math.pow(1+pi/100,T))*100;
+    const mod=T/(1+i/100),dv=N*mod*0.0001;
+    setv('oWpv','R$ '+fmtR(PV)+'  ('+n2(pvFrac*100)+'%)');
+    setv('oWbud','R$ '+fmtR(bud)+'  ('+n2((1-pvFrac)*100)+'%)');
+    setv('oWrf','R$ '+fmtR(RF)+'  ('+pct(i,1)+' a.a.)');
+    setv('oWbe','+'+n2(be*100)+'% no período');
+    setv('oWcoe','R$ '+fmtR(coeFin)+'  ('+(coeFin>=RF?'ganha':'perde')+' da RF)');
+    setv('oWreal','−'+n2(realLoss)+'% de poder de compra');
+    setv('oWdv',n2(T)+' anos · R$ '+fmtR(dv)+' por p.b.');
+    const labs=[],a=[],b=[],c=[];
+    for(let x=-50;x<=100.001;x+=5){const r2=x/100;labs.push(x);
+      a.push(+(N*(1+p*Math.max(0,r2))/1000).toFixed(1));
+      b.push(+(RF/1000).toFixed(1));
+      c.push(+((N+bud*(1+r2))/1000).toFixed(1));}
+    CH.cW.data.labels=labs;[a,b,c].forEach((d,k)=>CH.cW.data.datasets[k].data=d);CH.cW.update();
+    /* barbell / quanto de COE */
+    const P=v('iWcart'),G=v('iWg')/100,alvo=P*G;
+    setv('lWcart','R$ '+Math.round(P).toLocaleString('pt-BR'));setv('lWg',Math.round(G*100)+'%');
+    setv('oWcoeNec','R$ '+fmtR(alvo)+' em COE');
+    setv('oWdiy','R$ '+fmtR(alvo*pvFrac)+' no pré ('+n2(pvFrac*100)+'%)');
+    setv('oWlivre','R$ '+fmtR(P-alvo*pvFrac)+' ('+n2((P-alvo*pvFrac)/P*100)+'% da carteira)');
+    setv('oWverd','A ferramenta não escolhe o ativo — ela dá a régua: com pré a '+pct(i,1)+' e participação de '+Math.round(p*100)+'%, a aposta precisa render mais de +'+n2(be*100)+'% no período de '+T+' anos só para EMPATAR com a renda fixa. Abaixo disso, o cliente pagou a proteção e não levou nada por ela; se zerar, ainda perde '+n2(realLoss)+'% de poder de compra. A aposta que "deve" ser feita é aquela em que você atribui probabilidade razoável de superar esse breakeven — e repare no gráfico que o "COE caseiro" (zero + aposta direta com a sobra) entrega o mesmo piso protegido deixando a escolha do ativo, a liquidez e todo o upside com o cliente.');
+    renderWh();
+  }
+  function renderWh(){if(!CH.cWh)return;
+    const T=v('iWt'),i=v('iWi');
+    const P=v('iWhV'),dur=v('iWhD'),sh=v('iWhS'),Nc=v('iWhC'),u=v('iWhU')/100,part=v('iWhP')/100;
+    setv('lWhV','R$ '+Math.round(P).toLocaleString('pt-BR'));setv('lWhD',dur.toFixed(1).replace('.',',')+' anos');
+    setv('lWhS','+'+sh.toFixed(2).replace('.',',')+' p.p.');setv('lWhC','R$ '+Math.round(Nc).toLocaleString('pt-BR'));
+    setv('lWhU',(u>=0?'+':'')+Math.round(u*100)+'%');setv('lWhP',Math.round(part*100)+'%');
+    const perda=-P*dur*sh/100, dv01=P*dur*0.0001;
+    const coeMark=-Nc*(T/(1+i/100))*sh/100;
+    const coeOpt=Nc*part*Math.max(0,u);
+    const cob=Math.abs(perda)>0?coeOpt/Math.abs(perda)*100:0;
+    const puDI=100000/Math.pow(1+i/100,T),modDI=T/(1+i/100),dv01DI=puDI*modDI*0.0001,nDI=dv01/dv01DI;
+    setv('oWhPerda','−R$ '+fmtR(Math.abs(perda)));
+    setv('oWhDv','R$ '+fmtR(dv01)+' por p.b.');
+    setv('oWhHoje','R$ 0 utilizáveis (ilíquido) · marcação interna −R$ '+fmtR(Math.abs(coeMark)));
+    setv('oWhVenc','+R$ '+fmtR(coeOpt)+' (se o dólar realizar '+(u>=0?'+':'')+Math.round(u*100)+'%)');
+    setv('oWhCob',n2(cob)+'% da perda');
+    setv('oWhDI','vender '+nDI.toFixed(1).replace('.',',')+' contratos · ganho imediato +R$ '+fmtR(Math.abs(perda)));
+    CH.cWh.data.datasets[0].data=[+(perda/1000).toFixed(1),0,+(coeOpt/1000).toFixed(1),+(Math.abs(perda)/1000).toFixed(1)];
+    CH.cWh.update();
+    setv('oWhVerd','No momento do choque, a carteira marca −R$ '+fmtR(Math.abs(perda))+' e o COE não entrega nada utilizável (sem liquidez — e a marcação interna dele também cai). O DI futuro, vendido na quantidade certa ('+nDI.toFixed(1).replace('.',',')+' contratos), compensa a perda NO MESMO DIA via ajuste diário: isso é imunizar. O COE de dólar só ajuda NO VENCIMENTO e SE a correlação realizar: com dólar '+(u>=0?'+':'')+Math.round(u*100)+'% e participação de '+Math.round(part*100)+'%, a opção pagaria R$ '+fmtR(coeOpt)+' ('+n2(cob)+'% da perda) — um amortecedor de cenário com risco de base, não um hedge. Se o dólar não subir junto com os juros, a proteção simplesmente não acontece.');
+  }
+
+  /* checklist COE no Comparador */
+  const ckS=[null,null,null,null,null,null];
+  function ck(i,val,btn){ckS[i]=val;btn.parentNode.querySelectorAll('button').forEach(b=>b.classList.remove('active'));btn.classList.add('active');
+    const resp=ckS.filter(x=>x!==null).length,sim=ckS.filter(x=>x===1).length;
+    if(resp<6){setv('ckTag','Veredito ('+resp+'/6 respondidas)');setv('ckOut','Continue — faltam '+(6-resp)+' perguntas.');return;}
+    if(sim===6){setv('ckTag','✅ Oferece o COE');setv('ckOut','Encaixe completo: data casada, liquidez resolvida, cliente que não tomaria o risco sozinho, termo decente, visão acima do breakeven e concentração em crédito privado para diluir. O COE entra como camada de diversificação de default + upside — dimensione pela aba "COE & proteção" e documente o racional no suitability.');}
+    else if(sim>=4){setv('ckTag','🟡 Quase — resolva as pendências');setv('ckOut','Há '+(6-sim)+' item(ns) marcado(s) como "Não". Cada um deles é um motivo clássico de reclamação futura (liquidez, termo ruim, breakeven improvável). Resolva antes de oferecer — ou reduza o tamanho da alocação proporcionalmente.');}
+    else{setv('ckTag','🔴 Prefira renda fixa');setv('ckOut','Com '+(6-sim)+' respostas "Não", o COE não se sustenta para este cliente: o Comparador acima mostra alternativas líquidas e, para diluir risco corporativo sem perder rendimento, Tesouro IPCA+ resolve com risco soberano e marcação transparente.');}}
+
+  /* O oferta combinada */
+  function initO(){CH.cOb=new Chart($('cOb'),{type:'bar',data:{labels:['Zeram','Metade','Tudo paga','CDI','Debênture'],datasets:[
+    {label:'Principal corrigido',data:[],backgroundColor:ACC.mint,borderRadius:3,stack:'s'},
+    {label:'Cupons no cenário',data:[],backgroundColor:ACC.amber,borderRadius:3,stack:'s'}]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:true,labels:{color:TXT,boxWidth:12,font:{family:"'IBM Plex Sans'",size:11}}}},
+      scales:{x:{stacked:true,grid:{color:GRID},ticks:{color:TXT,font:{family:"'IBM Plex Sans'",size:11}}},y:{stacked:true,grid:{color:GRID},ticks:{color:TXT,font:{family:"'IBM Plex Mono'",size:10}},title:{display:true,text:'R$ mil no vencimento',color:TXT,font:{size:11}}}}}});renderO();}
+  function renderO(){if(!CH.cOb)return;
+    const P=v('iObP'),cup=v('iObCup')/100,T=v('iObT'),pi=v('iObPi')/100,cdi=v('iObCdi')/100,part=v('iObPart')/100,R=v('iObR')/100;
+    setv('lObP','R$ '+Math.round(P).toLocaleString('pt-BR'));setv('lObCup',pct(cup*100,1));setv('lObT',T);
+    setv('lObPi',pct(pi*100,1));setv('lObCdi',pct(cdi*100,2));setv('lObPart',Math.round(part*100)+'%');setv('lObR','+'+Math.round(R*100)+'%');
+    const g1=part*R*(1-0.175),rDeb=(1+pi)*(1+cup)-1;
+    let rows='',sZ=0,sM=0,sT=0,sC=0,sD=0;
+    for(let t=1;t<=T;t++){const C=P*Math.pow(1+pi,t)*cup,n=T-t;
+      const vZ=C,vT=C*Math.pow(1+g1,n),vM=C*Math.pow(1+g1,n/2);
+      const vC=C*(1+(Math.pow(1+cdi,n)-1)*(1-aliqIR(Math.max(n,0.01))));
+      const vD=C*Math.pow(1+rDeb,n);
+      sZ+=vZ;sM+=vM;sT+=vT;sC+=vC;sD+=vD;
+      rows+='<tr><td>'+t+'</td><td class="num">'+fmtR(C)+'</td><td class="num">'+fmtR(vZ)+'</td><td class="num">'+fmtR(vM)+'</td><td class="num">'+fmtR(vT)+'</td><td class="num">'+fmtR(vC)+'</td><td class="num">'+fmtR(vD)+'</td></tr>';}
+    const VNA=P*Math.pow(1+pi,T);
+    rows+='<tr class="tot"><td colspan="2">Principal corrigido (devolvido)</td><td class="num" colspan="5">'+fmtR(VNA)+'</td></tr>';
+    rows+='<tr class="tot"><td colspan="2">TOTAL no vencimento</td><td class="num">'+fmtR(VNA+sZ)+'</td><td class="num">'+fmtR(VNA+sM)+'</td><td class="num">'+fmtR(VNA+sT)+'</td><td class="num">'+fmtR(VNA+sC)+'</td><td class="num">'+fmtR(VNA+sD)+'</td></tr>';
+    $('xObRows').innerHTML=rows;
+    setv('oObZ','R$ '+fmtR(VNA+sZ));setv('oObM','R$ '+fmtR(VNA+sM));setv('oObT2','R$ '+fmtR(VNA+sT));
+    setv('oObC','R$ '+fmtR(VNA+sC));setv('oObD','R$ '+fmtR(VNA+sD));
+    const cost=sD-sZ;
+    setv('oObCost','−R$ '+fmtR(cost)+' em '+T+' anos');
+    const beD=rDeb/(part*(1-0.175))*100,beC=cdi/part*100;
+    setv('oObBe','+'+n2(beC)+'%/ciclo (vs CDI) · +'+n2(beD)+'%/ciclo (vs debênture)');
+    CH.cOb.data.datasets[0].data=[VNA,VNA,VNA,VNA,VNA].map(x=>+(x/1000).toFixed(1));
+    CH.cOb.data.datasets[1].data=[sZ,sM,sT,sC,sD].map(x=>+(x/1000).toFixed(1));
+    CH.cOb.update();
+    setv('oObVerd','"Seu dinheiro grande fica em IPCA + '+pct(cup*100,1)+' sem imposto — nele ninguém mexe. Os juros anuais têm três destinos: CDI, mais debênture (o caminho seguro mais forte: R$ '+fmtR(VNA+sD)+' no total), ou o bilhete protegido — pior caso R$ '+fmtR(VNA+sZ)+', melhor caso R$ '+fmtR(VNA+sT)+'. O bilhete custa no máximo R$ '+fmtR(cost)+' em '+T+' anos, e a cada ano decidimos juntos." Régua de mesa: o ativo do COE precisa superar +'+n2(beD)+'% por ciclo para valer mais que reinvestir na debênture'+((VNA+sT)<(VNA+sD)?' — repare que, nas premissas atuais, nem o melhor caso do COE alcança o reinvestimento: o COE aqui é bilhete comportamental, não motor de retorno':'')+'.');
+  }
 
   initA();renderMath();
 </script>
